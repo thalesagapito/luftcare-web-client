@@ -1,0 +1,94 @@
+/* eslint-disable object-curly-newline */
+import { resolve } from 'path';
+import { config as DotenvConfig } from 'dotenv';
+import { Configuration as NuxtConfiguration } from '@nuxt/types';
+import { ProcessEnv } from './types/modules';
+import ValidateEnv from './validateEnv';
+
+DotenvConfig({ path: resolve(__dirname, './.env') });
+ValidateEnv();
+
+const nuxtConfig: NuxtConfiguration = {
+  mode: 'universal',
+  /*
+  ** Hosts at 0.0.0.0 to be accessible by other devices in the same network
+  */
+  server: {
+    host: '0.0.0.0',
+  },
+  /*
+  ** Headers of the page
+  */
+  head: {
+    title: '',
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: '' },
+    ],
+    link: [
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+      {
+        rel: 'stylesheet',
+        href: 'https://rsms.me/inter/inter.css',
+      },
+    ],
+  },
+  /*
+  ** Customize the progress-bar color
+  */
+  loading: { color: '#fff' },
+  /*
+  ** Global CSS
+  */
+  css: ['element-ui/lib/theme-chalk/index.css'],
+  /*
+  ** Plugins to load before mounting the App
+  */
+  plugins: [
+    { src: './plugins/element-ui', mode: 'all' },
+    { src: './plugins/apollo/clientErrorHandler', mode: 'client' },
+    { src: './plugins/vuex-persist/vuexCookies', mode: 'client' },
+  ],
+  /*
+  ** Nuxt.js dev-modules
+  */
+  buildModules: [
+    '@nuxt/typescript-build',
+    '@nuxtjs/tailwindcss',
+    'nuxt-typed-vuex',
+  ],
+  /*
+  ** Nuxt.js modules
+  */
+  modules: [
+    '@nuxtjs/pwa',
+    '@nuxtjs/apollo',
+    '@nuxtjs/dotenv',
+  ],
+  /*
+  ** Apollo configuration
+  */
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: (process.env as ProcessEnv).API_URL,
+      },
+    },
+  },
+  /*
+  ** Build configuration
+  */
+  build: {
+    postcss: {
+      plugins: {
+        'postcss-import': {},
+        'postcss-simple-vars': {},
+        'postcss-nested': {},
+      },
+    },
+    transpile: [/^element-ui/, /typed-vuex/],
+  },
+};
+
+export default nuxtConfig;

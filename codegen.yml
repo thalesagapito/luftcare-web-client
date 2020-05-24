@@ -1,0 +1,13 @@
+overwrite: true
+# Endpoint to download the schema from
+schema: http://localhost:5000/graphql
+# Run eslint to fix files after generation
+hooks:
+  afterAllFileWrite:
+    - eslint --fix
+# Glob of gql files
+documents: "graphql/**/*.ts"
+generates:
+  types/gql.ts:
+    - typescript
+    - typescript-operations

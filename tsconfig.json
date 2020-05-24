@@ -3,34 +3,29 @@
     "target": "es2018",
     "module": "esnext",
     "moduleResolution": "node",
-    "lib": [
-      "esnext",
-      "esnext.asynciterable",
-      "dom"
-    ],
+    "lib": ["esnext", "esnext.asynciterable", "dom"],
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
     "noEmit": true,
     "experimentalDecorators": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
+      "~/*": ["./*"],
+      "@/*": ["./*"]
     },
     "types": [
+      "vue-cli-plugin-apollo",
+      "vue-apollo/types",
+      "@nuxtjs/apollo",
+      "apollo-client",
+      "@types/webpack",
       "@types/node",
       "@nuxt/types"
     ]
   },
-  "exclude": [
-    "node_modules",
-    ".nuxt",
-    "dist"
-  ]
+  "include": ["**/*.ts", "**/*.js", "**/*.vue"],
+  "exclude": ["node_modules", ".nuxt", "dist"]
 }

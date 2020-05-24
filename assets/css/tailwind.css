@@ -1,0 +1,50 @@
+/* purgecss start ignore */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+/* purgecss end ignore */
+@import 'tailwindcss/utilities';
+@import './animations';
+
+html {
+  font-size: 16px;
+}
+
+/* Material design icons */
+.md-icon {
+  @apply font-icon;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased; /* Support for all WebKit browsers. */
+  text-rendering: optimizeLegibility; /* Support for Safari and Chrome. */
+  -moz-osx-font-smoothing: grayscale; /* Support for Firefox. */
+  font-feature-settings: 'liga'; /* Support for IE. */
+}
+/* Material design icons */
+
+/* iOS input resets */
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="button"],
+input[type="submit"] {
+  appearance: none;
+  &::placeholder {
+    line-height: normal;
+  }
+  @apply rounded-none;
+}
+/* iOS input resets */
+
+/* Remove input outline on focus */
+input:focus,
+textarea:focus {
+  @apply outline-none;
+}
+/* Remove input outline on focus */
