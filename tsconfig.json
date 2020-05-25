@@ -17,6 +17,7 @@
       "@/*": ["./*"]
     },
     "types": [
+      "async-validator/dist-types",
       "vue-cli-plugin-apollo",
       "vue-apollo/types",
       "@nuxtjs/apollo",

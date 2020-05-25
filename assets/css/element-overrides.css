@@ -1,0 +1,7 @@
+.el-form-item .el-form-item__label {
+  line-height: 2rem;
+}
+
+.el-loading-spinner {
+  @apply flex flex-col items-center justify-center;
+}

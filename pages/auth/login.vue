@@ -1,18 +1,35 @@
 <template lang="pug">
   .login-wrapper
-    h1.mb-10 Login page
-    //- nuxt-link(to="/") Current User
-    input(v-model="computedEmail")
-    label(for="password") Password
-    input(name="password" type="password" v-model="password")
-    button(type="submit" @click="loginUser") Login
+    h1.title Entrar na minha conta
+    el-form(v-bind="formProps" ref="loginForm" hide-required-asterisk)
+      el-form-item(label="Email" prop="email")
+        el-input(
+          type="email"
+          autocomplete="email"
+          placeholder="Digite seu endereço de email aqui"
+          v-model="email"
+        )
+      el-form-item(label="Senha" prop="password")
+        el-input(
+          type="password"
+          autocomplete="email"
+          placeholder="Digite sua senha aqui"
+          v-model="password"
+        )
+      el-form-item.flex.justify-end
+        el-button(
+          type="primary"
+          @click="validateFormAndLogin"
+        ) Login
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { ExecutionResult } from 'graphql';
+import { ElFormProps } from '@/types/element-ui';
 import LoginMutationGQL from '@/graphql/mutations/User/login';
 import { MutationLoginArgs, Mutation } from '@/types/gql';
+import { Form } from 'element-ui';
 
 type Data = {
   email?: string;
@@ -20,27 +37,42 @@ type Data = {
 };
 type Methods = {
   loginUser: () => void;
-  passTokenToApolloClient: (result: ExecutionResult<Mutation['login']>) => void;
+  validateFormAndLogin: () => void;
+  passTokenToApolloClient: (result: ExecutionResult<Mutation>) => void;
 };
 type Computed = {
-  computedEmail: string | undefined;
+  formProps: Partial<ElFormProps<'email'|'password'>>
 };
 
 export default Vue.extend<Data, Methods, Computed, {}>({
-  data() {
-    return {
-      email: undefined,
-      password: undefined,
-    };
-  },
+  layout: 'auth',
   middleware: ['isUserGuest'],
+  data() {
+    return { email: undefined, password: undefined };
+  },
   computed: {
-    computedEmail: {
-      get() { return this.email; },
-      set(newValue) { this.email = newValue; },
+    formProps() {
+      return {
+        model: { email: this.email, password: this.password },
+        rules: {
+          email: [
+            { type: 'email', required: true, message: 'Insira um endereço de email válido' },
+          ],
+          password: [
+            { type: 'string', required: true, message: 'O campo senha é obrigatório' },
+          ],
+        },
+      };
     },
   },
   methods: {
+    validateFormAndLogin() {
+      (this.$refs.loginForm as Form).validate((isValid) => {
+        if (!isValid) return;
+
+        this.loginUser();
+      });
+    },
     async loginUser() {
       if (!this.email || !this.password) return;
 
@@ -49,14 +81,17 @@ export default Vue.extend<Data, Methods, Computed, {}>({
         password: this.password,
       };
 
+      const loading = this.$loading({ lock: true, text: 'Entrando' });
+
       await this.$apollo
         .mutate({ mutation: LoginMutationGQL, variables: loginArgs })
         .then(this.passTokenToApolloClient)
-        .catch(this.$clientErrorHandler);
+        .catch(this.$defaultClientErrorHandler)
+        .finally(() => loading.close());
     },
     async passTokenToApolloClient({ data }) {
-      const authToken = data?.authorization as string;
-      const refreshToken = data?.authorization as string;
+      const authToken = data?.login?.authorization || '';
+      const refreshToken = data?.login?.authorization || '';
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
       this.$router.push('/');
@@ -67,10 +102,6 @@ export default Vue.extend<Data, Methods, Computed, {}>({
 
 <style lang="postcss" scoped>
 .login-wrapper {
-  @apply flex flex-col px-2;
-
-  input {
-    @apply border;
-  }
+  @apply flex flex-col;
 }
 </style>

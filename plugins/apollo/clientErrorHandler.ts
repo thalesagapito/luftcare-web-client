@@ -1,7 +1,7 @@
-/* eslint-disable import/prefer-default-export */
 import Vue from 'vue';
 import { GraphQLError } from 'graphql';
 import { ApolloError } from 'apollo-client';
+import { ElNotification } from 'element-ui/types/notification';
 import { log } from '~/logs/LogHandler';
 
 const SERVER_ERROR = 'ServerError';
@@ -23,17 +23,37 @@ function handleValidationError(errors: Readonly<GraphQLError[]>) {
   });
 }
 
-function errorHandler(error: ApolloError): void {
+function notifyError(message: string): void {
+  (Vue.prototype.$notify as ElNotification)({
+    title: 'Erro',
+    type: 'error',
+    message,
+  });
+}
+
+function errorHandler(error: ApolloError, enableErrorNotification: boolean = true): void {
   const { message, graphQLErrors, networkError } = error;
 
   const isNetworkError = networkError !== null && networkError !== undefined;
   const isValidationError = message === VALIDATION_ERROR;
 
+  if (enableErrorNotification) notifyError(error.message);
   if (isNetworkError) return handleNetworkError(error);
   if (isValidationError) return handleValidationError(graphQLErrors);
 
-  return log('Unhandled error', error);
+  return log('Processing error', error);
 }
 
-Vue.prototype.$clientErrorHandler = errorHandler;
-export const clientErrorHandler = errorHandler;
+type CustomHandler = (error: ApolloError) => void;
+
+function customErrorHandler(customHandler: CustomHandler): typeof errorHandler {
+  return (error: ApolloError) => {
+    errorHandler(error);
+    customHandler(error);
+  };
+}
+
+Vue.prototype.$defaultClientErrorHandler = errorHandler;
+Vue.prototype.$customClientErrorHandler = customErrorHandler;
+export const defaultClientErrorHandler = errorHandler;
+export const customClientErrorHandler = customErrorHandler;

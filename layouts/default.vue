@@ -1,6 +1,5 @@
 <template lang="pug">
 .page-wrapper
-  page-scrim
   navbar
   .content
     nuxt
@@ -8,14 +7,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import PageScrim from '~/components/organisms/single-instance/TheScrim.vue';
 import Navbar from '~/components/organisms/single-instance/navbar/TheNavbar.vue';
 
 export default Vue.extend({
-  components: {
-    Navbar,
-    PageScrim,
-  },
+  components: { Navbar },
 });
 </script>
 

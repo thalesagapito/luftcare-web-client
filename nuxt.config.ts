@@ -14,7 +14,8 @@ const nuxtConfig: NuxtConfiguration = {
   ** Hosts at 0.0.0.0 to be accessible by other devices in the same network
   */
   server: {
-    host: '0.0.0.0',
+    host: process.env.CLIENT_DEV_HOST,
+    port: process.env.CLIENT_DEV_PORT,
   },
   /*
   ** Headers of the page
@@ -41,7 +42,10 @@ const nuxtConfig: NuxtConfiguration = {
   /*
   ** Global CSS
   */
-  css: ['element-ui/lib/theme-chalk/index.css'],
+  css: [
+    'element-ui/lib/theme-chalk/index.css',
+    './assets/css/element-overrides.css',
+  ],
   /*
   ** Plugins to load before mounting the App
   */
@@ -80,6 +84,10 @@ const nuxtConfig: NuxtConfiguration = {
   ** Build configuration
   */
   build: {
+    filenames: {
+      app: ({ isDev }) => (isDev ? '[name].[hash].js' : '[chunkhash].js'),
+      chunk: ({ isDev }) => (isDev ? '[name].[hash].js' : '[chunkhash].js'),
+    },
     postcss: {
       plugins: {
         'postcss-import': {},
