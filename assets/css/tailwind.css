@@ -15,3 +15,9 @@ body,
 #__layout {
   @apply min-h-full flex;
 }
+
+@screen sm {
+  html {
+    font-size: 14px;
+  }
+}

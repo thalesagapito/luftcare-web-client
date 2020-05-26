@@ -50,7 +50,7 @@ const nuxtConfig: NuxtConfiguration = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: './plugins/element-ui', mode: 'all' },
+    { src: './plugins/element-ui/index', mode: 'all' },
     { src: './plugins/apollo/clientErrorHandler', mode: 'client' },
     { src: './plugins/vuex-persist/vuexCookies', mode: 'client' },
   ],
