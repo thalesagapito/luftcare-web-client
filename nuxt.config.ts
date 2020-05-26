@@ -14,8 +14,8 @@ const nuxtConfig: NuxtConfiguration = {
   ** Hosts at 0.0.0.0 to be accessible by other devices in the same network
   */
   server: {
-    host: process.env.CLIENT_DEV_HOST,
-    port: process.env.CLIENT_DEV_PORT,
+    host: (process.env as ProcessEnv).CLIENT_DEV_HOST,
+    port: (process.env as ProcessEnv).CLIENT_DEV_PORT,
   },
   /*
   ** Headers of the page
@@ -84,10 +84,6 @@ const nuxtConfig: NuxtConfiguration = {
   ** Build configuration
   */
   build: {
-    filenames: {
-      app: ({ isDev }) => (isDev ? '[name].[hash].js' : '[chunkhash].js'),
-      chunk: ({ isDev }) => (isDev ? '[name].[hash].js' : '[chunkhash].js'),
-    },
     postcss: {
       plugins: {
         'postcss-import': {},
