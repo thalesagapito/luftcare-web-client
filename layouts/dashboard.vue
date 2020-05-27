@@ -39,7 +39,7 @@ export default Vue.extend<{}, {}, {}, {}>({
   .dashboard-wrapper {
     .side-menu {
       display: unset;
-      width: 22rem;
+      width: 25rem;
     }
   }
 }
