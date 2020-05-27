@@ -86,7 +86,7 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       await this.$apollo
         .mutate({ mutation: LoginMutationGQL, variables: loginArgs })
         .then(this.passTokenToApolloClient)
-        .catch(this.$defaultClientErrorHandler)
+        .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
     },
     async passTokenToApolloClient({ data }) {
@@ -94,7 +94,7 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       const refreshToken = data?.login?.authorization || '';
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
-      this.$router.push('/');
+      this.$router.push('/dashboard');
     },
   },
 });

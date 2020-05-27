@@ -1,8 +1,9 @@
 import Vue from 'vue';
+import { Plugin } from '@nuxt/types';
 import { GraphQLError } from 'graphql';
 import { ApolloError } from 'apollo-client';
 import { ElNotification } from 'element-ui/types/notification';
-import { log } from '~/logs/LogHandler';
+import { log, ExceptionSeverityLevel } from '~/logs/LogHandler';
 
 const SERVER_ERROR = 'ServerError';
 const VALIDATION_ERROR = 'GraphQL error: Argument Validation Error';
@@ -10,25 +11,35 @@ const VALIDATION_ERROR = 'GraphQL error: Argument Validation Error';
 function handleNetworkError(error: ApolloError) {
   const serverResponded = error.networkError?.name === SERVER_ERROR;
   if (serverResponded) {
-    log('Erro no servidor', error);
+    log({
+      message: 'Erro no servidor',
+      objectToLog: error,
+      severityLevel: ExceptionSeverityLevel.ERROR,
+    });
   } else {
-    log('Sem conexão ou o servidor está fora do ar', error);
+    log(
+      {
+        message: 'Sem conexão ou o servidor está fora do ar',
+        objectToLog: error,
+        severityLevel: ExceptionSeverityLevel.FATAL,
+      },
+    );
   }
 }
 
 function handleValidationError(errors: Readonly<GraphQLError[]>) {
   errors.forEach((graphqlError) => {
     const { validationErrors = [] } = graphqlError?.extensions?.exception;
-    validationErrors.forEach((e: any) => log('Validation error', e));
+    validationErrors.forEach((e: any) => log({
+      message: 'Erro de validação',
+      objectToLog: e,
+      severityLevel: ExceptionSeverityLevel.INFO,
+    }));
   });
 }
 
 function notifyError(message: string): void {
-  (Vue.prototype.$notify as ElNotification)({
-    title: 'Erro',
-    type: 'error',
-    message,
-  });
+  (Vue.prototype.$notify as ElNotification)({ title: 'Erro', type: 'error', message });
 }
 
 function errorHandler(error: ApolloError, enableErrorNotification: boolean = true): void {
@@ -41,19 +52,33 @@ function errorHandler(error: ApolloError, enableErrorNotification: boolean = tru
   if (isNetworkError) return handleNetworkError(error);
   if (isValidationError) return handleValidationError(graphQLErrors);
 
-  return log('Processing error', error);
+  return log({
+    message: 'Erro genérico no processamento',
+    objectToLog: error,
+    severityLevel: ExceptionSeverityLevel.WARNING,
+  });
 }
 
-type CustomHandler = (error: ApolloError) => void;
+const registerClientErrorHandler: Plugin = (context, inject) => {
+  inject('clientErrorHandler', errorHandler);
+};
 
-function customErrorHandler(customHandler: CustomHandler): typeof errorHandler {
-  return (error: ApolloError) => {
-    errorHandler(error);
-    customHandler(error);
-  };
+declare module 'vue/types/vue' {
+  interface Vue {
+    $clientErrorHandler: typeof errorHandler;
+  }
 }
 
-Vue.prototype.$defaultClientErrorHandler = errorHandler;
-Vue.prototype.$customClientErrorHandler = customErrorHandler;
-export const defaultClientErrorHandler = errorHandler;
-export const customClientErrorHandler = customErrorHandler;
+declare module '@nuxt/types' {
+  interface NuxtAppOptions {
+    $clientErrorHandler: typeof errorHandler;
+  }
+}
+
+declare module 'vuex/types/index' {
+  interface Store<S> {
+    $clientErrorHandler: typeof errorHandler;
+  }
+}
+
+export default registerClientErrorHandler;

@@ -7,7 +7,7 @@
     template(v-if="isLoggedIn")
       n-link.link(to="/closet") Meu closet
       n-link.link(to="/profile") Meu perfil
-      .link(@click="logout") Logout
+      .link(@click="$authMethodsLogout") Logout
 
     template(v-else)
       n-link.link(to="/auth/login") Login
@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { authMethods } from '~/mixins/RegisteredMixins';
 
 type NavLink = {
   id: number
@@ -23,6 +24,7 @@ type NavLink = {
 };
 
 export default Vue.extend({
+  mixins: [authMethods],
   computed: {
     isLoggedIn(): boolean {
       return this.$accessor.auth.isLoggedIn;
@@ -36,14 +38,6 @@ export default Vue.extend({
         { id: 2, url: '/hottest', label: 'Mais quentes' },
         { id: 3, url: '/news', label: 'Notícias' },
       ];
-    },
-  },
-  methods: {
-    logout() {
-      // TODO CREATE GLOBAL METHOD THAT DOES BOTH OF THESE THINGS
-      this.$apolloHelpers.onLogout();
-      this.$accessor.auth.clearRefreshToken();
-      this.$router.push('/auth/login');
     },
   },
 });
