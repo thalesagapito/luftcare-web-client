@@ -5,17 +5,17 @@
 
       el-menu-item(index="/dashboard") Início
       el-menu-item(index="/dashboard/formularios") Formulários
-      el-menu-item(@click="$logout") Sair
+      el-menu-item(@click="$authMethodsLogout") Sair
     .content
       nuxt
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import AuthMethods from '~/mixins/AuthMethods';
+import { authMethods } from '~/mixins/RegisteredMixins';
 
 export default Vue.extend<{}, {}, {}, {}>({
-  mixins: [AuthMethods],
+  mixins: [authMethods],
   methods: {},
 });
 </script>
