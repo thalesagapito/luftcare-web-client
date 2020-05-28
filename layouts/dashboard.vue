@@ -1,22 +1,21 @@
 <template lang="pug">
   .dashboard-wrapper
-    el-menu.side-menu(router collapse="")
-      img.logo(src="/logos/luftcare-logo-black.png")
-
-      el-menu-item(index="/dashboard") Início
-      el-menu-item(index="/dashboard/formularios") Formulários
-      el-menu-item(@click="$authMethodsLogout") Sair
+    the-side-menu
     .content
       nuxt
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { authMethods } from '~/mixins/RegisteredMixins';
+import TheSideMenu from '~/components/organisms/single-instance/side-menu/TheSideMenu.vue';
 
-export default Vue.extend<{}, {}, {}, {}>({
-  mixins: [authMethods],
-  methods: {},
+type Data = {};
+type Methods = {};
+type Computed = {};
+type Props = {};
+
+export default Vue.extend<Data, Methods, Computed, Props>({
+  components: { TheSideMenu },
 });
 </script>
 
@@ -24,24 +23,8 @@ export default Vue.extend<{}, {}, {}, {}>({
 .dashboard-wrapper {
   @apply flex w-screen;
 
-  .side-menu {
-    @apply hidden;
-    .logo {
-      @apply w-32 my-9 mx-auto;
-    }
-  }
   .content {
-    @apply flex flex-col items-center justify-start w-full bg-white;
+    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-70;
   }
 }
-
-@screen md {
-  .dashboard-wrapper {
-    .side-menu {
-      display: unset;
-      width: 25rem;
-    }
-  }
-}
-
 </style>
