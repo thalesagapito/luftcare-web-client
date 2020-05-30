@@ -88,7 +88,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .the-side-menu-wrapper {
-  width: 25rem;
+  @apply hidden;
 
   .logo {
     @apply w-32 my-9 mx-auto;
@@ -103,7 +103,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 }
 @screen md {
   .the-side-menu-wrapper {
-    @apply flex flex-col;
+    @apply flex flex-col flex-shrink-0 flex-grow-0 w-64;
   }
 }
 </style>

@@ -119,6 +119,8 @@ $--border-style-base: solid !default;
 $--border-color-hover: $--color-text-placeholder !default;
 $--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
 /// borderRadius|1|Radius|0
+$--border-radius-large: 6px !default;
+/// borderRadius|1|Radius|0
 $--border-radius-base: 4px !default;
 /// borderRadius|1|Radius|0
 $--border-radius-small: 2px !default;
@@ -549,11 +551,11 @@ $--button-font-size: $--font-size-base !default;
 /// fontWeight||Font|1
 $--button-font-weight: $--font-weight-primary !default;
 /// borderRadius||Border|2
-$--button-border-radius: $--border-radius-base !default;
+$--button-border-radius: $--border-radius-large !default;
 /// padding||Spacing|3
-$--button-padding-vertical: 12px !default;
+$--button-padding-vertical: 10px !default;
 /// padding||Spacing|3
-$--button-padding-horizontal: 20px !default;
+$--button-padding-horizontal: 19px !default;
 
 /// fontSize||Font|1
 $--button-medium-font-size: $--font-size-base !default;
@@ -562,7 +564,7 @@ $--button-medium-border-radius: $--border-radius-base !default;
 /// padding||Spacing|3
 $--button-medium-padding-vertical: 10px !default;
 /// padding||Spacing|3
-$--button-medium-padding-horizontal: 20px !default;
+$--button-medium-padding-horizontal: 18px !default;
 
 /// fontSize||Font|1
 $--button-small-font-size: 12px !default;

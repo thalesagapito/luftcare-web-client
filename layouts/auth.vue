@@ -15,7 +15,7 @@ export default Vue.extend({});
 
 <style lang="postcss" scoped>
 .auth-wrapper {
-  @apply flex w-screen;
+  @apply flex flex-grow;
   .content {
     @apply flex flex-col items-center justify-center w-full bg-white px-10;
 

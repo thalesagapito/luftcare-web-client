@@ -21,10 +21,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .dashboard-wrapper {
-  @apply flex w-screen;
+  @apply flex flex-grow;
 
   .content {
-    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-70;
+    @apply flex flex-col flex-grow items-center justify-start w-full bg-gray-100 bg-opacity-70;
   }
 }
 </style>

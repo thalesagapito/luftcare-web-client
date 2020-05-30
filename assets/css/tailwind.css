@@ -13,7 +13,7 @@ html {
 body,
 #__nuxt,
 #__layout {
-  @apply min-h-full flex;
+  @apply min-h-full flex flex-grow;
 }
 
 @screen sm {
