@@ -4,12 +4,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RegisteredLayout } from '~/layouts/RegisteredLayout';
-import { RegisteredMiddleware } from '~/middleware/RegisteredMiddleware';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 
 export default Vue.extend({
-  middleware: ['isUserAuthenticated'] as RegisteredMiddleware,
-  layout: 'dashboard' as RegisteredLayout,
+  middleware: RegisteredMiddleware.isUserAuthenticated,
+  layout: RegisteredLayout.dashboard,
 });
 </script>
 

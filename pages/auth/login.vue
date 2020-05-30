@@ -25,11 +25,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Form } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '@/types/element-ui';
-import LoginMutationGQL from '@/graphql/mutations/User/login';
 import { MutationLoginArgs, Mutation } from '@/types/gql';
-import { Form } from 'element-ui';
+import LoginMutationGQL from '@/graphql/mutations/User/login';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 
 type Data = {
   email?: string;
@@ -45,8 +46,8 @@ type Computed = {
 };
 
 export default Vue.extend<Data, Methods, Computed, {}>({
-  layout: 'auth',
-  middleware: ['isUserGuest'],
+  layout: RegisteredLayout.auth,
+  middleware: RegisteredMiddleware.isUserGuest,
   data() {
     return { email: undefined, password: undefined };
   },
