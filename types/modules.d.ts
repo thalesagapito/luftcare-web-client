@@ -1,4 +1,5 @@
 import { accessorType } from '~/store';
+import { errorHandler } from '~/errorHandling/apollo/clientErrorHandler';
 
 declare interface ProcessEnv extends Record<string, string> {
   API_URL: string;
@@ -11,15 +12,22 @@ declare interface ProcessEnv extends Record<string, string> {
 declare module 'vue/types/vue' {
   interface Vue {
     $accessor: typeof accessorType;
+    $clientErrorHandler: typeof errorHandler;
   }
 }
 
 declare module '@nuxt/types' {
   interface NuxtAppOptions {
     $accessor: typeof accessorType;
+    $clientErrorHandler: typeof errorHandler;
   }
 }
 
+declare module 'vuex/types/index' {
+  interface Store<S> {
+    $clientErrorHandler: typeof errorHandler;
+  }
+}
 interface NuxtExtendedWindow {
   onNuxtReady(obj: object): void
 }

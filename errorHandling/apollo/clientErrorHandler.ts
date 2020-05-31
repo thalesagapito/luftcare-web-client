@@ -42,7 +42,7 @@ function notifyError(message: string): void {
   (Vue.prototype.$notify as ElNotification)({ title: 'Erro', type: 'error', message });
 }
 
-function errorHandler(error: ApolloError, enableErrorNotification: boolean = true): void {
+export function errorHandler(error: ApolloError, enableErrorNotification: boolean = true): void {
   const { message, graphQLErrors, networkError } = error;
 
   const isNetworkError = networkError !== null && networkError !== undefined;
@@ -63,22 +63,5 @@ const registerClientErrorHandler: Plugin = (context, inject) => {
   inject('clientErrorHandler', errorHandler);
 };
 
-declare module 'vue/types/vue' {
-  interface Vue {
-    $clientErrorHandler: typeof errorHandler;
-  }
-}
-
-declare module '@nuxt/types' {
-  interface NuxtAppOptions {
-    $clientErrorHandler: typeof errorHandler;
-  }
-}
-
-declare module 'vuex/types/index' {
-  interface Store<S> {
-    $clientErrorHandler: typeof errorHandler;
-  }
-}
 
 export default registerClientErrorHandler;

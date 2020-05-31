@@ -21,7 +21,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .dashboard-wrapper {
-  @apply flex flex-grow;
+  @apply flex flex-grow overflow-x-hidden;
 
   .content {
     @apply flex flex-col flex-grow items-center justify-start w-full bg-gray-100 bg-opacity-70;
