@@ -103,7 +103,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 }
 @screen md {
   .the-side-menu-wrapper {
-    @apply flex flex-col flex-shrink-0 flex-grow-0 w-64;
+    @apply flex flex-col w-full;
   }
 }
 </style>

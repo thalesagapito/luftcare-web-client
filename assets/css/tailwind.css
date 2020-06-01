@@ -13,7 +13,7 @@ html {
 body,
 #__nuxt,
 #__layout {
-  @apply min-h-full flex w-full;
+  @apply min-h-full flex w-screen overflow-x-hidden;
 }
 
 @screen sm {

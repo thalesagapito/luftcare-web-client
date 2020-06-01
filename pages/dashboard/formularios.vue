@@ -2,7 +2,7 @@
   .wrapper
     the-header(v-bind="headerProps")
       el-button(type="primary") Criar novo formulário
-    shadowed-card.mt-7(vertical)
+    shadowed-card.mt-7
       el-table(v-bind="tableProps" v-loading="tableLoading")
         el-table-column(
           v-for="col in tableColumns"
@@ -125,6 +125,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .wrapper {
-  @apply flex flex-col w-full pl-6 pr-8 py-8;
+  @apply px-6 py-8;
+}
+@screen md {
+  .wrapper {
+    @apply pr-8;
+  }
 }
 </style>

@@ -2,7 +2,8 @@
   .dashboard-wrapper
     the-side-menu
     .content
-      nuxt
+      .container.mx-auto
+        nuxt
 </template>
 
 <script lang="ts">
@@ -21,10 +22,32 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .dashboard-wrapper {
-  @apply flex flex-grow overflow-x-hidden;
+  @apply grid;
+  grid-template-columns: 100vw;
 
   .content {
-    @apply flex flex-col flex-grow items-center justify-start w-full bg-gray-100 bg-opacity-70;
+    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-70;
+    & > div {
+      @apply w-full;
+    }
+  }
+}
+@screen md {
+  $sidebar-width: 16rem;
+  .dashboard-wrapper {
+    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
+  }
+}
+@screen lg {
+  $sidebar-width: 18rem;
+  .dashboard-wrapper {
+    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
+  }
+}
+@screen xl {
+  $sidebar-width: 20rem;
+  .dashboard-wrapper {
+    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
   }
 }
 </style>
