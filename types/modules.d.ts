@@ -13,6 +13,7 @@ declare module 'vue/types/vue' {
   interface Vue {
     $accessor: typeof accessorType;
     $clientErrorHandler: typeof errorHandler;
+    $emit<T, K extends keyof T>(event: K, args: T[K]): this;
   }
 }
 
@@ -20,6 +21,7 @@ declare module '@nuxt/types' {
   interface NuxtAppOptions {
     $accessor: typeof accessorType;
     $clientErrorHandler: typeof errorHandler;
+    $emit<T, K extends keyof T>(event: K, args: T[K]): this;
   }
 }
 

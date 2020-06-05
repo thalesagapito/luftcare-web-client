@@ -3,16 +3,11 @@
     the-header(v-bind="headerProps")
       el-button(type="primary") Criar novo formulário
     shadowed-card.mt-7
-      el-table(v-bind="tableProps" v-loading="tableLoading")
-        el-table-column(
-          v-for="col in tableColumns"
-          :key="col.id"
-          v-bind="col"
-        )
-      .p-2: el-pagination(
-        v-bind="paginationProps"
-        @size-change="updatePageSize"
-        @current-change="updateCurrentPage"
+      forms-table(
+        v-bind="formsTableProps"
+        @update-sort="updateSort"
+        @update-page-size="updatePageSize"
+        @update-current-page="updateCurrentPage"
       )
 </template>
 
@@ -20,38 +15,37 @@
 import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
-import { Pagination, Table, TableColumn } from 'element-ui';
 import { Query, QuerySymptomAnalysisFormsArgs } from '~/types/gql';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import currentForms from '~/graphql/queries/SymptomAnalysisForms/currentForms';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import FormsTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Data = {
   formsQueryResult?: ExecutionResult<Query['symptomAnalysisForms']>['data']
   formsFilters: QuerySymptomAnalysisFormsArgs;
-  tableLoading: 0;
+  isFormsTableLoading: 0;
 };
 type Methods = {
-  updatePageSize: (newSize: number) => void;
-  updateCurrentPage: (newCurrentPage: number) => void;
+  updateSort: (args: TableEvents['update-sort']) => void;
+  updatePageSize: (newSize: TableEvents['update-page-size']) => void;
+  updateCurrentPage: (newCurrentPage: TableEvents['update-current-page']) => void;
 };
 type Computed = {
   headerProps: HeaderProps;
-  tableProps: Partial<Table>;
-  tableColumns: Partial<TableColumn & { id: number }>[];
-  paginationProps: Partial<Pagination>;
+  formsTableProps: TableProps;
 };
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: RegisteredLayout.dashboard,
   middleware: RegisteredMiddleware.isUserAuthenticated,
-  components: { TheHeader, ShadowedCard },
+  components: { TheHeader, ShadowedCard, FormsTable },
   data() {
     return {
-      tableLoading: 0,
+      isFormsTableLoading: 0,
       formsQueryResult: undefined,
       formsFilters: {
         isPublished: undefined,
@@ -65,7 +59,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   apollo: {
     formsQueryResult: {
       query: currentForms,
-      loadingKey: 'tableLoading',
+      loadingKey: 'isFormsTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
       update: ({ symptomAnalysisForms }) => symptomAnalysisForms,
       variables() { return this.formsFilters; },
@@ -80,43 +74,39 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         title: 'Listar Formulários',
       };
     },
-    paginationProps() {
+    formsTableProps() {
       return {
-        total: this.formsQueryResult?.totalResultsCount,
-        pageSize: this.formsFilters.resultsPerPage || undefined,
-        currentPage: this.formsFilters.pageNumber || undefined,
-        layout: 'total, sizes, ->, prev, pager, next',
-        // pageSizes: [1, 2, 3, 4, 5, 20],
-        // hideOnSinglePage: true,
-      };
-    },
-    tableProps() {
-      return {
-        data: this.formsQueryResult?.results,
-      };
-    },
-    tableColumns() {
-      return [
-        {
-          id: 1,
-          label: 'Nome',
-          prop: 'name',
-          sortable: 'custom',
+        tableProps: {
+          stripe: true,
+          isLoading: this.isFormsTableLoading,
+          data: this.formsQueryResult?.results,
         },
-        {
-          id: 2,
-          label: 'Versão atual',
-          prop: 'version',
-          sortable: 'custom',
+        tablePaginationProps: {
+          total: this.formsQueryResult?.totalResultsCount,
+          pageSize: this.formsFilters.resultsPerPage || undefined,
+          currentPage: this.formsFilters.pageNumber || undefined,
+          layout: 'total, sizes, ->, prev, pager, next',
+          pageSizes: [5, 10, 25],
         },
-      ];
+        tableColumns: [
+          {
+            id: 1, label: 'Nome', prop: 'name', sortable: 'custom',
+          },
+          {
+            id: 2, label: 'Versão atual', prop: 'version', sortable: 'custom',
+          },
+        ],
+      };
     },
   },
   methods: {
-    updatePageSize(resultsPerPage: number) {
+    updateSort(orderBy: TableEvents['update-sort']) {
+      this.formsFilters = { ...this.formsFilters, orderBy };
+    },
+    updatePageSize(resultsPerPage: TableEvents['update-page-size']) {
       this.formsFilters = { ...this.formsFilters, resultsPerPage };
     },
-    updateCurrentPage(pageNumber: number) {
+    updateCurrentPage(pageNumber: TableEvents['update-current-page']) {
       this.formsFilters = { ...this.formsFilters, pageNumber };
     },
   },
