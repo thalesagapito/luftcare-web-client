@@ -665,8 +665,7 @@ $--dialog-padding-primary: 20px !default;
 /* Table
 -------------------------- */
 /// color||Color|0
-$--table-border-color: $--border-color-lighter !default;
-$--table-border: 1px solid $--table-border-color !default;
+$--table-border: none !default;
 /// color||Color|0
 $--table-font-color: $--color-text-regular !default;
 /// color||Color|0

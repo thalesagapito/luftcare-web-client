@@ -50,7 +50,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       formsFilters: {
         isPublished: undefined,
         pageNumber: undefined,
-        resultsPerPage: 20,
+        resultsPerPage: 10,
         orderBy: [],
         name: undefined,
       },
@@ -83,8 +83,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         tablePaginationProps: {
           total: this.formsQueryResult?.totalResultsCount,
-          pageSize: this.formsFilters.resultsPerPage || undefined,
-          currentPage: this.formsFilters.pageNumber || undefined,
+          pageSize: this.formsFilters.resultsPerPage || 10,
+          currentPage: this.formsFilters.pageNumber || 1,
           layout: 'total, sizes, ->, prev, pager, next',
           pageSizes: [5, 10, 25],
         },

@@ -51,3 +51,19 @@ textarea,
 .el-button {
   @apply shadow;
 }
+
+.el-table {
+  .el-table__header-wrapper {
+    @apply border-b-1 border-gray-200;
+
+    thead tr th {
+      @apply py-2 bg-gray-100;
+      & > .cell {
+        @apply px-6 text-sm;
+      }
+    }
+  }
+  .el-table__body-wrapper .cell {
+    @apply px-6;
+  }
+}
