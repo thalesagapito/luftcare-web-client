@@ -1,7 +1,7 @@
 <template lang="pug">
-  .wrapper
+  .dashboard-page-wrapper
     the-header(v-bind="headerProps")
-      el-button(type="primary") Criar novo formulário
+      el-button(type="primary" @click="$router.push('formularios/novo')") Criar novo formulário
     shadowed-card.mt-7
       forms-table(
         v-bind="formsTableProps"
@@ -69,7 +69,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     headerProps() {
       return {
         breadcrumbs: {
-          items: [{ label: 'Formulários', to: '/dashboard/formularios' }],
+          items: [
+            { label: 'Início', to: '/dashboard' },
+            { label: 'Formulários', to: '/dashboard/formularios' },
+          ],
         },
         title: 'Listar Formulários',
       };
@@ -110,16 +113,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.formsFilters = { ...this.formsFilters, pageNumber };
     },
   },
+  head: {
+    titleTemplate: (base) => `${base} - Listar formulários cadastrados`,
+  },
 });
 </script>
 
 <style lang="postcss" scoped>
-.wrapper {
-  @apply px-6 py-8;
-}
-@screen md {
-  .wrapper {
-    @apply pr-8;
-  }
-}
 </style>

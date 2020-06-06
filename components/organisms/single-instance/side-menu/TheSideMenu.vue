@@ -6,7 +6,6 @@
       v-for="({ iconName, label, index, onClick }) in topLinks"
       @click="onClick"
       :class="{ 'is-active': currentActiveLink === index }"
-      :index="index"
       :key="index"
     )
       i(:class="iconName")
@@ -76,6 +75,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         case '/dashboard':
           return 'home';
         case '/dashboard/formularios':
+        case '/dashboard/formularios/novo':
           return 'forms';
         default:
           return undefined;

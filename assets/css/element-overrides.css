@@ -48,10 +48,13 @@ textarea,
   }
 }
 
+/* Button default styling */
 .el-button {
   @apply shadow;
 }
+/* Button default styling */
 
+/* Table default styling */
 .el-table {
   .el-table__header-wrapper {
     @apply border-b-1 border-gray-200;
@@ -67,3 +70,14 @@ textarea,
     @apply px-6;
   }
 }
+/* Table default styling */
+
+/* Breadcrumbs default styling */
+.el-breadcrumb {
+  .el-breadcrumb__item:not(:last-of-type) {
+    .el-breadcrumb__inner.is-link {
+      @apply text-avocado font-semibold;
+    }
+  }
+}
+/* Breadcrumbs default styling */
