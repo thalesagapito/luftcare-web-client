@@ -24,7 +24,7 @@ body,
 
 /* Default dashboard styling */
 .dashboard-page-wrapper {
-  @apply px-6 py-8;
+  @apply px-6 pt-10 pb-8;
 }
 @screen md {
   .dashboard-page-wrapper {

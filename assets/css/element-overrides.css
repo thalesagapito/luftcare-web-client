@@ -63,7 +63,7 @@ button:focus {
     @apply border-b-1 border-gray-200;
 
     thead tr th {
-      @apply py-2 bg-gray-100;
+      @apply py-2 bg-white;
       & > .cell {
         @apply px-6 text-sm;
       }
