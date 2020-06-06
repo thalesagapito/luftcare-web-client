@@ -52,6 +52,9 @@ textarea,
 .el-button {
   @apply shadow;
 }
+button:focus {
+  @apply shadow-outline outline-none;
+}
 /* Button default styling */
 
 /* Table default styling */

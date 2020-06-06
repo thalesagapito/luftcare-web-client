@@ -16,7 +16,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({});
 
 <style lang="postcss" scoped>
   .shadowed-card-wrapper {
-    @apply bg-white shadow-lg rounded-lg overflow-hidden;
+    @apply bg-white shadow-xl-center rounded-lg overflow-hidden;
   }
 
 </style>

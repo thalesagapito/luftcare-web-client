@@ -26,7 +26,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   grid-template-columns: 100vw;
 
   .content {
-    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-70;
+    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-60;
     & > div {
       @apply w-full;
     }
