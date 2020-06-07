@@ -2,14 +2,15 @@
   .login-wrapper
     h1.title Entrar na minha conta
     el-form(v-bind="formProps" ref="loginForm" hide-required-asterisk)
-      el-form-item(label="Email" prop="email")
+      .mb-6: el-form-item(label="Email" prop="email")
         el-input(
+          autofocus
           type="email"
           autocomplete="email"
           placeholder="Digite seu endereço de email aqui"
           v-model="email"
         )
-      el-form-item(label="Senha" prop="password")
+      .mb-7: el-form-item(label="Senha" prop="password")
         el-input(
           type="password"
           autocomplete="email"
@@ -42,7 +43,7 @@ type Methods = {
   passTokenToApolloClient: (result: ExecutionResult<Mutation>) => void;
 };
 type Computed = {
-  formProps: Partial<ElFormProps<'email'|'password'>>
+  formProps: Partial<ElFormProps<'email'|'password'>>;
 };
 
 export default Vue.extend<Data, Methods, Computed, {}>({
@@ -56,12 +57,8 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       return {
         model: { email: this.email, password: this.password },
         rules: {
-          email: [
-            { type: 'email', required: true, message: 'Insira um endereço de email válido' },
-          ],
-          password: [
-            { type: 'string', required: true, message: 'O campo senha é obrigatório' },
-          ],
+          email: [{ type: 'email', required: true, message: 'Insira um endereço de email válido' }],
+          password: [{ type: 'string', required: true, message: 'O campo senha é obrigatório' }],
         },
       };
     },

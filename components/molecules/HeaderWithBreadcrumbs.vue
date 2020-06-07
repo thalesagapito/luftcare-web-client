@@ -43,6 +43,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
   .title-and-action-wrapper {
     @apply flex justify-between items-center mt-2;
+    min-height: 3rem;
 
     .title {
       @apply text-2xl text-gray-800 font-bold;
