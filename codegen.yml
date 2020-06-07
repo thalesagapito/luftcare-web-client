@@ -4,7 +4,7 @@ schema: http://localhost:5000/graphql
 # Run eslint to fix files after generation
 hooks:
   afterAllFileWrite:
-    - eslint --fix
+    - 'eslint --rule "{ ''max-len'': ''off'' }" --fix'
 # Glob of gql files
 documents: "graphql/**/*.ts"
 generates:

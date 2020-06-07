@@ -9,8 +9,8 @@
     "build": "nuxt-ts build",
     "generate": "nuxt-ts generate",
     "start": "nuxt-ts start",
-    "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
-    "lintfix": "eslint --ext .ts,.js,.vue --ignore-path .gitignore . --fix",
+    "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore --ignore-pattern '**/types/gql.ts' .",
+    "lintfix": "eslint --ext .ts,.js,.vue --ignore-path .gitignore --ignore-pattern '**/types/gql.ts' . --fix",
     "gql-codegen": "graphql-codegen"
   },
   "lint-staged": {
