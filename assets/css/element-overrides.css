@@ -1,11 +1,17 @@
-.el-form-item .el-form-item__label {
-  line-height: 2rem;
+body .el-form-item {
+  @apply mb-0;
+
+  .el-form-item__label {
+    @apply leading-loose;
+    float: unset;
+  }
 }
 
 .el-loading-spinner {
   @apply flex flex-col items-center justify-center;
 }
 
+/* Input default styling */
 input[type="color"],
 input[type="date"],
 input[type="datetime"],
@@ -47,13 +53,22 @@ textarea,
     font-size: unset;
   }
 }
+.el-form-item.is-error .el-input__inner:focus {
+  @apply shadow-outline-danger;
+}
+
+.el-input__inner:focus {
+  @apply shadow-outline-avocado;
+}
+
+/* Input default styling */
 
 /* Button default styling */
 .el-button {
   @apply shadow;
 }
 button:focus {
-  @apply shadow-outline outline-none;
+  @apply shadow-outline-avocado outline-none;
 }
 /* Button default styling */
 
