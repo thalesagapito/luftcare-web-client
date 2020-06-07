@@ -10,7 +10,7 @@ query currentSymptomAnalysisForms(
   ) {
   symptomAnalysisForms(
     currentVersionsOnly: true
-    name: $name
+    nameForManagement: $name
     orderBy: $orderBy
     pageNumber: $pageNumber
     isPublished: $isPublished
@@ -18,12 +18,13 @@ query currentSymptomAnalysisForms(
     ) {
     results {
       id
-      name
+      nameForManagement
+      nameForPresentation
       createdAt
       updatedAt
       version
       questions {
-        name
+        nameForManagement
       }
     }
     hasMorePages

@@ -52,7 +52,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         pageNumber: undefined,
         resultsPerPage: 10,
         orderBy: [],
-        name: undefined,
+        nameForManagement: undefined,
       },
     };
   },
@@ -93,10 +93,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         tableColumns: [
           {
-            id: 1, label: 'Nome', prop: 'name', sortable: 'custom',
+            id: 1, label: 'Nome', prop: 'nameForManagement', sortable: 'custom',
           },
           {
-            id: 2, label: 'Versão atual', prop: 'version', sortable: 'custom',
+            id: 2, label: 'Nome para pacientes', prop: 'nameForPresentation', sortable: 'custom',
+          },
+          {
+            id: 3, label: 'Versão atual', prop: 'version', sortable: 'custom',
           },
         ],
       };
