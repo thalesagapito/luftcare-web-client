@@ -35,6 +35,12 @@
 
         .form-section-title.my-6 Perguntas do formulário
 
+        el-steps.questions-stepper(v-bind="stepperProps")
+          el-step(title="Sintomas ao dormir" icon="_")
+          el-step(title="Sintomas ao fazer exercícios" icon="_")
+          el-step(title="Sintomas ao fazer exercícios" icon="_")
+          el-step(title="Sintomas ao fazer exercícios" icon="_")
+
         el-form-item.flex.justify-end.mb-0.mt-5
           el-button(
             type="default"
@@ -48,7 +54,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Form } from 'element-ui';
+import { Form, Steps } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '~/types/element-ui';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
@@ -67,6 +73,7 @@ type Methods = {
   handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
 };
 type Computed = {
+  stepperProps: Partial<Steps>;
   headerProps: HeaderProps;
   formProps: Partial<ElFormProps<keyof Data['formData']>>;
 };
@@ -125,6 +132,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
       };
     },
+    stepperProps() {
+      return {
+        simple: true,
+        active: 1,
+      };
+    },
   },
   methods: {
     validateFormAndSubmit() {
@@ -173,6 +186,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply text-sm text-gray-500 leading-none mt-1 mb-2;
     &.mb-0 {
       @apply mb-0;
+    }
+  }
+
+  .questions-stepper {
+    @apply rounded-lg px-2;
+
+    .el-step.is-simple >>> .el-step__title {
+      @apply break-normal text-center text-base;
+      max-width: 80%;
     }
   }
 }
