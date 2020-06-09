@@ -34,13 +34,15 @@
           el-radio(v-model="formData.isPublished" :label="true") Público
 
         .form-section-title.my-6 Perguntas do formulário
+          .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
 
         el-steps.questions-stepper(v-bind="stepperProps")
-          el-step(title="Sintomas ao dormir" icon="_")
-          el-step(title="Sintomas ao fazer exercícios" icon="_")
-          el-step(title="Sintomas ao fazer exercícios" icon="_")
-          el-step(title="Sintomas ao fazer exercícios" icon="_")
-
+          el-step(
+            v-for="question in questionSteps"
+            :key="question.presentationOrder"
+            v-bind="question"
+            @click="test"
+          )
         el-form-item.flex.justify-end.mb-0.mt-5
           el-button(
             type="default"
@@ -54,20 +56,30 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Form, Steps } from 'element-ui';
+import { Form, Steps, Step } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '~/types/element-ui';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { MutationCreateSymptomAnalysisFormArgs, Mutation } from '~/types/gql';
+import {
+  Mutation,
+  SymptomAnalysisFormQuestionKind,
+  MutationCreateSymptomAnalysisFormArgs,
+  CreateSymptomAnalysisFormQuestionInput,
+} from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomAnalysisFormMutationGQL from '~/graphql/mutations/SymptomAnalysisForms/createSymptomAnalysisForm';
 
+type QuestionStep = Partial<Step> & CreateSymptomAnalysisFormQuestionInput;
+
 type Data = {
   formData: MutationCreateSymptomAnalysisFormArgs['form'];
+  currentQuestionNumber: number;
 };
 type Methods = {
+  test: () => void;
   createForm: () => void;
+  addNewQuestion: () => void;
   cancelAndGoBack: () => void;
   validateFormAndSubmit: () => void;
   handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
@@ -76,6 +88,7 @@ type Computed = {
   stepperProps: Partial<Steps>;
   headerProps: HeaderProps;
   formProps: Partial<ElFormProps<keyof Data['formData']>>;
+  questionSteps: Partial<Step>[];
 };
 type Props = {};
 
@@ -85,6 +98,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   components: { TheHeader, ShadowedCard },
   data() {
     return {
+      currentQuestionNumber: 1,
       formData: {
         nameForManagement: '',
         nameForPresentation: '',
@@ -138,8 +152,18 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         active: 1,
       };
     },
+    questionSteps() {
+      return this.formData?.questions?.map((question) => ({
+        icon: '_',
+        title: question.nameForManagement,
+        status: this.currentQuestionNumber === question.presentationOrder ? 'finish' : 'wait',
+      }) as Computed['questionSteps'][0]);
+    },
   },
   methods: {
+    test() {
+      alert('aaa');
+    },
     validateFormAndSubmit() {
       (this.$refs.form as Form).validate((isValid) => {
         if (!isValid) {
@@ -169,6 +193,18 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     handleFormCreationSuccess({ data }) {
       console.log(data);
     },
+    addNewQuestion() {
+      this.formData.questions = [
+        ...this.formData.questions,
+        {
+          text: '',
+          possibleChoices: [],
+          nameForManagement: 'Nova pergunta',
+          kind: SymptomAnalysisFormQuestionKind.MultipleChoice,
+          presentationOrder: this.formData.questions.length + 1,
+        },
+      ];
+    },
   },
   head: {
     titleTemplate: (base) => `${base} - Criar novo formulário`,
@@ -179,7 +215,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .dashboard-page-wrapper {
   .form-section-title {
-    @apply mb-6 text-lg font-semibold text-gray-800;
+    @apply mb-6 text-lg font-semibold text-gray-800 flex items-center;
   }
 
   .form-item-helper-text {
@@ -190,11 +226,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 
   .questions-stepper {
-    @apply rounded-lg px-2;
+    @apply rounded-lg px-4;
 
+    .el-step.is-simple >>> .el-step__head {
+      @apply hidden;
+    }
     .el-step.is-simple >>> .el-step__title {
       @apply break-normal text-center text-base;
-      max-width: 80%;
+      max-width: 70%;
     }
   }
 }
