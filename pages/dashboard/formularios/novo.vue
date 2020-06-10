@@ -5,7 +5,7 @@
       .form-section-title Dados do formulário
 
       el-form(v-bind="formProps" ref="form")
-        .mb-7: el-form-item(label="Nome para uso interno do formulário" prop="nameForManagement" )
+        .mb-7: el-form-item(label="Nome do formulário para uso interno" prop="nameForManagement")
           .form-item-helper-text
             |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
           el-input(
@@ -47,35 +47,11 @@
           )
 
           .question-form
-            el-form(v-bind="formProps" ref="form")
-              .mb-7: el-form-item(label="Nome para uso interno do formulário" prop="nameForManagement" )
-                .form-item-helper-text
-                  |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
-                el-input(
-                  autofocus
-                  type="text"
-                  maxlength="500"
-                  placeholder="Digite aqui"
-                  v-model="formData.nameForManagement"
-                )
-
-              .mb-7: el-form-item(label="Nome do formulário para pacientes" prop="nameForPresentation")
-                .form-item-helper-text
-                  |Esse nome será mostrado aos pacientes,
-                  |é recomendado escolher um nome de fácil entendimento.
-                el-input(
-                  type="text"
-                  maxlength="500"
-                  placeholder="Digite aqui"
-                  v-model="formData.nameForPresentation"
-                )
-
-              el-form-item(label="Visibilidade" prop="isPublished")
-                .form-item-helper-text.mb-0
-                  |Recomendamos criar um formulário privado inicialmente,
-                  |e após revisar as perguntas e alternativas torná-lo público.
-                el-radio(v-model="formData.isPublished" :label="false") Privado
-                el-radio(v-model="formData.isPublished" :label="true") Público
+            question-form(
+              :question.sync="currentQuestion"
+              :max-presentation-order="maxPresentationOrder"
+              @update-presentation-order="updateQuestionsOrder"
+            )
 
         el-form-item.flex.justify-end.mb-0.mt-5
           el-button(
@@ -90,6 +66,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { find } from 'lodash';
 import { Form } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '~/types/element-ui';
@@ -102,6 +79,7 @@ import {
 } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomAnalysisFormMutationGQL from '~/graphql/mutations/SymptomAnalysisForms/createSymptomAnalysisForm';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-analysis/FormQuestionForm.vue';
 import QuestionStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-analysis/FormQuestionStepper.vue';
 
 type Data = {
@@ -113,25 +91,38 @@ type Methods = {
   addNewQuestion: () => void;
   validateFormAndSubmit: () => void;
   handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
+  updateQuestionsOrder: (args: QuestionEvents['update-presentation-order']) => void;
 };
 type Computed = {
   stepperProps: StepperProps;
   headerProps: HeaderProps;
   formProps: Partial<ElFormProps<keyof Data['formData']>>;
+  currentQuestion: QuestionProps['question'];
+  maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: 'dashboard' as RegisteredLayout,
   middleware: 'isUserAuthenticated' as RegisteredMiddleware,
-  components: { TheHeader, ShadowedCard, QuestionStepper },
+  components: {
+    TheHeader, ShadowedCard, QuestionStepper, QuestionForm,
+  },
   data() {
     return {
       activeStepNumber: 1,
       formData: {
         nameForManagement: '',
         nameForPresentation: '',
-        questions: [],
+        questions: [
+          {
+            nameForManagement: 'Pergunta 1',
+            text: 'Texto da Pergunta 1',
+            kind: SymptomAnalysisFormQuestionKind.FreeResponse,
+            presentationOrder: 1,
+            possibleChoices: [],
+          },
+        ],
         isPublished: false,
       },
     };
@@ -181,6 +172,28 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         questions: this.formData.questions,
       };
     },
+    currentQuestion: {
+      get() {
+        return find(
+          this.formData.questions,
+          ['presentationOrder', this.activeStepNumber],
+        ) as Computed['currentQuestion'];
+      },
+      set(newQuestionValue: Computed['currentQuestion']) {
+        const newFormDataQuestions = this.formData.questions.map((originalQuestion) => {
+          const isCurrentQuestionTheOne = originalQuestion.presentationOrder === this.activeStepNumber;
+          return isCurrentQuestionTheOne ? newQuestionValue : originalQuestion;
+        });
+
+        this.formData = {
+          ...this.formData,
+          questions: newFormDataQuestions,
+        };
+      },
+    },
+    maxPresentationOrder() {
+      return this.formData.questions.length;
+    },
   },
   methods: {
     validateFormAndSubmit() {
@@ -221,6 +234,21 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
       ];
     },
+    updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
+      const questionsWithUpdatedPresentationOrders = this.formData.questions.map((question) => {
+        if (question.presentationOrder === oldPresentationOrder) {
+          return { ...question, presentationOrder: newPresentationOrder };
+        }
+        if (question.presentationOrder === newPresentationOrder) {
+          return { ...question, presentationOrder: oldPresentationOrder };
+        }
+        return question;
+      });
+
+      this.formData.questions = questionsWithUpdatedPresentationOrders;
+      this.activeStepNumber = newPresentationOrder;
+    },
+
   },
   head: {
     titleTemplate: (base) => `${base} - Criar novo formulário`,
@@ -234,11 +262,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply mb-6 text-lg font-semibold text-gray-800 flex items-center;
   }
 
-  .form-item-helper-text {
+  & >>> .form-item-helper-text {
     @apply text-sm text-gray-500 leading-none mt-1 mb-2;
     &.mb-0 {
       @apply mb-0;
     }
+  }
+
+  .question-form {
+    @apply px-6 pt-5;
   }
 }
 </style>

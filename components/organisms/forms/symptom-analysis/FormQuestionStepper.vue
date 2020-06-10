@@ -1,10 +1,10 @@
 <template lang="pug">
   el-steps.questions-stepper(v-bind="stepperProps")
     el-step(
-      v-for="({ nameForManagement, presentationOrder }) in questions"
+      v-for="({ nameForManagement, presentationOrder }) in orderedQuestions"
       icon="_"
       :key="presentationOrder"
-      :title="nameForManagement"
+      :title="nameForManagement || 'Pergunta sem nome'"
       :status="activeStepNumber === presentationOrder ? 'finish' : 'wait'"
       @click.native="updateActiveStepNumber(presentationOrder)"
     )
@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { sortBy } from 'lodash';
 import { Steps } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { CreateSymptomAnalysisFormQuestionInput } from '~/types/gql';
@@ -22,6 +23,7 @@ type Methods = {
 };
 type Computed = {
   stepperProps: Partial<Steps>;
+  orderedQuestions: Props['questions'];
 };
 export type Props = {
   activeStepNumber: number;
@@ -51,6 +53,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         simple: true,
         active: this.activeStepNumber,
       };
+    },
+    orderedQuestions() {
+      return sortBy(this.questions, ['presentationOrder']);
     },
   },
   methods: {

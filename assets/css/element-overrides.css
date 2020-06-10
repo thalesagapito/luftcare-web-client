@@ -53,11 +53,13 @@ textarea,
     font-size: unset;
   }
 }
-.el-form-item.is-error .el-input__inner:focus {
+.el-form-item.is-error .el-input__inner:focus,
+.el-form-item.is-error .el-textarea__inner:focus {
   @apply shadow-outline-danger;
 }
 
-.el-input__inner:focus {
+.el-input__inner:focus,
+.el-textarea__inner:focus {
   @apply shadow-outline-avocado;
 }
 
