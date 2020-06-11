@@ -34,11 +34,23 @@
         :autosize="{ minRows: 4 }"
         @input="updateQuestionField($event, 'text')"
       )
+
+    .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
+      el-select(
+        :value="question.kind"
+        @input="updateQuestionField($event, 'kind')"
+      )
+        el-option(
+          v-for="option in questionKindSelectOptions"
+          :key="option.label"
+          v-bind="option"
+        )
     pre {{ question }}
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
 import { CreateSymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
@@ -50,6 +62,7 @@ type Methods = {
 };
 type Computed = {
   formProps: Partial<ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>>;
+  questionKindSelectOptions: Partial<Option>[];
 };
 export type Props = {
   question: CreateSymptomQuestionnaireQuestionInput;
@@ -101,6 +114,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           }],
         },
       };
+    },
+    questionKindSelectOptions() {
+      return [
+        { value: SymptomQuestionnaireQuestionKind.MultipleChoice, label: 'Múltipla escolha' },
+        { value: SymptomQuestionnaireQuestionKind.FreeResponse, label: 'Texto livre' },
+      ];
     },
   },
   methods: {
