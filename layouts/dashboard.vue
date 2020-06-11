@@ -33,13 +33,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 }
 @screen md {
-  $sidebar-width: 16rem;
+  $sidebar-width: 14rem;
   .dashboard-wrapper {
     grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
   }
 }
 @screen lg {
-  $sidebar-width: 18rem;
+  $sidebar-width: 16rem;
   .dashboard-wrapper {
     grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
   }

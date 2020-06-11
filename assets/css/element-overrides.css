@@ -72,6 +72,9 @@ textarea,
 button:focus {
   @apply shadow-outline-avocado outline-none;
 }
+button.el-button--danger:focus {
+  @apply shadow-outline-danger outline-none;
+}
 /* Button default styling */
 
 /* Table default styling */

@@ -2,7 +2,7 @@
 import { Form } from 'element-ui';
 import { RuleItem } from 'async-validator';
 
-export interface ElFormProps<T extends string> extends Form {
+export interface ElFormProps<T extends string> extends Partial<Form> {
   /** Data of form component */
   model: { [P in T]: any };
 

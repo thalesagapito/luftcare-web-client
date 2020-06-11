@@ -43,7 +43,7 @@ type Methods = {
   passTokenToApolloClient: (result: ExecutionResult<Mutation>) => void;
 };
 type Computed = {
-  formProps: Partial<ElFormProps<'email'|'password'>>;
+  formProps: ElFormProps<'email'|'password'>;
 };
 
 export default Vue.extend<Data, Methods, Computed, {}>({
