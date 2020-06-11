@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import { authMethods } from '~/mixins/RegisteredMixins';
 
-type SideMenuLinkIndex = 'home' | 'forms';
+type SideMenuLinkIndex = 'home' | 'questionnaires';
 
 type SideMenuLink = {
   label: string;
@@ -53,9 +53,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         {
           iconName: 'el-icon-notebook-2',
-          label: 'Formulários',
-          index: 'forms',
-          onClick: () => this.$router.push('/dashboard/formularios'),
+          label: 'Questionários',
+          index: 'questionnaires',
+          onClick: () => this.$router.push('/dashboard/questionarios'),
         },
       ];
     },
@@ -64,7 +64,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         {
           iconName: 'el-icon-switch-button',
           label: 'Sair',
-          index: 'forms',
+          index: 'questionnaires',
           onClick: () => this.$authMethodsLogout,
         },
       ];
@@ -74,9 +74,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       switch (currentRoute) {
         case '/dashboard':
           return 'home';
-        case '/dashboard/formularios':
-        case '/dashboard/formularios/novo':
-          return 'forms';
+        case '/dashboard/questionarios':
+        case '/dashboard/questionarios/novo':
+          return 'questionnaires';
         default:
           return undefined;
       }

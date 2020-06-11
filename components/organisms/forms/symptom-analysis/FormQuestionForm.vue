@@ -2,7 +2,7 @@
   el-form.question-form-wrapper(v-bind="formProps")
     .mb-7: el-form-item(label="Ordem da pergunta" prop="presentationOrder")
       .form-item-helper-text
-        |Posição em que a pergunta vai aparecer no formulário
+        |Posição em que a pergunta vai aparecer no questionário
       el-input-number(
         :min="1"
         :max="maxPresentationOrder"

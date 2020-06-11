@@ -2,10 +2,10 @@
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
     shadowed-card.p-5.mt-6
-      .form-section-title Dados do formulário
+      .form-section-title Dados do questionário
 
       el-form(v-bind="formProps" ref="form")
-        .mb-7: el-form-item(label="Nome do formulário para uso interno" prop="nameForManagement")
+        .mb-7: el-form-item(label="Nome do questionário para uso interno" prop="nameForManagement")
           .form-item-helper-text
             |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
           el-input(
@@ -16,7 +16,7 @@
             v-model="formData.nameForManagement"
           )
 
-        .mb-7: el-form-item(label="Nome do formulário para pacientes" prop="nameForPresentation")
+        .mb-7: el-form-item(label="Nome do questionário para pacientes" prop="nameForPresentation")
           .form-item-helper-text
             |Esse nome será mostrado aos pacientes,
             |é recomendado escolher um nome de fácil entendimento.
@@ -29,16 +29,16 @@
 
         el-form-item(label="Visibilidade" prop="isPublished")
           .form-item-helper-text.mb-0
-            |Recomendamos criar um formulário privado inicialmente,
+            |Recomendamos criar um questionário privado inicialmente,
             |e após revisar as perguntas e alternativas torná-lo público.
           el-radio(v-model="formData.isPublished" :label="false") Privado
           el-radio(v-model="formData.isPublished" :label="true") Público
 
-        .form-section-title.my-6 Perguntas do formulário
+        .form-section-title.my-6 Perguntas do questionário
           .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
 
         template(v-if="formData.questions.length === 0")
-          .text-gray-500.mt-2 Nenhuma pergunta no formulário, adicione uma com o botão acima.
+          .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
         template(v-else)
           question-stepper(
             v-bind="stepperProps"
@@ -61,7 +61,7 @@
           el-button(
             type="primary"
             @click="validateFormAndSubmit"
-          ) Criar formulário
+          ) Criar questionário
 </template>
 
 <script lang="ts">
@@ -79,8 +79,8 @@ import {
 } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-analysis/FormQuestionForm.vue';
-import QuestionStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-analysis/FormQuestionStepper.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/questionnaires/symptom-analysis/FormQuestionForm.vue';
+import QuestionStepper, { Props as StepperProps } from '~/components/organisms/questionnaires/symptom-analysis/FormQuestionStepper.vue';
 
 type Data = {
   formData: MutationCreateSymptomQuestionnaireArgs['form'];
@@ -130,12 +130,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   computed: {
     headerProps() {
       return {
-        title: 'Criar novo formulário',
+        title: 'Criar novo questionário',
         breadcrumbs: {
           items: [
             { label: 'Início', to: '/dashboard' },
-            { label: 'Formulários', to: '/dashboard/formularios' },
-            { label: 'Criar', to: '/dashboard/formularios/novo' },
+            { label: 'Questionários', to: '/dashboard/questionarios' },
+            { label: 'Criar', to: '/dashboard/questionarios/novo' },
           ],
         },
       };
@@ -159,7 +159,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
             max: 500,
             type: 'string',
             required: true,
-            message: 'O nome do formulário para pacientes é obrigatório',
+            message: 'O nome do questionário para pacientes é obrigatório',
           }],
           isPublished: [{ type: 'boolean', required: true }],
           questions: [{ type: 'string', required: true, max: 500 }],
@@ -211,7 +211,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         form: this.formData,
       };
 
-      const loading = this.$loading({ lock: true, text: 'Criando formulário...' });
+      const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
       await this.$apollo
         .mutate({ mutation: CreateSymptomQuestionnaireMutationGQL, variables: mutationArgs })
@@ -251,7 +251,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
   },
   head: {
-    titleTemplate: (base) => `${base} - Criar novo formulário`,
+    titleTemplate: (base) => `${base} - Criar novo questionário`,
   },
 });
 </script>

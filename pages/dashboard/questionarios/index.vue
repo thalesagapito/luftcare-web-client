@@ -1,9 +1,9 @@
 <template lang="pug">
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
-      el-button(type="primary" @click="$router.push('formularios/novo')") Criar novo formulário
+      el-button(type="primary" @click="$router.push('questionarios/novo')") Criar novo questionário
     shadowed-card.mt-7
-      forms-table(
+      questionnaires-table(
         v-bind="formsTableProps"
         @update-sort="updateSort"
         @update-page-size="updatePageSize"
@@ -71,10 +71,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         breadcrumbs: {
           items: [
             { label: 'Início', to: '/dashboard' },
-            { label: 'Formulários', to: '/dashboard/formularios' },
+            { label: 'Questionários', to: '/dashboard/questionarios' },
           ],
         },
-        title: 'Listar Formulários',
+        title: 'Listar Questionários',
       };
     },
     formsTableProps() {
@@ -117,7 +117,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   head: {
-    titleTemplate: (base) => `${base} - Listar formulários cadastrados`,
+    titleTemplate: (base) => `${base} - Listar questionários cadastrados`,
   },
 });
 </script>
