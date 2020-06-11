@@ -20,7 +20,6 @@ import Vue from 'vue';
 import { find, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { Keyed } from '~/types/helpers';
 import { CreateSymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
 import QuestionForm, { Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
 import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
@@ -52,7 +51,7 @@ type Computed = {
   currentQuestion: Props['questions'][0];
 };
 export type Props = {
-  questions: Keyed<CreateSymptomQuestionnaireQuestionInput>[];
+  questions: CreateSymptomQuestionnaireQuestionInput[];
 };
 export type Events = {
   'update:questions': Props['questions'];
