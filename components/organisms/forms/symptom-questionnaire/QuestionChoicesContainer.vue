@@ -1,7 +1,7 @@
 <template lang="pug">
-  .py-5
+  .question-choices-container-wrapper
     transition-group(name="flip-list")
-      choice-form.my-5.shadow-sm(
+      choice-form.choice(
         v-for="choice in orderedChoices"
         :choice="choice"
         :key="choice.key"
@@ -24,7 +24,7 @@ import ChoiceForm, { Events as ChoiceEvents } from '~/components/organisms/forms
 
 type DefaultChoiceGetter = (currentChoicesLength: number) => Props['choices'][0];
 export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength: number) => ({
-  nameForManagement: 'Alternativa sem nome',
+  nameForManagement: '',
   presentationOrder: currentChoicesLength + 1,
   text: '',
   value: 1,
@@ -114,7 +114,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 </script>
 
 <style lang="postcss" scoped>
-.flip-list-move {
-  transition: transform .5s;
+.question-choices-container-wrapper {
+  @apply px-4;
+  .flip-list-move {
+    transition: transform .5s;
+  }
+
+  .choice {
+    @apply mt-5 shadow-sm;
+  }
 }
 </style>

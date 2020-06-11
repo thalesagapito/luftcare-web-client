@@ -65,6 +65,7 @@
 import Vue from 'vue';
 import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
+import { Keyed } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
 import { SymptomQuestionnaireQuestionKind, CreateSymptomQuestionnaireQuestionInput } from '~/types/gql';
 import ChoicesContainer, { getDefaultChoice } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoicesContainer.vue';
@@ -81,12 +82,13 @@ type Computed = {
   isQuestionMultipleChoice: boolean;
 };
 export type Props = {
-  question: CreateSymptomQuestionnaireQuestionInput;
+  question: Keyed<CreateSymptomQuestionnaireQuestionInput>;
   maxPresentationOrder: number;
 };
 export type Events = {
   'update-presentation-order': { oldPresentationOrder: number; newPresentationOrder: number };
-  'update:question': CreateSymptomQuestionnaireQuestionInput;
+  'delete-question': Props['question'];
+  'update:question': Props['question'];
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
@@ -96,6 +98,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       type: Object,
       required: true,
       default: () => ({
+        key: '',
         text: '',
         possibleChoices: [],
         presentationOrder: 1,
@@ -123,12 +126,21 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         rules: {
           kind: [],
           possibleChoices: [],
-          presentationOrder: [{ type: 'number', required: true }],
+          presentationOrder: [{
+            type: 'number',
+            required: true,
+          }],
           text: [{
-            type: 'string', required: true, max: 500, message: 'Obrigatório',
+            type: 'string',
+            required: true,
+            max: 500,
+            message: 'Obrigatório',
           }],
           nameForManagement: [{
-            type: 'string', required: true, max: 500, message: 'Obrigatório',
+            type: 'string',
+            required: true,
+            max: 500,
+            message: 'Obrigatório',
           }],
         },
       };

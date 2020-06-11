@@ -4,7 +4,7 @@
     el-form(v-bind="formProps")
       .inner-container
         .left
-          el-form-item(label="Nome da alternativa para uso interno" prop="nameForManagement")
+          el-form-item(label="Nome para uso interno" prop="nameForManagement" :show-message="false")
             el-input(
               autofocus
               type="text"
@@ -14,7 +14,7 @@
               @input="updateChoiceField($event, 'nameForManagement')"
             )
 
-          el-form-item.choice-text(label="Enunciado da alternativa" prop="text")
+          el-form-item(label="Enunciado da alternativa" prop="text" :show-message="false")
             el-input(
               show-word-limit
               type="textarea"
@@ -24,8 +24,15 @@
               :autosize="{ minRows: 3 }"
               @input="updateChoiceField($event, 'text')"
             )
+
+          el-form-item(label="Pontuação" prop="value" :show-message="false")
+            .form-item-helper-text Se essa alternativa for selecionada,
+            el-input-number(
+              :value="choice.value"
+              @input="updateChoiceField($event, 'value')"
+            )
         .right
-          el-form-item(label="Ordem da alternativa" prop="presentationOrder")
+          el-form-item(label="Ordem" prop="presentationOrder")
             number-stepper(
               is-inverted
               :minValue="1"
@@ -38,7 +45,7 @@
             size="mini"
             type="danger"
             @click="emitDeleteChoice"
-          ) Remover alternativa
+          ) Remover
 </template>
 
 <script lang="ts">
@@ -100,9 +107,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           presentationOrder: this.choice.presentationOrder,
         },
         rules: {
-          text: [],
-          value: [],
-          nameForManagement: [],
+          text: [{ type: 'string', required: true, max: 500 }],
+          value: [{ type: 'number', required: true }],
+          nameForManagement: [{ type: 'string', required: true, max: 500 }],
           presentationOrder: [],
         },
       };
@@ -132,14 +139,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .question-choice-form-wrapper {
-  @apply border-gray-300 border-1 rounded-lg px-4 pt-3 pb-4 bg-white;
+  @apply border-gray-300 border-1 rounded-lg p-4 bg-white;
 
   .inner-container {
     @apply flex;
 
     .left {
       @apply flex-1;
-      .el-form-item.choice-text {
+      .el-form-item:last-of-type {
         @apply mb-0;
       }
     }
@@ -149,10 +156,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     }
 
     .right {
-      @apply justify-between items-end ml-6 pl-6 border-l-1 border-gray-200;
+      @apply justify-between items-center ml-6 pl-6 border-l-1 border-gray-200;
 
       .el-form-item {
-        @apply flex flex-col items-end;
+        @apply flex flex-col items-center;
       }
 
       & >>> .el-form-item__label {

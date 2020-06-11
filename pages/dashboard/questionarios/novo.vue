@@ -40,90 +40,51 @@
       template(v-if="questionnaireData.questions.length === 0")
         .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
       template(v-else)
-        questions-stepper(
-          v-bind="stepperProps"
-          @update:activeStepNumber="activeStepNumber = $event"
-          @update:questions="$set(questionnaireData, 'questions', $event)"
-        )
+        questions-container(:questions.sync="questionnaireData.questions")
 
-        .question-form
-          question-form(
-            :question.sync="currentQuestion"
-            :max-presentation-order="maxPresentationOrder"
-            @update-presentation-order="updateQuestionsOrder"
-          )
-
-        .flex.justify-end.mb-0.mt-5
-          el-button(
-            type="default"
-            @click="$router.back()"
-          ) Cancelar
-          el-button(
-            type="primary"
-            @click="validateFormAndSubmit"
-          ) Criar questionário
+      .form-section-footer
+        el-button(type="default" @click="$router.back()") Cancelar
+        el-button(type="primary" @click="validateFormAndSubmit") Criar questionário
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { find } from 'lodash';
 import { Form } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '~/types/element-ui';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import {
-  Mutation,
-  SymptomQuestionnaireQuestionKind,
-  MutationCreateSymptomQuestionnaireArgs,
-} from '~/types/gql';
+import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
+import QuestionsContainer, { getDefaultQuestion } from '~/components/organisms/forms/symptom-questionnaire/QuestionsContainer.vue';
 
 type Data = {
   questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'];
-  activeStepNumber: number;
 };
 type Methods = {
-  createForm: () => void;
   addNewQuestion: () => void;
+  runCreateFormMutation: () => void;
   validateFormAndSubmit: () => void;
   handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
-  updateQuestionsOrder: (args: QuestionEvents['update-presentation-order']) => void;
 };
 type Computed = {
-  stepperProps: StepperProps;
   headerProps: HeaderProps;
   formProps: ElFormProps<keyof Data['questionnaireData']>;
-  currentQuestion: QuestionProps['question'];
-  maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: 'dashboard' as RegisteredLayout,
   middleware: 'isUserAuthenticated' as RegisteredMiddleware,
-  components: {
-    TheHeader, ShadowedCard, QuestionsStepper, QuestionForm,
-  },
+  components: { TheHeader, ShadowedCard, QuestionsContainer },
   data() {
     return {
-      activeStepNumber: 1,
       questionnaireData: {
         nameForManagement: '',
         nameForPresentation: '',
-        questions: [
-          {
-            nameForManagement: 'Pergunta 1',
-            text: 'Texto da Pergunta 1',
-            kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-            presentationOrder: 1,
-            possibleChoices: [],
-          },
-        ],
         isPublished: false,
+        questions: [],
       },
     };
   },
@@ -162,55 +123,22 @@ export default Vue.extend<Data, Methods, Computed, Props>({
             message: 'O nome do questionário para pacientes é obrigatório',
           }],
           isPublished: [{ type: 'boolean', required: true }],
-          questions: [{ type: 'string', required: true, max: 500 }],
+          questions: [
+            // TODO ADD CUSTOM VALIDATOR HERE
+            // HAVE A SYNC PROP LIKE isQuestionsValid
+            // return if its true
+          ],
         },
       };
     },
-    stepperProps() {
-      return {
-        activeStepNumber: this.activeStepNumber,
-        questions: this.questionnaireData.questions,
-      };
-    },
-    currentQuestion: {
-      get() {
-        return find(
-          this.questionnaireData.questions,
-          ['presentationOrder', this.activeStepNumber],
-        ) as Computed['currentQuestion'];
-      },
-      set(newQuestionValue: Computed['currentQuestion']) {
-        const newFormDataQuestions = this.questionnaireData.questions.map((originalQuestion) => {
-          const isCurrentQuestionTheOne = originalQuestion.presentationOrder === this.activeStepNumber;
-          return isCurrentQuestionTheOne ? newQuestionValue : originalQuestion;
-        });
-
-        this.questionnaireData = {
-          ...this.questionnaireData,
-          questions: newFormDataQuestions,
-        };
-      },
-    },
-    maxPresentationOrder() {
-      return this.questionnaireData.questions.length;
-    },
   },
   methods: {
-    validateFormAndSubmit() {
-      (this.$refs.form as Form).validate((isValid) => {
-        if (!isValid) {
-          this.$notify({ title: 'Erro', type: 'error', message: 'Preencha todos os campos corretamente' });
-          return;
-        }
-
-        this.createForm();
-      });
+    addNewQuestion() {
+      const newQuestion = getDefaultQuestion(this.questionnaireData.questions?.length || 0);
+      this.questionnaireData.questions.push(newQuestion);
     },
-    async createForm() {
-      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
-        questionnaire: this.questionnaireData,
-      };
-
+    async runCreateFormMutation() {
+      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = { questionnaire: this.questionnaireData };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
       await this.$apollo
@@ -219,40 +147,21 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
     },
+    validateFormAndSubmit() {
+      (this.$refs.form as Form).validate((isValid) => {
+        if (!isValid) {
+          this.$notify({ title: 'Erro', type: 'error', message: 'Preencha todos os campos corretamente' });
+          return;
+        }
+
+        this.runCreateFormMutation();
+      });
+    },
     handleFormCreationSuccess({ data }) {
       console.log(data);
     },
-    addNewQuestion() {
-      this.questionnaireData.questions = [
-        ...this.questionnaireData.questions,
-        {
-          text: '',
-          possibleChoices: [],
-          nameForManagement: `Pergunta ${this.questionnaireData?.questions?.length + 1}`,
-          kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-          presentationOrder: this.questionnaireData?.questions?.length + 1,
-        },
-      ];
-    },
-    updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
-      const questionsWithUpdatedPresentationOrders = this.questionnaireData.questions.map((question) => {
-        if (question.presentationOrder === oldPresentationOrder) {
-          return { ...question, presentationOrder: newPresentationOrder };
-        }
-        if (question.presentationOrder === newPresentationOrder) {
-          return { ...question, presentationOrder: oldPresentationOrder };
-        }
-        return question;
-      });
-
-      this.questionnaireData.questions = questionsWithUpdatedPresentationOrders;
-      this.activeStepNumber = newPresentationOrder;
-    },
-
   },
-  head: {
-    titleTemplate: (base) => `${base} - Criar novo questionário`,
-  },
+
 });
 </script>
 
@@ -264,13 +173,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
   & >>> .form-item-helper-text {
     @apply text-sm text-gray-500 leading-none mt-1 mb-2;
-    &.mb-0 {
-      @apply mb-0;
-    }
   }
 
-  .question-form {
-    @apply px-6 pt-5;
+  .form-section-footer {
+    @apply flex justify-end mb-0 mt-5;
   }
 }
 </style>
