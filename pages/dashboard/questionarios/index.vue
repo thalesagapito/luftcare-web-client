@@ -4,7 +4,7 @@
       el-button(type="primary" @click="$router.push('questionarios/novo')") Criar novo questionário
     shadowed-card.mt-7
       questionnaires-table(
-        v-bind="formsTableProps"
+        v-bind="questionnairesTableProps"
         @update-sort="updateSort"
         @update-page-size="updatePageSize"
         @update-current-page="updateCurrentPage"
@@ -18,15 +18,15 @@ import { ExecutionResult } from 'graphql';
 import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import currentForms from '~/graphql/queries/SymptomQuestionnaires/currentForms';
+import currentSymptomQuestionnaires from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import FormsTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
+import QuestionnairesTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Data = {
-  formsQueryResult?: ExecutionResult<Query['symptomQuestionnaires']>['data']
-  formsFilters: QuerySymptomQuestionnairesArgs;
-  isFormsTableLoading: 0;
+  questionnairesQueryResult?: ExecutionResult<Query['symptomQuestionnaires']>['data']
+  questionnairesFilters: QuerySymptomQuestionnairesArgs;
+  isQuestionnairesTableLoading: 0;
 };
 type Methods = {
   updateSort: (args: TableEvents['update-sort']) => void;
@@ -35,19 +35,19 @@ type Methods = {
 };
 type Computed = {
   headerProps: HeaderProps;
-  formsTableProps: TableProps;
+  questionnairesTableProps: TableProps;
 };
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: RegisteredLayout.dashboard,
   middleware: RegisteredMiddleware.isUserAuthenticated,
-  components: { TheHeader, ShadowedCard, FormsTable },
+  components: { TheHeader, ShadowedCard, QuestionnairesTable },
   data() {
     return {
-      isFormsTableLoading: 0,
-      formsQueryResult: undefined,
-      formsFilters: {
+      isQuestionnairesTableLoading: 0,
+      questionnairesQueryResult: undefined,
+      questionnairesFilters: {
         isPublished: undefined,
         pageNumber: undefined,
         resultsPerPage: 10,
@@ -57,12 +57,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     };
   },
   apollo: {
-    formsQueryResult: {
-      query: currentForms,
-      loadingKey: 'isFormsTableLoading',
+    questionnairesQueryResult: {
+      query: currentSymptomQuestionnaires,
+      loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
       update: ({ symptomQuestionnaires }) => symptomQuestionnaires,
-      variables() { return this.formsFilters; },
+      variables() { return this.questionnairesFilters; },
     },
   },
   computed: {
@@ -77,17 +77,17 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         title: 'Listar Questionários',
       };
     },
-    formsTableProps() {
+    questionnairesTableProps() {
       return {
         tableProps: {
           stripe: true,
-          isLoading: this.isFormsTableLoading,
-          data: this.formsQueryResult?.results,
+          isLoading: this.isQuestionnairesTableLoading,
+          data: this.questionnairesQueryResult?.results,
         },
         tablePaginationProps: {
-          total: this.formsQueryResult?.totalResultsCount,
-          pageSize: this.formsFilters.resultsPerPage || 10,
-          currentPage: this.formsFilters.pageNumber || 1,
+          total: this.questionnairesQueryResult?.totalResultsCount,
+          pageSize: this.questionnairesFilters.resultsPerPage || 10,
+          currentPage: this.questionnairesFilters.pageNumber || 1,
           layout: 'total, sizes, ->, prev, pager, next',
           pageSizes: [5, 10, 25],
         },
@@ -107,13 +107,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     updateSort(orderBy: TableEvents['update-sort']) {
-      this.formsFilters = { ...this.formsFilters, orderBy };
+      this.questionnairesFilters = { ...this.questionnairesFilters, orderBy };
     },
     updatePageSize(resultsPerPage: TableEvents['update-page-size']) {
-      this.formsFilters = { ...this.formsFilters, resultsPerPage };
+      this.questionnairesFilters = { ...this.questionnairesFilters, resultsPerPage };
     },
     updateCurrentPage(pageNumber: TableEvents['update-current-page']) {
-      this.formsFilters = { ...this.formsFilters, pageNumber };
+      this.questionnairesFilters = { ...this.questionnairesFilters, pageNumber };
     },
   },
   head: {

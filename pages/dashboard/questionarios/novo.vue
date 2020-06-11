@@ -13,7 +13,7 @@
             type="text"
             maxlength="500"
             placeholder="Digite aqui"
-            v-model="formData.nameForManagement"
+            v-model="questionnaireData.nameForManagement"
           )
 
         .mb-7: el-form-item(label="Nome do questionário para pacientes" prop="nameForPresentation")
@@ -24,26 +24,26 @@
             type="text"
             maxlength="500"
             placeholder="Digite aqui"
-            v-model="formData.nameForPresentation"
+            v-model="questionnaireData.nameForPresentation"
           )
 
         el-form-item(label="Visibilidade" prop="isPublished")
           .form-item-helper-text.mb-0
             |Recomendamos criar um questionário privado inicialmente,
             |e após revisar as perguntas e alternativas torná-lo público.
-          el-radio(v-model="formData.isPublished" :label="false") Privado
-          el-radio(v-model="formData.isPublished" :label="true") Público
+          el-radio(v-model="questionnaireData.isPublished" :label="false") Privado
+          el-radio(v-model="questionnaireData.isPublished" :label="true") Público
 
         .form-section-title.my-6 Perguntas do questionário
           .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
 
-        template(v-if="formData.questions.length === 0")
+        template(v-if="questionnaireData.questions.length === 0")
           .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
         template(v-else)
           question-stepper(
             v-bind="stepperProps"
             @update:activeStepNumber="activeStepNumber = $event"
-            @update:questions="$set(formData, 'questions', $event)"
+            @update:questions="$set(questionnaireData, 'questions', $event)"
           )
 
           .question-form
@@ -56,7 +56,7 @@
         el-form-item.flex.justify-end.mb-0.mt-5
           el-button(
             type="default"
-            @click="$router.back"
+            @click="$router.back()"
           ) Cancelar
           el-button(
             type="primary"
@@ -79,11 +79,11 @@ import {
 } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/questionnaires/symptom-analysis/FormQuestionForm.vue';
-import QuestionStepper, { Props as StepperProps } from '~/components/organisms/questionnaires/symptom-analysis/FormQuestionStepper.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireQuestionForm.vue';
+import QuestionStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireQuestionStepper.vue';
 
 type Data = {
-  formData: MutationCreateSymptomQuestionnaireArgs['form'];
+  questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'];
   activeStepNumber: number;
 };
 type Methods = {
@@ -96,7 +96,7 @@ type Methods = {
 type Computed = {
   stepperProps: StepperProps;
   headerProps: HeaderProps;
-  formProps: Partial<ElFormProps<keyof Data['formData']>>;
+  formProps: Partial<ElFormProps<keyof Data['questionnaireData']>>;
   currentQuestion: QuestionProps['question'];
   maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
@@ -111,7 +111,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   data() {
     return {
       activeStepNumber: 1,
-      formData: {
+      questionnaireData: {
         nameForManagement: '',
         nameForPresentation: '',
         questions: [
@@ -143,10 +143,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     formProps() {
       return {
         model: {
-          nameForManagement: this.formData.nameForManagement,
-          nameForPresentation: this.formData.nameForPresentation,
-          isPublished: this.formData.isPublished,
-          questions: this.formData.questions,
+          nameForManagement: this.questionnaireData.nameForManagement,
+          nameForPresentation: this.questionnaireData.nameForPresentation,
+          isPublished: this.questionnaireData.isPublished,
+          questions: this.questionnaireData.questions,
         },
         rules: {
           nameForManagement: [{
@@ -169,30 +169,30 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     stepperProps() {
       return {
         activeStepNumber: this.activeStepNumber,
-        questions: this.formData.questions,
+        questions: this.questionnaireData.questions,
       };
     },
     currentQuestion: {
       get() {
         return find(
-          this.formData.questions,
+          this.questionnaireData.questions,
           ['presentationOrder', this.activeStepNumber],
         ) as Computed['currentQuestion'];
       },
       set(newQuestionValue: Computed['currentQuestion']) {
-        const newFormDataQuestions = this.formData.questions.map((originalQuestion) => {
+        const newFormDataQuestions = this.questionnaireData.questions.map((originalQuestion) => {
           const isCurrentQuestionTheOne = originalQuestion.presentationOrder === this.activeStepNumber;
           return isCurrentQuestionTheOne ? newQuestionValue : originalQuestion;
         });
 
-        this.formData = {
-          ...this.formData,
+        this.questionnaireData = {
+          ...this.questionnaireData,
           questions: newFormDataQuestions,
         };
       },
     },
     maxPresentationOrder() {
-      return this.formData.questions.length;
+      return this.questionnaireData.questions.length;
     },
   },
   methods: {
@@ -208,7 +208,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     async createForm() {
       const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
-        form: this.formData,
+        questionnaire: this.questionnaireData,
       };
 
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
@@ -223,19 +223,19 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       console.log(data);
     },
     addNewQuestion() {
-      this.formData.questions = [
-        ...this.formData.questions,
+      this.questionnaireData.questions = [
+        ...this.questionnaireData.questions,
         {
           text: '',
           possibleChoices: [],
-          nameForManagement: `Pergunta ${this.formData?.questions?.length + 1}`,
+          nameForManagement: `Pergunta ${this.questionnaireData?.questions?.length + 1}`,
           kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-          presentationOrder: this.formData?.questions?.length + 1,
+          presentationOrder: this.questionnaireData?.questions?.length + 1,
         },
       ];
     },
     updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
-      const questionsWithUpdatedPresentationOrders = this.formData.questions.map((question) => {
+      const questionsWithUpdatedPresentationOrders = this.questionnaireData.questions.map((question) => {
         if (question.presentationOrder === oldPresentationOrder) {
           return { ...question, presentationOrder: newPresentationOrder };
         }
@@ -245,7 +245,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         return question;
       });
 
-      this.formData.questions = questionsWithUpdatedPresentationOrders;
+      this.questionnaireData.questions = questionsWithUpdatedPresentationOrders;
       this.activeStepNumber = newPresentationOrder;
     },
 
