@@ -45,24 +45,59 @@
           :key="option.label"
           v-bind="option"
         )
-    pre {{ question }}
+
+
+    .question-choices-wrapper(v-if="isQuestionMultipleChoice")
+      .header
+        .title Alternativas da pergunta
+        el-button(type="default" size="mini" @click="addNewChoice") Adicionar alternativa
+
+      template(v-if="question.possibleChoices.length === 0")
+        .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
+      template(v-else)
+        choice-form.my-5.shadow-sm(
+          v-for="choice in orderedChoices"
+          :choice="choice"
+          :key="choice.presentationOrder"
+          :max-presentation-order="maxChoicePresentationOrder"
+          @delete-choice="deleteChoice(choice)"
+        )
+
+
+    //- pre {{ isQuestionMultipleChoice }}
+
+    //- pre {{ question }}
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { sortBy, pull } from 'lodash';
 import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
-import { CreateSymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
+import {
+  SymptomQuestionnaireQuestionKind,
+  CreateSymptomQuestionnaireQuestionInput,
+  CreateSymptomQuestionnaireQuestionChoiceInput,
+} from '~/types/gql';
+import ChoiceForm, { Props as ChoiceProps, Events as ChoiceEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoiceForm.vue';
 
+// const a: ChoiceEvents['update-presentation-order']
+// const a: ChoiceEvents['update:choice']
+// const a: ChoiceEvents['delete-choice']
 type Data = {};
 type Methods = {
-  updateQuestionField: (value: string, fieldName: keyof Props['question']) => void;
+  addNewChoice: () => void;
+  deleteChoice: (choiceToDelete: ChoiceEvents['delete-choice']) => void;
+  updateQuestionField: (value: any, fieldName: keyof Props['question']) => void;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: Partial<ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>>;
+  formProps: ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
+  isQuestionMultipleChoice: boolean;
+  orderedChoices: Props['question']['possibleChoices'];
+  maxChoicePresentationOrder: ChoiceProps['maxPresentationOrder'];
 };
 export type Props = {
   question: CreateSymptomQuestionnaireQuestionInput;
@@ -74,6 +109,7 @@ export type Events = {
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
+  components: { ChoiceForm },
   props: {
     question: {
       type: Object,
@@ -83,7 +119,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         possibleChoices: [],
         presentationOrder: 1,
         nameForManagement: '',
-        kind: SymptomQuestionnaireQuestionKind.FreeResponse,
+        kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
       }),
     },
     maxPresentationOrder: {
@@ -95,6 +131,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   computed: {
     formProps() {
       return {
+        size: 'small',
         model: {
           text: this.question.text,
           kind: this.question.kind,
@@ -121,18 +158,43 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         { value: SymptomQuestionnaireQuestionKind.FreeResponse, label: 'Texto livre' },
       ];
     },
+    isQuestionMultipleChoice() {
+      return this.question.kind === SymptomQuestionnaireQuestionKind.MultipleChoice;
+    },
+    orderedChoices() {
+      return sortBy(this.question.possibleChoices, ['presentationOrder']);
+    },
+    maxChoicePresentationOrder() {
+      return this.question.possibleChoices?.length || 1;
+    },
   },
   methods: {
-    updateQuestionField(value: string, fieldName: keyof Props['question']) {
+    updateQuestionField(value, fieldName) {
       const newQuestionValue = { ...this.question, [fieldName]: value };
       this.$emit<Events, 'update:question'>('update:question', newQuestionValue);
     },
-    updateQuestionPresentationOrder(newPresentationOrder: number) {
+    updateQuestionPresentationOrder(newPresentationOrder) {
       const eventArgs = {
         oldPresentationOrder: this.question.presentationOrder,
         newPresentationOrder,
       };
       this.$emit<Events, 'update-presentation-order'>('update-presentation-order', eventArgs);
+    },
+    addNewChoice() {
+      const newChoice: CreateSymptomQuestionnaireQuestionChoiceInput = {
+        nameForManagement: 'Alternativa sem nome',
+        presentationOrder: (this.question.possibleChoices?.length || 0) + 1,
+        text: '',
+        value: 1,
+      };
+      const currentChoices = this.question.possibleChoices || [];
+      const updatedQuestionChoicesArray = [...currentChoices, newChoice];
+
+      this.updateQuestionField(updatedQuestionChoicesArray, 'possibleChoices');
+    },
+    deleteChoice(choiceToDelete) {
+      const updatedQuestionChoices = pull(this.question.possibleChoices || [], choiceToDelete);
+      this.updateQuestionField(updatedQuestionChoices, 'possibleChoices');
     },
   },
 });
@@ -140,5 +202,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .question-form-wrapper {
+  .question-choices-wrapper {
+    .header {
+      @apply flex items-center;
+      .title {
+        @apply font-bold text-gray-700 mr-2;
+      }
+    }
+  }
 }
 </style>
