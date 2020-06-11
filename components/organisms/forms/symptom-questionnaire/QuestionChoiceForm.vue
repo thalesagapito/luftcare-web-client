@@ -26,7 +26,9 @@
             )
 
           el-form-item(label="Pontuação" prop="value" :show-message="false")
-            .form-item-helper-text Se essa alternativa for selecionada,
+            .form-item-helper-text
+              |Se essa alternativa for selecionada,
+              |esse é o valor dela no cálculo do resultado do formulário
             el-input-number(
               :value="choice.value"
               @input="updateChoiceField($event, 'value')"

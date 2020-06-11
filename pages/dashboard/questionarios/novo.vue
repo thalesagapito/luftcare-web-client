@@ -111,7 +111,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         rules: {
           nameForManagement: [{
-            max: 5,
+            max: 500,
             type: 'string',
             required: true,
             message: 'O nome para uso interno é obrigatório',

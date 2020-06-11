@@ -30,8 +30,8 @@ export type Props = {
   questions: CreateSymptomQuestionnaireQuestionInput[];
 };
 export type Events = {
-  'update:activeStepNumber': number;
-  'update:questions': CreateSymptomQuestionnaireQuestionInput[];
+  'update:activeStepNumber': Props['activeStepNumber'];
+  'update:questions': Props['questions'];
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({

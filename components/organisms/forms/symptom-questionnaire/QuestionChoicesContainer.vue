@@ -92,7 +92,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         if (choice.presentationOrder === oldPresentationOrder) {
           return { ...choice, presentationOrder: newPresentationOrder };
         }
-
         if (choice.presentationOrder === newPresentationOrder) {
           return { ...choice, presentationOrder: oldPresentationOrder };
         }
