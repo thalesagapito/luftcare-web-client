@@ -1,5 +1,12 @@
 <template lang="pug">
   el-form.question-form-wrapper(v-bind="formProps")
+    .delete
+      el-button(
+        plain
+        size="mini"
+        type="danger"
+        @click="emitDelete"
+      ) Remover pergunta
     .mb-7: el-form-item(label="Ordem da pergunta" prop="presentationOrder")
       .form-item-helper-text
         |Posição em que a pergunta vai aparecer no questionário
@@ -46,7 +53,6 @@
           v-bind="option"
         )
 
-
     .question-choices-wrapper(v-if="isQuestionMultipleChoice")
       .header
         .title Alternativas da pergunta
@@ -72,6 +78,7 @@ import ChoicesContainer, { getDefaultChoice } from '~/components/organisms/forms
 
 type Data = {};
 type Methods = {
+  emitDelete: () => void;
   addNewChoice: () => void;
   updateQuestionField: (value: any, fieldName: keyof Props['question']) => void;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
@@ -156,6 +163,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
+    emitDelete() {
+      this.$emit<Events, 'delete-question'>('delete-question', this.question);
+    },
     updateQuestionField(value, fieldName) {
       const newQuestionValue = { ...this.question, [fieldName]: value };
       this.$emit<Events, 'update:question'>('update:question', newQuestionValue);
@@ -180,6 +190,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .question-form-wrapper {
+  @apply relative;
+
+  .delete {
+    @apply absolute right-0 top-0;
+  }
+
   .question-choices-wrapper {
     .header {
       @apply flex items-center;

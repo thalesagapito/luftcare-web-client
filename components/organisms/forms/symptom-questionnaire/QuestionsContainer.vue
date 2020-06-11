@@ -10,6 +10,7 @@
       question-form(
         :question.sync="currentQuestion"
         :max-presentation-order="maxPresentationOrder"
+        @delete-question="deleteQuestion($event)"
         @update-presentation-order="updateQuestionsOrder"
       )
 </template>
@@ -27,7 +28,7 @@ import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/
 
 type DefaultQuestionGetter = (currentQuestionsLength: number) => Props['questions'][0];
 export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength: number) => ({
-  nameForManagement: 'Pergunta',
+  nameForManagement: `Pergunta ${currentQuestionsLength + 1}`,
   presentationOrder: currentQuestionsLength + 1,
   text: '',
   kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
@@ -116,6 +117,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         }
         return question;
       });
+      this.activeStepNumber = 1;
       this.emitUpdate(questionsWithNormalizedOrders);
     },
     updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
