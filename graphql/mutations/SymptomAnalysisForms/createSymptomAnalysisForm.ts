@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation createSymptomAnalysisForm($form: CreateSymptomAnalysisFormInput!) {
-    createSymptomAnalysisForm(form: $form) {
+  mutation createSymptomQuestionnaire($questionnaire: CreateSymptomQuestionnaireInput!) {
+    createSymptomQuestionnaire(questionnaire: $questionnaire) {
       id
     }
   }

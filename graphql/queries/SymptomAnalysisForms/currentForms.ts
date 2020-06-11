@@ -1,14 +1,14 @@
 import gql from 'graphql-tag';
 
 export default gql`
-query currentSymptomAnalysisForms(
+query currentSymptomQuestionnaires(
   $name: String
   $orderBy: [OrderByClause!]
   $pageNumber: Int
   $isPublished: Boolean
   $resultsPerPage: Int
   ) {
-  symptomAnalysisForms(
+  symptomQuestionnaires(
     currentVersionsOnly: true
     nameForManagement: $name
     orderBy: $orderBy

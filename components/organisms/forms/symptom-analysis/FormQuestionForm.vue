@@ -41,7 +41,7 @@
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
-import { CreateSymptomAnalysisFormQuestionInput, SymptomAnalysisFormQuestionKind } from '~/types/gql';
+import { CreateSymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
 
 type Data = {};
 type Methods = {
@@ -49,15 +49,15 @@ type Methods = {
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: Partial<ElFormProps<keyof CreateSymptomAnalysisFormQuestionInput>>;
+  formProps: Partial<ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>>;
 };
 export type Props = {
-  question: CreateSymptomAnalysisFormQuestionInput;
+  question: CreateSymptomQuestionnaireQuestionInput;
   maxPresentationOrder: number;
 };
 export type Events = {
   'update-presentation-order': { oldPresentationOrder: number; newPresentationOrder: number };
-  'update:question': CreateSymptomAnalysisFormQuestionInput;
+  'update:question': CreateSymptomQuestionnaireQuestionInput;
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
@@ -70,7 +70,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         possibleChoices: [],
         presentationOrder: 1,
         nameForManagement: '',
-        kind: SymptomAnalysisFormQuestionKind.FreeResponse,
+        kind: SymptomQuestionnaireQuestionKind.FreeResponse,
       }),
     },
     maxPresentationOrder: {

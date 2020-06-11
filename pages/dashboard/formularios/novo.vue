@@ -74,16 +74,16 @@ import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import {
   Mutation,
-  SymptomAnalysisFormQuestionKind,
-  MutationCreateSymptomAnalysisFormArgs,
+  SymptomQuestionnaireQuestionKind,
+  MutationCreateSymptomQuestionnaireArgs,
 } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import CreateSymptomAnalysisFormMutationGQL from '~/graphql/mutations/SymptomAnalysisForms/createSymptomAnalysisForm';
+import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
 import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-analysis/FormQuestionForm.vue';
 import QuestionStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-analysis/FormQuestionStepper.vue';
 
 type Data = {
-  formData: MutationCreateSymptomAnalysisFormArgs['form'];
+  formData: MutationCreateSymptomQuestionnaireArgs['form'];
   activeStepNumber: number;
 };
 type Methods = {
@@ -118,7 +118,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           {
             nameForManagement: 'Pergunta 1',
             text: 'Texto da Pergunta 1',
-            kind: SymptomAnalysisFormQuestionKind.FreeResponse,
+            kind: SymptomQuestionnaireQuestionKind.FreeResponse,
             presentationOrder: 1,
             possibleChoices: [],
           },
@@ -207,14 +207,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       });
     },
     async createForm() {
-      const mutationArgs: MutationCreateSymptomAnalysisFormArgs = {
+      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
         form: this.formData,
       };
 
       const loading = this.$loading({ lock: true, text: 'Criando formulário...' });
 
       await this.$apollo
-        .mutate({ mutation: CreateSymptomAnalysisFormMutationGQL, variables: mutationArgs })
+        .mutate({ mutation: CreateSymptomQuestionnaireMutationGQL, variables: mutationArgs })
         .then(this.handleFormCreationSuccess)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
@@ -229,7 +229,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           text: '',
           possibleChoices: [],
           nameForManagement: `Pergunta ${this.formData?.questions?.length + 1}`,
-          kind: SymptomAnalysisFormQuestionKind.MultipleChoice,
+          kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
           presentationOrder: this.formData?.questions?.length + 1,
         },
       ];

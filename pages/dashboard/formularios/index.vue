@@ -15,17 +15,17 @@
 import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
-import { Query, QuerySymptomAnalysisFormsArgs } from '~/types/gql';
+import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import currentForms from '~/graphql/queries/SymptomAnalysisForms/currentForms';
+import currentForms from '~/graphql/queries/SymptomQuestionnaires/currentForms';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import FormsTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Data = {
-  formsQueryResult?: ExecutionResult<Query['symptomAnalysisForms']>['data']
-  formsFilters: QuerySymptomAnalysisFormsArgs;
+  formsQueryResult?: ExecutionResult<Query['symptomQuestionnaires']>['data']
+  formsFilters: QuerySymptomQuestionnairesArgs;
   isFormsTableLoading: 0;
 };
 type Methods = {
@@ -61,7 +61,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       query: currentForms,
       loadingKey: 'isFormsTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
-      update: ({ symptomAnalysisForms }) => symptomAnalysisForms,
+      update: ({ symptomQuestionnaires }) => symptomQuestionnaires,
       variables() { return this.formsFilters; },
     },
   },

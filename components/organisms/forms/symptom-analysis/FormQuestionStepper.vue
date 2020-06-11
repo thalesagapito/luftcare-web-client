@@ -15,7 +15,7 @@ import Vue from 'vue';
 import { sortBy } from 'lodash';
 import { Steps } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { CreateSymptomAnalysisFormQuestionInput } from '~/types/gql';
+import { CreateSymptomQuestionnaireQuestionInput } from '~/types/gql';
 
 type Data = {};
 type Methods = {
@@ -27,11 +27,11 @@ type Computed = {
 };
 export type Props = {
   activeStepNumber: number;
-  questions: CreateSymptomAnalysisFormQuestionInput[];
+  questions: CreateSymptomQuestionnaireQuestionInput[];
 };
 export type Events = {
   'update:activeStepNumber': number;
-  'update:questions': CreateSymptomAnalysisFormQuestionInput[];
+  'update:questions': CreateSymptomQuestionnaireQuestionInput[];
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({

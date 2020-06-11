@@ -10,25 +10,25 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type CreateSymptomAnalysisFormInput = {
+export type CreateSymptomQuestionnaireInput = {
   nameForManagement: Scalars['String'];
   nameForPresentation: Scalars['String'];
   isPublished?: Maybe<Scalars['Boolean']>;
-  questions: Array<CreateSymptomAnalysisFormQuestionInput>;
+  questions: Array<CreateSymptomQuestionnaireQuestionInput>;
 };
 
-export type CreateSymptomAnalysisFormQuestionChoiceInput = {
+export type CreateSymptomQuestionnaireQuestionChoiceInput = {
   nameForManagement: Scalars['String'];
   text: Scalars['String'];
   value: Scalars['Int'];
   presentationOrder: Scalars['Int'];
 };
 
-export type CreateSymptomAnalysisFormQuestionInput = {
+export type CreateSymptomQuestionnaireQuestionInput = {
   nameForManagement: Scalars['String'];
   text: Scalars['String'];
-  kind: SymptomAnalysisFormQuestionKind;
-  possibleChoices?: Maybe<Array<CreateSymptomAnalysisFormQuestionChoiceInput>>;
+  kind: SymptomQuestionnaireQuestionKind;
+  possibleChoices?: Maybe<Array<CreateSymptomQuestionnaireQuestionChoiceInput>>;
   presentationOrder: Scalars['Int'];
 };
 
@@ -36,7 +36,7 @@ export type CreateSymptomAnalysisFormQuestionInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: TokenSet;
-  createSymptomAnalysisForm: SymptomAnalysisForm;
+  createSymptomQuestionnaire: SymptomQuestionnaire;
   registerUser: User;
 };
 
@@ -47,8 +47,8 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationCreateSymptomAnalysisFormArgs = {
-  form: CreateSymptomAnalysisFormInput;
+export type MutationCreateSymptomQuestionnaireArgs = {
+  questionnaire: CreateSymptomQuestionnaireInput;
 };
 
 
@@ -72,17 +72,17 @@ export enum OrderByClauseNullsPosition {
   NullsLast = 'NULLS_LAST'
 }
 
-export type PaginatedSymptomAnalysisFormResponse = {
-  __typename?: 'PaginatedSymptomAnalysisFormResponse';
+export type PaginatedSymptomQuestionnaireResponse = {
+  __typename?: 'PaginatedSymptomQuestionnaireResponse';
   totalResultsCount: Scalars['Int'];
   hasMorePages: Scalars['Boolean'];
-  results: Array<SymptomAnalysisForm>;
+  results: Array<SymptomQuestionnaire>;
 };
 
 export type Query = {
   __typename?: 'Query';
   authorizationToken: Scalars['String'];
-  symptomAnalysisForms: PaginatedSymptomAnalysisFormResponse;
+  symptomQuestionnaires: PaginatedSymptomQuestionnaireResponse;
   currentUser?: Maybe<User>;
   user?: Maybe<User>;
   users?: Maybe<Array<User>>;
@@ -94,7 +94,7 @@ export type QueryAuthorizationTokenArgs = {
 };
 
 
-export type QuerySymptomAnalysisFormsArgs = {
+export type QuerySymptomQuestionnairesArgs = {
   pageNumber?: Maybe<Scalars['Int']>;
   resultsPerPage?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<OrderByClause>>;
@@ -117,8 +117,8 @@ export type RegisterUserInput = {
   phoneNumber: Scalars['String'];
 };
 
-export type SymptomAnalysisForm = {
-  __typename?: 'SymptomAnalysisForm';
+export type SymptomQuestionnaire = {
+  __typename?: 'SymptomQuestionnaire';
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -127,42 +127,43 @@ export type SymptomAnalysisForm = {
   nameForPresentation: Scalars['String'];
   version: Scalars['Int'];
   /**
-   * If the form is an older version kept only to prevent integrity problems this
-   * field will contain the id of the current form with the highest version
+   * If the questionnaire is an older version kept only to prevent integrity
+   * problems this field will contain the id of the current questionnaire with the
+   * highest version
    */
   idOfCurrentVersion?: Maybe<Scalars['ID']>;
   isPublished: Scalars['Boolean'];
-  questions?: Maybe<Array<SymptomAnalysisFormQuestion>>;
+  questions?: Maybe<Array<SymptomQuestionnaireQuestion>>;
 };
 
-export type SymptomAnalysisFormQuestion = {
-  __typename?: 'SymptomAnalysisFormQuestion';
+export type SymptomQuestionnaireQuestion = {
+  __typename?: 'SymptomQuestionnaireQuestion';
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
-  /** Question name only for internal use. Only form-creator admins will see this. */
+  /** Question name only for internal use. Only questionnaire-creator admins will see this. */
   nameForManagement: Scalars['String'];
   /** Question text, what will be shown to the user. Localization is not a concern. */
   text: Scalars['String'];
-  kind: SymptomAnalysisFormQuestionKind;
-  possibleChoices?: Maybe<Array<SymptomAnalysisFormQuestionChoice>>;
+  kind: SymptomQuestionnaireQuestionKind;
+  possibleChoices?: Maybe<Array<SymptomQuestionnaireQuestionChoice>>;
   presentationOrder: Scalars['Int'];
 };
 
-export type SymptomAnalysisFormQuestionChoice = {
-  __typename?: 'SymptomAnalysisFormQuestionChoice';
+export type SymptomQuestionnaireQuestionChoice = {
+  __typename?: 'SymptomQuestionnaireQuestionChoice';
   id: Scalars['ID'];
-  /** Choice name only for internal use. Only form-creator admins will see this. */
+  /** Choice name only for internal use. Only questionnaire-creator admins will see this. */
   nameForManagement: Scalars['String'];
   /** Choice text, what will be shown to the user. Localization is not a concern. */
   text: Scalars['String'];
-  /** When the form is answered, this field is used to calculate the result. */
+  /** When the questionnaire is answered, this field is used to calculate the result. */
   value: Scalars['Int'];
   presentationOrder: Scalars['Int'];
 };
 
-export enum SymptomAnalysisFormQuestionKind {
+export enum SymptomQuestionnaireQuestionKind {
   MultipleChoice = 'MULTIPLE_CHOICE',
   FreeResponse = 'FREE_RESPONSE'
 }
@@ -192,6 +193,19 @@ export enum UserRole {
   NonAdmin = 'NON_ADMIN'
 }
 
+export type CreateSymptomQuestionnaireMutationVariables = {
+  questionnaire: CreateSymptomQuestionnaireInput;
+};
+
+
+export type CreateSymptomQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { createSymptomQuestionnaire: (
+    { __typename?: 'SymptomQuestionnaire' }
+    & Pick<SymptomQuestionnaire, 'id'>
+  ) }
+);
+
 export type LoginMutationVariables = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -206,7 +220,7 @@ export type LoginMutation = (
   ) }
 );
 
-export type CurrentSymptomAnalysisFormsQueryVariables = {
+export type CurrentSymptomQuestionnairesQueryVariables = {
   name?: Maybe<Scalars['String']>;
   orderBy?: Maybe<Array<OrderByClause>>;
   pageNumber?: Maybe<Scalars['Int']>;
@@ -215,32 +229,18 @@ export type CurrentSymptomAnalysisFormsQueryVariables = {
 };
 
 
-export type CurrentSymptomAnalysisFormsQuery = (
+export type CurrentSymptomQuestionnairesQuery = (
   { __typename?: 'Query' }
-  & { symptomAnalysisForms: (
-    { __typename?: 'PaginatedSymptomAnalysisFormResponse' }
-    & Pick<PaginatedSymptomAnalysisFormResponse, 'hasMorePages' | 'totalResultsCount'>
+  & { symptomQuestionnaires: (
+    { __typename?: 'PaginatedSymptomQuestionnaireResponse' }
+    & Pick<PaginatedSymptomQuestionnaireResponse, 'hasMorePages' | 'totalResultsCount'>
     & { results: Array<(
-      { __typename?: 'SymptomAnalysisForm' }
-      & Pick<SymptomAnalysisForm, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version'>
+      { __typename?: 'SymptomQuestionnaire' }
+      & Pick<SymptomQuestionnaire, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version'>
       & { questions?: Maybe<Array<(
-        { __typename?: 'SymptomAnalysisFormQuestion' }
-        & Pick<SymptomAnalysisFormQuestion, 'nameForManagement'>
+        { __typename?: 'SymptomQuestionnaireQuestion' }
+        & Pick<SymptomQuestionnaireQuestion, 'nameForManagement'>
       )>> }
-    )> }
-  ) }
-);
-
-export type SymptomAnalysisFormsQueryVariables = {};
-
-
-export type SymptomAnalysisFormsQuery = (
-  { __typename?: 'Query' }
-  & { symptomAnalysisForms: (
-    { __typename?: 'PaginatedSymptomAnalysisFormResponse' }
-    & { results: Array<(
-      { __typename?: 'SymptomAnalysisForm' }
-      & Pick<SymptomAnalysisForm, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt'>
     )> }
   ) }
 );
