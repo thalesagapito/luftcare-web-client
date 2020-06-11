@@ -34,26 +34,26 @@
           el-radio(v-model="questionnaireData.isPublished" :label="false") Privado
           el-radio(v-model="questionnaireData.isPublished" :label="true") Público
 
-        .form-section-title.my-6 Perguntas do questionário
-          .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
+      .form-section-title.my-6 Perguntas do questionário
+        .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
 
-        template(v-if="questionnaireData.questions.length === 0")
-          .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
-        template(v-else)
-          question-stepper(
-            v-bind="stepperProps"
-            @update:activeStepNumber="activeStepNumber = $event"
-            @update:questions="$set(questionnaireData, 'questions', $event)"
+      template(v-if="questionnaireData.questions.length === 0")
+        .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
+      template(v-else)
+        questions-stepper(
+          v-bind="stepperProps"
+          @update:activeStepNumber="activeStepNumber = $event"
+          @update:questions="$set(questionnaireData, 'questions', $event)"
+        )
+
+        .question-form
+          question-form(
+            :question.sync="currentQuestion"
+            :max-presentation-order="maxPresentationOrder"
+            @update-presentation-order="updateQuestionsOrder"
           )
 
-          .question-form
-            question-form(
-              :question.sync="currentQuestion"
-              :max-presentation-order="maxPresentationOrder"
-              @update-presentation-order="updateQuestionsOrder"
-            )
-
-        el-form-item.flex.justify-end.mb-0.mt-5
+        .flex.justify-end.mb-0.mt-5
           el-button(
             type="default"
             @click="$router.back()"
@@ -79,8 +79,8 @@ import {
 } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireQuestionForm.vue';
-import QuestionStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireQuestionStepper.vue';
+import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
 
 type Data = {
   questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'];
@@ -96,7 +96,7 @@ type Methods = {
 type Computed = {
   stepperProps: StepperProps;
   headerProps: HeaderProps;
-  formProps: Partial<ElFormProps<keyof Data['questionnaireData']>>;
+  formProps: ElFormProps<keyof Data['questionnaireData']>;
   currentQuestion: QuestionProps['question'];
   maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
@@ -106,7 +106,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   layout: 'dashboard' as RegisteredLayout,
   middleware: 'isUserAuthenticated' as RegisteredMiddleware,
   components: {
-    TheHeader, ShadowedCard, QuestionStepper, QuestionForm,
+    TheHeader, ShadowedCard, QuestionsStepper, QuestionForm,
   },
   data() {
     return {
@@ -118,7 +118,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           {
             nameForManagement: 'Pergunta 1',
             text: 'Texto da Pergunta 1',
-            kind: SymptomQuestionnaireQuestionKind.FreeResponse,
+            kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
             presentationOrder: 1,
             possibleChoices: [],
           },
