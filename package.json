@@ -42,6 +42,7 @@
     "nuxt-typed-vuex": "^0.1.18",
     "secure-ls": "^1.2.6",
     "typed-vuex": "^0.1.18",
+    "uuid": "^8.1.0",
     "vue": "^2.6.11",
     "vuex-persistedstate": "^3.0.1"
   },
@@ -54,6 +55,7 @@
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/tailwindcss": "^2.0.0",
     "@types/lodash": "^4.14.154",
+    "@types/uuid": "^8.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-typescript": "^7.2.1",

@@ -44,13 +44,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
-import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
+import { Keyed } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
 import { CreateSymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
+import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
 
 type Data = {};
 type Methods = {
   emitDeleteChoice: () => void;
+  emitUpdateChoice: (updatedChoice: Props['choice']) => void;
   updateChoiceField: (value: any, fieldName: keyof Props['choice']) => void;
   updateChoicePresentationOrder: (newPresentationOrder: number) => void;
 };
@@ -58,13 +60,13 @@ type Computed = {
   formProps: ElFormProps<keyof CreateSymptomQuestionnaireQuestionChoiceInput>;
 };
 export type Props = {
-  choice: CreateSymptomQuestionnaireQuestionChoiceInput;
+  choice: Keyed<CreateSymptomQuestionnaireQuestionChoiceInput>;
   maxPresentationOrder: number;
 };
 export type Events = {
   'update-presentation-order': { oldPresentationOrder: number; newPresentationOrder: number };
-  'update:choice': CreateSymptomQuestionnaireQuestionChoiceInput;
-  'delete-choice': CreateSymptomQuestionnaireQuestionChoiceInput
+  'update:choice': Props['choice'];
+  'delete-choice': Props['choice'];
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
@@ -78,6 +80,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         presentationOrder: 1,
         text: '',
         value: 1,
+        key: '',
       }),
     },
     maxPresentationOrder: {
@@ -106,9 +109,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
+    emitUpdateChoice(updatedChoice) {
+      this.$emit<Events, 'update:choice'>('update:choice', updatedChoice);
+    },
     updateChoiceField(value: any, fieldName: keyof Props['choice']) {
-      const newQuestionValue = { ...this.choice, [fieldName]: value };
-      this.$emit<Events, 'update:choice'>('update:choice', newQuestionValue);
+      const updatedChoice = { ...this.choice, [fieldName]: value };
+      this.emitUpdateChoice(updatedChoice);
     },
     updateChoicePresentationOrder(newPresentationOrder: number) {
       const eventArgs = {
@@ -126,7 +132,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .question-choice-form-wrapper {
-  @apply border-gray-300 border-1 rounded-lg px-4 pt-3 pb-4;
+  @apply border-gray-300 border-1 rounded-lg px-4 pt-3 pb-4 bg-white;
 
   .inner-container {
     @apply flex;

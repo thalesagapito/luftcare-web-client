@@ -53,42 +53,25 @@
         el-button(type="default" size="mini" @click="addNewChoice") Adicionar alternativa
 
       template(v-if="question.possibleChoices.length === 0")
-        .text-gray-500.mt-2 Nenhuma pergunta no questionário, adicione uma com o botão acima.
+        .text-gray-500.mt-2 Nenhuma alternativa na pergunta atual, adicione uma com o botão acima.
       template(v-else)
-        choice-form.my-5.shadow-sm(
-          v-for="choice in orderedChoices"
-          :choice="choice"
-          :key="choice.presentationOrder"
-          :max-presentation-order="maxChoicePresentationOrder"
-          @delete-choice="deleteChoice(choice)"
+        choices-container(
+          :choices="question.possibleChoices"
+          @update:choices="updateQuestionField($event, 'possibleChoices')"
         )
-
-
-    //- pre {{ isQuestionMultipleChoice }}
-
-    //- pre {{ question }}
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { sortBy, pull } from 'lodash';
 import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
-import {
-  SymptomQuestionnaireQuestionKind,
-  CreateSymptomQuestionnaireQuestionInput,
-  CreateSymptomQuestionnaireQuestionChoiceInput,
-} from '~/types/gql';
-import ChoiceForm, { Props as ChoiceProps, Events as ChoiceEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoiceForm.vue';
+import { SymptomQuestionnaireQuestionKind, CreateSymptomQuestionnaireQuestionInput } from '~/types/gql';
+import ChoicesContainer, { getDefaultChoice } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoicesContainer.vue';
 
-// const a: ChoiceEvents['update-presentation-order']
-// const a: ChoiceEvents['update:choice']
-// const a: ChoiceEvents['delete-choice']
 type Data = {};
 type Methods = {
   addNewChoice: () => void;
-  deleteChoice: (choiceToDelete: ChoiceEvents['delete-choice']) => void;
   updateQuestionField: (value: any, fieldName: keyof Props['question']) => void;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
@@ -96,8 +79,6 @@ type Computed = {
   formProps: ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
   isQuestionMultipleChoice: boolean;
-  orderedChoices: Props['question']['possibleChoices'];
-  maxChoicePresentationOrder: ChoiceProps['maxPresentationOrder'];
 };
 export type Props = {
   question: CreateSymptomQuestionnaireQuestionInput;
@@ -109,7 +90,7 @@ export type Events = {
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  components: { ChoiceForm },
+  components: { ChoicesContainer },
   props: {
     question: {
       type: Object,
@@ -161,12 +142,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     isQuestionMultipleChoice() {
       return this.question.kind === SymptomQuestionnaireQuestionKind.MultipleChoice;
     },
-    orderedChoices() {
-      return sortBy(this.question.possibleChoices, ['presentationOrder']);
-    },
-    maxChoicePresentationOrder() {
-      return this.question.possibleChoices?.length || 1;
-    },
   },
   methods: {
     updateQuestionField(value, fieldName) {
@@ -181,20 +156,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$emit<Events, 'update-presentation-order'>('update-presentation-order', eventArgs);
     },
     addNewChoice() {
-      const newChoice: CreateSymptomQuestionnaireQuestionChoiceInput = {
-        nameForManagement: 'Alternativa sem nome',
-        presentationOrder: (this.question.possibleChoices?.length || 0) + 1,
-        text: '',
-        value: 1,
-      };
+      const newChoice = getDefaultChoice(this.question.possibleChoices?.length || 0);
       const currentChoices = this.question.possibleChoices || [];
       const updatedQuestionChoicesArray = [...currentChoices, newChoice];
 
       this.updateQuestionField(updatedQuestionChoicesArray, 'possibleChoices');
-    },
-    deleteChoice(choiceToDelete) {
-      const updatedQuestionChoices = pull(this.question.possibleChoices || [], choiceToDelete);
-      this.updateQuestionField(updatedQuestionChoices, 'possibleChoices');
     },
   },
 });
