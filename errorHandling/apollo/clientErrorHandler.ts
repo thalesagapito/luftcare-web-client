@@ -3,7 +3,7 @@ import { Plugin } from '@nuxt/types';
 import { GraphQLError } from 'graphql';
 import { ApolloError } from 'apollo-client';
 import { ElNotification } from 'element-ui/types/notification';
-import { log, ExceptionSeverityLevel } from '~/logs/LogHandler';
+import { log, ExceptionSeverityLevel } from '~/logHandling/LogHandler';
 
 const SERVER_ERROR = 'ServerError';
 const VALIDATION_ERROR = 'GraphQL error: Argument Validation Error';
