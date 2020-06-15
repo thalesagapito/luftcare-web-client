@@ -20,9 +20,9 @@ import Vue from 'vue';
 import { find, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { CreateSymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
-import QuestionForm, { Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
+import { SymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
 import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
 
 
 type DefaultQuestionGetter = (currentQuestionsLength: number) => Props['questions'][0];
@@ -47,11 +47,11 @@ type Methods = {
 };
 type Computed = {
   stepperProps: StepperProps;
-  maxPresentationOrder: number;
-  currentQuestion: Props['questions'][0];
+  currentQuestion: QuestionProps['question'];
+  maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 export type Props = {
-  questions: CreateSymptomQuestionnaireQuestionInput[];
+  questions: SymptomQuestionnaireQuestionInput[];
 };
 export type Events = {
   'update:questions': Props['questions'];
@@ -99,7 +99,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    emitUpdate(updatedValue: Props['questions']) {
+    emitUpdate(updatedValue) {
       this.$emit<Events, 'update:questions'>('update:questions', updatedValue);
     },
     addNewQuestion() {

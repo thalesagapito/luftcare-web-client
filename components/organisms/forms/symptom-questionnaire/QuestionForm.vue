@@ -69,27 +69,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { merge } from 'lodash';
 import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { Keyed } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
-import { SymptomQuestionnaireQuestionKind, CreateSymptomQuestionnaireQuestionInput } from '~/types/gql';
+import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '~/types/gql';
 import ChoicesContainer, { getDefaultChoice } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoicesContainer.vue';
+import { getDefaultQuestion } from './QuestionsContainer.vue';
 
 type Data = {};
 type Methods = {
   emitDelete: () => void;
   addNewChoice: () => void;
-  updateQuestionField: (value: any, fieldName: keyof Props['question']) => void;
+  updateQuestionField: <K extends keyof Props['question']>(value: Props['question'][K], fieldName: K) => void;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof CreateSymptomQuestionnaireQuestionInput>;
+  formProps: ElFormProps<keyof SymptomQuestionnaireQuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
   isQuestionMultipleChoice: boolean;
 };
 export type Props = {
-  question: Keyed<CreateSymptomQuestionnaireQuestionInput>;
+  question: SymptomQuestionnaireQuestionInput;
   maxPresentationOrder: number;
 };
 export type Events = {
@@ -104,14 +105,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     question: {
       type: Object,
       required: true,
-      default: () => ({
-        key: '',
-        text: '',
-        possibleChoices: [],
-        presentationOrder: 1,
-        nameForManagement: '',
-        kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-      }),
+      default: getDefaultQuestion(0),
     },
     maxPresentationOrder: {
       type: Number,
@@ -167,8 +161,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$emit<Events, 'delete-question'>('delete-question', this.question);
     },
     updateQuestionField(value, fieldName) {
-      const newQuestionValue = { ...this.question, [fieldName]: value };
-      this.$emit<Events, 'update:question'>('update:question', newQuestionValue);
+      const updatedQuestion = merge({}, this.question, { [fieldName]: value });
+      this.$emit<Events, 'update:question'>('update:question', updatedQuestion);
     },
     updateQuestionPresentationOrder(newPresentationOrder) {
       const eventArgs = {

@@ -15,9 +15,9 @@
 import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
-import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
 import currentSymptomQuestionnaires from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
@@ -106,13 +106,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    updateSort(orderBy: TableEvents['update-sort']) {
+    updateSort(orderBy) {
       this.questionnairesFilters = { ...this.questionnairesFilters, orderBy };
     },
-    updatePageSize(resultsPerPage: TableEvents['update-page-size']) {
+    updatePageSize(resultsPerPage) {
       this.questionnairesFilters = { ...this.questionnairesFilters, resultsPerPage };
     },
-    updateCurrentPage(pageNumber: TableEvents['update-current-page']) {
+    updateCurrentPage(pageNumber) {
       this.questionnairesFilters = { ...this.questionnairesFilters, pageNumber };
     },
   },

@@ -53,9 +53,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { Keyed } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
-import { CreateSymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
+import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
 import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
 
 type Data = {};
@@ -66,10 +65,10 @@ type Methods = {
   updateChoicePresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof CreateSymptomQuestionnaireQuestionChoiceInput>;
+  formProps: ElFormProps<keyof SymptomQuestionnaireQuestionChoiceInput>;
 };
 export type Props = {
-  choice: Keyed<CreateSymptomQuestionnaireQuestionChoiceInput>;
+  choice: SymptomQuestionnaireQuestionChoiceInput;
   maxPresentationOrder: number;
 };
 export type Events = {
@@ -121,11 +120,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     emitUpdateChoice(updatedChoice) {
       this.$emit<Events, 'update:choice'>('update:choice', updatedChoice);
     },
-    updateChoiceField(value: any, fieldName: keyof Props['choice']) {
+    updateChoiceField(value, fieldName) {
       const updatedChoice = { ...this.choice, [fieldName]: value };
       this.emitUpdateChoice(updatedChoice);
     },
-    updateChoicePresentationOrder(newPresentationOrder: number) {
+    updateChoicePresentationOrder(newPresentationOrder) {
       const eventArgs = {
         oldPresentationOrder: this.choice.presentationOrder,
         newPresentationOrder,

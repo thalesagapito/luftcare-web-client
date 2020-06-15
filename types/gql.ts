@@ -10,33 +10,12 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type CreateSymptomQuestionnaireInput = {
-  nameForManagement: Scalars['String'];
-  nameForPresentation: Scalars['String'];
-  isPublished?: Maybe<Scalars['Boolean']>;
-  questions: Array<CreateSymptomQuestionnaireQuestionInput>;
-};
-
-export type CreateSymptomQuestionnaireQuestionChoiceInput = {
-  nameForManagement: Scalars['String'];
-  text: Scalars['String'];
-  value: Scalars['Int'];
-  presentationOrder: Scalars['Int'];
-};
-
-export type CreateSymptomQuestionnaireQuestionInput = {
-  nameForManagement: Scalars['String'];
-  text: Scalars['String'];
-  kind: SymptomQuestionnaireQuestionKind;
-  possibleChoices?: Maybe<Array<CreateSymptomQuestionnaireQuestionChoiceInput>>;
-  presentationOrder: Scalars['Int'];
-};
-
 
 export type Mutation = {
   __typename?: 'Mutation';
   login: TokenSet;
   createSymptomQuestionnaire: SymptomQuestionnaire;
+  updateSymptomQuestionnaire: SymptomQuestionnaire;
   registerUser: User;
 };
 
@@ -48,7 +27,13 @@ export type MutationLoginArgs = {
 
 
 export type MutationCreateSymptomQuestionnaireArgs = {
-  questionnaire: CreateSymptomQuestionnaireInput;
+  questionnaire: SymptomQuestionnaireInput;
+};
+
+
+export type MutationUpdateSymptomQuestionnaireArgs = {
+  idSharedBetweenVersions: Scalars['ID'];
+  questionnaire: SymptomQuestionnaireInput;
 };
 
 
@@ -123,17 +108,19 @@ export type SymptomQuestionnaire = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  idSharedBetweenVersions: Scalars['ID'];
   nameForManagement: Scalars['String'];
   nameForPresentation: Scalars['String'];
   version: Scalars['Int'];
-  /**
-   * If the questionnaire is an older version kept only to prevent integrity
-   * problems this field will contain the id of the current questionnaire with the
-   * highest version
-   */
-  idOfCurrentVersion?: Maybe<Scalars['ID']>;
   isPublished: Scalars['Boolean'];
   questions?: Maybe<Array<SymptomQuestionnaireQuestion>>;
+};
+
+export type SymptomQuestionnaireInput = {
+  nameForManagement: Scalars['String'];
+  nameForPresentation: Scalars['String'];
+  isPublished?: Maybe<Scalars['Boolean']>;
+  questions: Array<SymptomQuestionnaireQuestionInput>;
 };
 
 export type SymptomQuestionnaireQuestion = {
@@ -142,7 +129,7 @@ export type SymptomQuestionnaireQuestion = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
-  /** Question name only for internal use. Only questionnaire-creator admins will see this. */
+  /** Question name only for internal use. Only admins will see this. */
   nameForManagement: Scalars['String'];
   /** Question text, what will be shown to the user. Localization is not a concern. */
   text: Scalars['String'];
@@ -154,12 +141,30 @@ export type SymptomQuestionnaireQuestion = {
 export type SymptomQuestionnaireQuestionChoice = {
   __typename?: 'SymptomQuestionnaireQuestionChoice';
   id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
   /** Choice name only for internal use. Only questionnaire-creator admins will see this. */
   nameForManagement: Scalars['String'];
   /** Choice text, what will be shown to the user. Localization is not a concern. */
   text: Scalars['String'];
   /** When the questionnaire is answered, this field is used to calculate the result. */
   value: Scalars['Int'];
+  presentationOrder: Scalars['Int'];
+};
+
+export type SymptomQuestionnaireQuestionChoiceInput = {
+  nameForManagement: Scalars['String'];
+  text: Scalars['String'];
+  value: Scalars['Int'];
+  presentationOrder: Scalars['Int'];
+};
+
+export type SymptomQuestionnaireQuestionInput = {
+  nameForManagement: Scalars['String'];
+  text: Scalars['String'];
+  kind: SymptomQuestionnaireQuestionKind;
+  possibleChoices?: Maybe<Array<SymptomQuestionnaireQuestionChoiceInput>>;
   presentationOrder: Scalars['Int'];
 };
 
@@ -194,7 +199,7 @@ export enum UserRole {
 }
 
 export type CreateSymptomQuestionnaireMutationVariables = {
-  questionnaire: CreateSymptomQuestionnaireInput;
+  questionnaire: SymptomQuestionnaireInput;
 };
 
 
