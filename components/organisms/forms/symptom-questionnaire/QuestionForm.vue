@@ -105,7 +105,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     question: {
       type: Object,
       required: true,
-      default: getDefaultQuestion(0),
+      default: () => getDefaultQuestion(0),
     },
     maxPresentationOrder: {
       type: Number,

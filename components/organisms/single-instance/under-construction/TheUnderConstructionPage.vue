@@ -4,6 +4,12 @@
     .title Versão beta
     .subtitle Ainda estamos em fase de desenvolvimento. Por isso somente usuários selecionados têm acesso.
     el-button(
+      v-if="isUserLoggedIn"
+      @click="$router.push('/dashboard')"
+      round
+    ) Acessar painel
+    el-button(
+      v-else
       @click="$router.push('/auth/login')"
       round
     ) Acessar minha conta
@@ -15,12 +21,19 @@ import BrandLogo from '~/components/atoms/BrandLogo.vue';
 
 type Data = {};
 type Methods = {};
-type Computed = {};
+type Computed = {
+  isUserLoggedIn: boolean;
+};
 export type Props = {};
 export type Events = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   components: { BrandLogo },
+  computed: {
+    isUserLoggedIn() {
+      return this.$accessor.auth.isLoggedIn;
+    },
+  },
 });
 </script>
 
