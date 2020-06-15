@@ -85,13 +85,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   methods: {
-    emitUpdatePageSize(pageSize: number) {
+    emitUpdatePageSize(pageSize) {
       this.$emit<Events, 'update-page-size'>('update-page-size', pageSize);
     },
-    emitUpdateCurrentPage(currentPage: number) {
+    emitUpdateCurrentPage(currentPage) {
       this.$emit<Events, 'update-current-page'>('update-current-page', currentPage);
     },
-    emitUpdateSort({ order, prop }: SortChangeArgs) {
+    emitUpdateSort({ order, prop }) {
       const isRemovingSorting = !order;
       if (isRemovingSorting) {
         this.$emit<Events, 'update-sort'>('update-sort', []);
