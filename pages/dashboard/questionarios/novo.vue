@@ -103,6 +103,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     formProps() {
       return {
+        hideRequiredAsterisk: true,
         model: {
           nameForManagement: this.questionnaireData.nameForManagement,
           nameForPresentation: this.questionnaireData.nameForPresentation,

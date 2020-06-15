@@ -17,8 +17,7 @@ import Vue from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { sortBy, pull } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { Keyed } from '~/types/helpers';
-import { CreateSymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
+import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
 import ChoiceForm, { Events as ChoiceEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoiceForm.vue';
 
 
@@ -44,7 +43,7 @@ type Computed = {
   maxPresentationOrder: number;
 };
 export type Props = {
-  choices: Keyed<CreateSymptomQuestionnaireQuestionChoiceInput>[];
+  choices: SymptomQuestionnaireQuestionChoiceInput[];
 };
 export type Events = {
   'update:choices': Props['choices'];
@@ -68,7 +67,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    emitUpdate(updatedValue: Props['choices']) {
+    emitUpdate(updatedValue) {
       this.$emit<Events, 'update:choices'>('update:choices', updatedValue);
     },
     addNewChoice() {

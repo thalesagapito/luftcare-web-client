@@ -117,6 +117,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     formProps() {
       return {
         size: 'small',
+        hideRequiredAsterisk: true,
         model: {
           text: this.question.text,
           kind: this.question.kind,

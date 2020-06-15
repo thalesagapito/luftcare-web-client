@@ -101,6 +101,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     formProps() {
       return {
         size: 'mini',
+        hideRequiredAsterisk: true,
         model: {
           text: this.choice.text,
           value: this.choice.value,

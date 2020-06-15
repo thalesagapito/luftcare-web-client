@@ -1,7 +1,7 @@
 <template lang="pug">
   .login-wrapper
     h1.title Entrar na minha conta
-    el-form(v-bind="formProps" ref="loginForm" hide-required-asterisk)
+    el-form(v-bind="formProps" ref="loginForm")
       .mb-6: el-form-item(label="Email" prop="email")
         el-input(
           autofocus
@@ -55,6 +55,7 @@ export default Vue.extend<Data, Methods, Computed, {}>({
   computed: {
     formProps() {
       return {
+        hideRequiredAsterisk: true,
         model: { email: this.email, password: this.password },
         rules: {
           email: [{ type: 'email', required: true, message: 'Insira um endereço de email válido' }],
