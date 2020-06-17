@@ -77,8 +77,8 @@ type Computed = {
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  layout: 'dashboard' as RegisteredLayout,
-  middleware: 'isUserAuthenticated' as RegisteredMiddleware,
+  layout: RegisteredLayout.dashboard,
+  middleware: RegisteredMiddleware.isUserAuthenticated,
   components: { TheHeader, ShadowedCard, QuestionsContainer },
   data() {
     return {

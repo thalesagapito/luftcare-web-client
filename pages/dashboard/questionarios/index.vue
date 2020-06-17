@@ -1,6 +1,7 @@
 <template lang="pug">
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
+      el-button(type="default" plain @click="refreshQuery") Atualizar
       el-button(type="primary" @click="$router.push('questionarios/novo')") Criar novo questionário
     shadowed-card.mt-7
       questionnaires-table(
@@ -24,11 +25,12 @@ import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWi
 import QuestionnairesTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Data = {
-  questionnairesQueryResult?: ExecutionResult<Query['symptomQuestionnaires']>['data']
+  questionnaires?: ExecutionResult<Query['symptomQuestionnaires']>['data']
   questionnairesFilters: QuerySymptomQuestionnairesArgs;
   isQuestionnairesTableLoading: 0;
 };
 type Methods = {
+  refreshQuery: () => void;
   updateSort: (args: TableEvents['update-sort']) => void;
   updatePageSize: (newSize: TableEvents['update-page-size']) => void;
   updateCurrentPage: (newCurrentPage: TableEvents['update-current-page']) => void;
@@ -46,7 +48,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   data() {
     return {
       isQuestionnairesTableLoading: 0,
-      questionnairesQueryResult: undefined,
+      questionnaires: undefined,
       questionnairesFilters: {
         isPublished: undefined,
         pageNumber: undefined,
@@ -57,7 +59,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     };
   },
   apollo: {
-    questionnairesQueryResult: {
+    questionnaires: {
       query: currentSymptomQuestionnaires,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
@@ -82,10 +84,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         tableProps: {
           stripe: true,
           isLoading: this.isQuestionnairesTableLoading,
-          data: this.questionnairesQueryResult?.results,
+          data: this.questionnaires?.results,
         },
         tablePaginationProps: {
-          total: this.questionnairesQueryResult?.totalResultsCount,
+          total: this.questionnaires?.totalResultsCount,
           pageSize: this.questionnairesFilters.resultsPerPage || 10,
           currentPage: this.questionnairesFilters.pageNumber || 1,
           layout: 'total, sizes, ->, prev, pager, next',
@@ -106,6 +108,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
+    refreshQuery() {
+      this.$apollo.queries.questionnaires?.refetch();
+    },
     updateSort(orderBy) {
       this.questionnairesFilters = { ...this.questionnairesFilters, orderBy };
     },
