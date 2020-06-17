@@ -91,7 +91,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           pageSize: this.questionnairesFilters.resultsPerPage || 10,
           currentPage: this.questionnairesFilters.pageNumber || 1,
           layout: 'total, sizes, ->, prev, pager, next',
-          pageSizes: [5, 10, 25],
+          pageSizes: [5, 10, 15, 20, 25],
         },
         tableColumns: [
           {
