@@ -49,13 +49,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { map } from 'lodash';
 import { Form } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '~/types/element-ui';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
+import { Mutation, MutationCreateSymptomQuestionnaireArgs, SymptomQuestionnaireQuestionKind } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import { removeKeysFromChoices } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoicesContainer.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
 import QuestionsContainer, { getDefaultQuestion } from '~/components/organisms/forms/symptom-questionnaire/QuestionsContainer.vue';
 
@@ -139,7 +141,19 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.questionnaireData.questions.push(newQuestion);
     },
     async runCreateFormMutation() {
-      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = { questionnaire: this.questionnaireData };
+      const questionsWithKeylessChoices = map(this.questionnaireData.questions, (question) => {
+        if (question.kind === SymptomQuestionnaireQuestionKind.FreeResponse) return question;
+
+        const choicesWihoutKeys = removeKeysFromChoices(question.possibleChoices || []);
+
+        return { ...question, possibleChoices: choicesWihoutKeys };
+      });
+      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
+        questionnaire: {
+          ...this.questionnaireData,
+          questions: questionsWithKeylessChoices,
+        },
+      };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
       await this.$apollo
@@ -158,8 +172,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         this.runCreateFormMutation();
       });
     },
-    handleFormCreationSuccess({ data }) {
-      console.log(data);
+    handleFormCreationSuccess() {
+      this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });
+      this.$router.push('/dashboard/questionarios');
     },
   },
 

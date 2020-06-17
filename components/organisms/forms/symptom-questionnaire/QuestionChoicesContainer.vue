@@ -15,20 +15,25 @@
 <script lang="ts">
 import Vue from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import { sortBy, pull } from 'lodash';
+import { sortBy, pull, omit } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
 import ChoiceForm, { Events as ChoiceEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoiceForm.vue';
 
-
 type DefaultChoiceGetter = (currentChoicesLength: number) => Props['choices'][0];
-export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength: number) => ({
+export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => ({
   nameForManagement: '',
   presentationOrder: currentChoicesLength + 1,
   text: '',
   value: 1,
   key: uuidv4(),
 });
+
+type ChoiceKeyRemover = (choices: Props['choices']) => Props['choices'];
+export const removeKeysFromChoices: ChoiceKeyRemover = (choices) => {
+  const choicesWithoutKeys = choices.map((currentChoice) => omit(currentChoice, 'key'));
+  return choicesWithoutKeys;
+};
 
 type Data = {};
 type Methods = {

@@ -18,7 +18,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { find, pull } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { SymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
 import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
@@ -32,7 +31,6 @@ export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength
   text: '',
   kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
   possibleChoices: [],
-  key: uuidv4(),
 });
 
 type Data = {

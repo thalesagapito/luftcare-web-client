@@ -1,6 +1,5 @@
 <template lang="pug">
   .question-choice-form-wrapper
-    //- pre {{ choice }}
     el-form(v-bind="formProps")
       .inner-container
         .left
