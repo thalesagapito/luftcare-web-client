@@ -2,12 +2,10 @@
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
     shadowed-card.p-5.mt-6
-      pre {{ questionnaireData }}
-      .form-section-title Dados do questionário
-        questionnaire-form(
-          v-model="questionnaireData"
-          :is-valid.sync="isFormValid"
-        )
+      questionnaire-form(
+        v-model="questionnaireData"
+        :is-valid.sync="isFormValid"
+      )
 
       .form-section-footer
         el-button(type="default" @click="$router.back()") Cancelar
@@ -27,10 +25,7 @@ import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionnaireForm, {
-  Props as FormProps,
-  // Events as FormEvents,
-} from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
   isFormValid: boolean;
