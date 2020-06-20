@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { sortBy, pull, omit } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
-import ChoiceForm, { Events as ChoiceEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoiceForm.vue';
+import ChoiceForm, { Events as ChoiceEvents } from './QuestionChoiceForm.vue';
 
 type DefaultChoiceGetter = (currentChoicesLength: number) => Props['choices'][0];
 export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => ({
@@ -29,11 +29,11 @@ export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => (
   key: uuidv4(),
 });
 
-type ChoiceKeyRemover = (choices: Props['choices']) => Props['choices'];
-export const removeKeysFromChoices: ChoiceKeyRemover = (choices) => {
-  const choicesWithoutKeys = choices.map((currentChoice) => omit(currentChoice, 'key'));
-  return choicesWithoutKeys;
-};
+type ChoiceKeyRemover = (choice: Props['choices'][0]) => Props['choices'][0];
+const removeKeyFromChoice: ChoiceKeyRemover = (choice) => omit(choice, 'key');
+
+type ChoicesKeyRemover = (choices: Props['choices']) => Props['choices'];
+export const removeKeysFromChoices: ChoicesKeyRemover = (choices) => choices.map(removeKeyFromChoice);
 
 type Data = {};
 type Methods = {

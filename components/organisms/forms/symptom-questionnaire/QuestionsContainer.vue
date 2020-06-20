@@ -19,9 +19,10 @@
 import Vue from 'vue';
 import { find, pull } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
+import { removeKeysFromChoices } from './QuestionChoicesContainer.vue';
+import QuestionsStepper, { Props as StepperProps } from './QuestionsStepper.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
 import { SymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
-import QuestionsStepper, { Props as StepperProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionsStepper.vue';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '~/components/organisms/forms/symptom-questionnaire/QuestionForm.vue';
 
 
 type DefaultQuestionGetter = (currentQuestionsLength: number) => Props['questions'][0];
@@ -32,6 +33,16 @@ export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength
   kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
   possibleChoices: [],
 });
+
+type QuestionChoicesKeyRemover = (question: Props['questions'][0]) => Props['questions'][0];
+const removeKeysFromQuestionChoices: QuestionChoicesKeyRemover = (question) => ({
+  ...question,
+  possibleChoices: removeKeysFromChoices(question.possibleChoices || []),
+});
+
+type QuestionsChoicesKeyRemover = (questions: Props['questions']) => Props['questions'];
+export const removeKeysFromQuestionsChoices: QuestionsChoicesKeyRemover = (questions) => questions
+  .map(removeKeysFromQuestionChoices);
 
 type Data = {
   activeStepNumber: number;

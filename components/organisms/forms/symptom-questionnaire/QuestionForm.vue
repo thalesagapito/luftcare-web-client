@@ -73,9 +73,9 @@ import { merge } from 'lodash';
 import { Option } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
-import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '~/types/gql';
-import ChoicesContainer, { getDefaultChoice } from '~/components/organisms/forms/symptom-questionnaire/QuestionChoicesContainer.vue';
 import { getDefaultQuestion } from './QuestionsContainer.vue';
+import ChoicesContainer, { getDefaultChoice } from './QuestionChoicesContainer.vue';
+import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '~/types/gql';
 
 type Data = {};
 type Methods = {
