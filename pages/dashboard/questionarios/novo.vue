@@ -25,7 +25,7 @@ import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import QuestionnaireForm, { Props as FormProps, removeKeysFromQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
   isFormValid: boolean;
@@ -73,7 +73,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   methods: {
     async runCreateFormMutation() {
       const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
-        questionnaire: this.questionnaireData,
+        questionnaire: removeKeysFromQuestionnaire(this.questionnaireData),
       };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 

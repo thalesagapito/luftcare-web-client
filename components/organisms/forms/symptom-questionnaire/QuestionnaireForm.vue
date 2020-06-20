@@ -61,6 +61,16 @@ import { ElFormProps } from '~/types/element-ui';
 import { SymptomQuestionnaireInput } from '~/types/gql';
 import QuestionsContainer, { getDefaultQuestion, removeKeysFromQuestionsChoices } from './QuestionsContainer.vue';
 
+type QuestionnaireKeyRemover = (questionnaire: Props['value']) => Props['value'];
+export const removeKeysFromQuestionnaire: QuestionnaireKeyRemover = (questionnaire) => {
+  const questionsWithKeylessChoices = removeKeysFromQuestionsChoices(questionnaire.questions);
+  const keylessQuestionnaire = {
+    ...questionnaire,
+    questions: questionsWithKeylessChoices,
+  };
+  return keylessQuestionnaire;
+};
+
 type Data = {};
 type Methods = {
   addNewQuestion: () => void;
@@ -76,7 +86,7 @@ export type Props = {
   isValid: boolean;
 };
 export type Events = {
-  input: SymptomQuestionnaireInput; // emits keyless choices
+  input: SymptomQuestionnaireInput; // emits keyed choices
   'update:isValid': Props['isValid'];
 };
 
@@ -143,14 +153,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.value.questions.push(newQuestion);
     },
     emitInput(updatedData) {
-      const questionsWithKeylessChoices = removeKeysFromQuestionsChoices(this.value.questions);
-      const sanitizedData: Events['input'] = {
-        ...updatedData,
-        questions: questionsWithKeylessChoices,
-      };
       // TODO update isValid here
 
-      this.$emit<Events, 'input'>('input', sanitizedData);
+      this.$emit<Events, 'input'>('input', updatedData);
     },
     updateQuestionnaireField(updatedValue, fieldName) {
       const updatedQuestionnaire = merge({}, this.value, { [fieldName]: updatedValue });
