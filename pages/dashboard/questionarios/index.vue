@@ -10,6 +10,35 @@
         @update-page-size="updatePageSize"
         @update-current-page="updateCurrentPage"
       )
+        el-table-column(
+          fixed="right"
+          label="Ações"
+          align="right"
+        )
+          .action-buttons(slot-scope="{ row }")
+            el-button(
+              round
+              size="mini"
+              type="text"
+              @click="handleEdit(row)"
+            ) Editar
+            el-button(
+              round
+              size="mini"
+              type="text"
+              @click="handleDelete(row)"
+            ) Remover
+            el-dropdown
+              el-button(
+                plain
+                round
+                size="mini"
+                icon="el-icon-more-outline"
+                @click="handleEdit(row)"
+              )
+              el-dropdown-menu(slot="dropdown")
+                el-dropdown-item Action 1
+                el-dropdown-item Action 1
 </template>
 
 <script lang="ts">
@@ -24,6 +53,8 @@ import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandle
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import QuestionnairesTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
+type Questionnaire = Query['symptomQuestionnaires']['results'][0];
+
 type Data = {
   questionnaires?: ExecutionResult<Query['symptomQuestionnaires']>['data']
   questionnairesFilters: QuerySymptomQuestionnairesArgs;
@@ -31,6 +62,8 @@ type Data = {
 };
 type Methods = {
   refreshQuery: () => void;
+  handleEdit: (questionnaire: Questionnaire) => void;
+  handleDelete: (questionnaire: Questionnaire) => void;
   updateSort: (args: TableEvents['update-sort']) => void;
   updatePageSize: (newSize: TableEvents['update-page-size']) => void;
   updateCurrentPage: (newCurrentPage: TableEvents['update-current-page']) => void;
@@ -83,6 +116,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       return {
         tableProps: {
           stripe: true,
+          border: true,
           isLoading: this.isQuestionnairesTableLoading,
           data: this.questionnaires?.results,
         },
@@ -120,6 +154,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     updateCurrentPage(pageNumber) {
       this.questionnairesFilters = { ...this.questionnairesFilters, pageNumber };
     },
+    handleEdit(questionnaire) {
+      console.log(questionnaire);
+    },
+    handleDelete(questionnaire) {
+      console.log(questionnaire);
+    },
   },
   head: {
     titleTemplate: (base) => `${base} - Listar questionários cadastrados`,
@@ -128,4 +168,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 </script>
 
 <style lang="postcss" scoped>
+.action-buttons {
+  @apply py-1;
+
+  .el-button {
+    @apply mx-0;
+
+    &:last-of-type {
+      @apply ml-1;
+    }
+  }
+}
 </style>

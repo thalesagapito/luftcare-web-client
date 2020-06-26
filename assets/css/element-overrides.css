@@ -66,7 +66,7 @@ textarea,
 /* Input default styling */
 
 /* Button default styling */
-.el-button {
+.el-button:not(.el-button--text) {
   @apply shadow;
 }
 button:focus {
@@ -79,6 +79,7 @@ button.el-button--danger:focus {
 
 /* Table default styling */
 .el-table {
+  .el-table__fixed-header-wrapper,
   .el-table__header-wrapper {
     @apply border-b-1 border-gray-200;
 

@@ -109,6 +109,4 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 });
 </script>
 
-<style lang="postcss" scoped>
-
-</style>
+<style lang="postcss" scoped></style>
