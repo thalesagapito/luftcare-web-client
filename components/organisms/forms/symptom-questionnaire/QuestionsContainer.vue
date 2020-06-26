@@ -17,32 +17,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { find, pull } from 'lodash';
+import { find, pull, omit } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { removeKeysFromChoices } from './QuestionChoicesContainer.vue';
+import { unkeyChoices } from './QuestionChoicesContainer.vue';
 import QuestionsStepper, { Props as StepperProps } from './QuestionsStepper.vue';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
-import { SymptomQuestionnaireQuestionInput, SymptomQuestionnaireQuestionKind } from '~/types/gql';
+import QuestionForm, {
+  Question,
+  getDefaultQuestion,
+  KeyedQuestion,
+  Props as QuestionProps,
+  Events as QuestionEvents,
+} from './QuestionForm.vue';
 
-
-type DefaultQuestionGetter = (currentQuestionsLength: number) => Props['questions'][0];
-export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength: number) => ({
-  nameForManagement: `Pergunta ${currentQuestionsLength + 1}`,
-  presentationOrder: currentQuestionsLength + 1,
-  text: '',
-  kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-  possibleChoices: [],
+type QuestionKeyRemover = (question: Props['questions'][0]) => Question;
+const unkeyQuestionChoices: QuestionKeyRemover = (question) => ({
+  ...omit(question, ['key', 'isValid']),
+  possibleChoices: unkeyChoices(question.possibleChoices || []),
 });
 
-type QuestionChoicesKeyRemover = (question: Props['questions'][0]) => Props['questions'][0];
-const removeKeysFromQuestionChoices: QuestionChoicesKeyRemover = (question) => ({
-  ...question,
-  possibleChoices: removeKeysFromChoices(question.possibleChoices || []),
-});
-
-type QuestionsChoicesKeyRemover = (questions: Props['questions']) => Props['questions'];
-export const removeKeysFromQuestionsChoices: QuestionsChoicesKeyRemover = (questions) => questions
-  .map(removeKeysFromQuestionChoices);
+type QuestionsKeyRemover = (questions: Props['questions']) => Question[];
+export const unkeyQuestionsChoices: QuestionsKeyRemover = (questions) => questions.map(unkeyQuestionChoices);
 
 type Data = {
   activeStepNumber: number;
@@ -60,7 +54,7 @@ type Computed = {
   maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 export type Props = {
-  questions: SymptomQuestionnaireQuestionInput[];
+  questions: KeyedQuestion[];
 };
 export type Events = {
   'update:questions': Props['questions'];

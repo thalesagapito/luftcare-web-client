@@ -12,28 +12,26 @@
         el-button(
           type="primary"
           :disabled="!isFormValid"
-          @click="validateFormAndSubmit"
+          @click="runCreateQuestionnaireMutation"
         ) Criar questionário
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Form } from 'element-ui';
 import { ExecutionResult } from 'graphql';
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
-import QuestionnaireForm, { Props as FormProps, removeKeysFromQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
   isFormValid: boolean;
   questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'] & FormProps['value'];
 };
 type Methods = {
-  runCreateFormMutation: () => void;
-  validateFormAndSubmit: () => void;
+  runCreateQuestionnaireMutation: () => void;
   handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
 };
 type Computed = {
@@ -71,9 +69,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    async runCreateFormMutation() {
+    async runCreateQuestionnaireMutation() {
       const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
-        questionnaire: removeKeysFromQuestionnaire(this.questionnaireData),
+        questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
@@ -82,16 +80,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         .then(this.handleFormCreationSuccess)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
-    },
-    validateFormAndSubmit() {
-      (this.$refs.form as Form).validate((isValid) => {
-        if (!isValid) {
-          this.$notify({ title: 'Erro', type: 'error', message: 'Preencha todos os campos corretamente' });
-          return;
-        }
-
-        this.runCreateFormMutation();
-      });
     },
     handleFormCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });

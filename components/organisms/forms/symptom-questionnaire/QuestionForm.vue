@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-form.question-form-wrapper(v-bind="formProps")
+  el-form.question-form-wrapper(v-bind="formProps" ref="form")
     .delete
       el-button(
         plain
@@ -57,40 +57,57 @@
       .header
         .title Alternativas da pergunta
         el-button(type="default" size="mini" @click="addNewChoice") Adicionar alternativa
+      el-form-item.mt-2.pb-3(prop="possibleChoices")
 
-      template(v-if="question.possibleChoices.length === 0")
-        .text-gray-500.mt-2 Nenhuma alternativa na pergunta atual, adicione uma com o botão acima.
-      template(v-else)
-        choices-container(
-          :choices="question.possibleChoices"
-          @update:choices="updateQuestionField($event, 'possibleChoices')"
-        )
+      choices-container(
+        :choices="question.possibleChoices"
+        @update:choices="updateQuestionField($event, 'possibleChoices')"
+      )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { merge } from 'lodash';
-import { Option } from 'element-ui';
+import { merge, every, debounce } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import { Option, Form } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
+import { WithIsValid, Override, Keyed } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
-import { getDefaultQuestion } from './QuestionsContainer.vue';
-import ChoicesContainer, { getDefaultChoice } from './QuestionChoicesContainer.vue';
+import { getDefaultChoice, KeyedChoice } from './QuestionChoiceForm.vue';
+import ChoicesContainer from './QuestionChoicesContainer.vue';
 import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '~/types/gql';
+
+export type Question = SymptomQuestionnaireQuestionInput;
+type QuestionWithKeyedChoices = Override<Question, { possibleChoices?: KeyedChoice[] }>;
+export type KeyedQuestion = Keyed<WithIsValid<QuestionWithKeyedChoices>>;
+
+type DefaultQuestionGetter = (currentQuestionsLength?: number) => Props['question'];
+export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength) => ({
+  nameForManagement: `Pergunta ${(currentQuestionsLength || 0) + 1}`,
+  presentationOrder: (currentQuestionsLength || 0) + 1,
+  text: '',
+  kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
+  possibleChoices: [],
+  isValid: false,
+  key: uuidv4(),
+});
 
 type Data = {};
 type Methods = {
   emitDelete: () => void;
   addNewChoice: () => void;
+  validateFormAndEmit: () => void;
+  emitUpdateQuestion:(question: Props['question']) => void;
   updateQuestionField: <K extends keyof Props['question']>(value: Props['question'][K], fieldName: K) => void;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof SymptomQuestionnaireQuestionInput>;
+  formProps: ElFormProps<keyof Question>;
   questionKindSelectOptions: Partial<Option>[];
   isQuestionMultipleChoice: boolean;
 };
 export type Props = {
-  question: SymptomQuestionnaireQuestionInput;
+  question: KeyedQuestion;
   maxPresentationOrder: number;
 };
 export type Events = {
@@ -105,7 +122,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     question: {
       type: Object,
       required: true,
-      default: () => getDefaultQuestion(0),
+      default: getDefaultQuestion,
     },
     maxPresentationOrder: {
       type: Number,
@@ -127,7 +144,26 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         rules: {
           kind: [],
-          possibleChoices: [],
+          possibleChoices: [
+            {
+              type: 'array',
+              required: this.isQuestionMultipleChoice,
+              validator: (rule, value: Props['question']['possibleChoices'] = [], callback) => {
+                const invalidChoicesMessage = 'Preencha todas as alternativas corretamente';
+                const minLengthChoicesMessage = 'Crie pelo menos duas alternativas';
+
+                if (!this.isQuestionMultipleChoice) return callback();
+
+                const hasMinLengthError = value.length < 2;
+                if (hasMinLengthError) return callback(minLengthChoicesMessage);
+
+                const hasInvalidChoicesError = !every(value, 'isValid');
+                if (hasInvalidChoicesError) return callback(invalidChoicesMessage);
+
+                return callback();
+              },
+            },
+          ],
           presentationOrder: [{
             type: 'number',
             required: true,
@@ -157,13 +193,21 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       return this.question.kind === SymptomQuestionnaireQuestionKind.MultipleChoice;
     },
   },
+  watch: {
+    question() {
+      debounce(this.validateFormAndEmit, 50)();
+    },
+  },
   methods: {
     emitDelete() {
       this.$emit<Events, 'delete-question'>('delete-question', this.question);
     },
+    emitUpdateQuestion(question) {
+      this.$emit<Events, 'update:question'>('update:question', question);
+    },
     updateQuestionField(value, fieldName) {
       const updatedQuestion = merge({}, this.question, { [fieldName]: value });
-      this.$emit<Events, 'update:question'>('update:question', updatedQuestion);
+      this.emitUpdateQuestion(updatedQuestion);
     },
     updateQuestionPresentationOrder(newPresentationOrder) {
       const eventArgs = {
@@ -178,6 +222,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       const updatedQuestionChoicesArray = [...currentChoices, newChoice];
 
       this.updateQuestionField(updatedQuestionChoicesArray, 'possibleChoices');
+    },
+    async validateFormAndEmit() {
+      const isValid = await (this.$refs.form as Form)?.validate().catch(() => false);
+      if (isValid === this.question.isValid) return;
+      this.emitUpdateQuestion({ ...this.question, isValid });
     },
   },
 });

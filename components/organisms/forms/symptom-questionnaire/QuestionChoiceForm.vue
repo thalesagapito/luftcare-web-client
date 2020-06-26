@@ -1,9 +1,9 @@
 <template lang="pug">
   .question-choice-form-wrapper
-    el-form(v-bind="formProps")
+    el-form(v-bind="formProps" ref="form")
       .inner-container
         .left
-          el-form-item(label="Nome para uso interno" prop="nameForManagement" :show-message="false")
+          el-form-item(label="Nome para uso interno" prop="nameForManagement")
             el-input(
               autofocus
               type="text"
@@ -13,7 +13,7 @@
               @input="updateChoiceField($event, 'nameForManagement')"
             )
 
-          el-form-item(label="Enunciado da alternativa" prop="text" :show-message="false")
+          el-form-item(label="Enunciado da alternativa" prop="text")
             el-input(
               show-word-limit
               type="textarea"
@@ -24,7 +24,7 @@
               @input="updateChoiceField($event, 'text')"
             )
 
-          el-form-item(label="Pontuação" prop="value" :show-message="false")
+          el-form-item(label="Pontuação" prop="value")
             .form-item-helper-text
               |Se essa alternativa for selecionada,
               |esse é o valor dela no cálculo do resultado do formulário
@@ -51,23 +51,41 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Form } from 'element-ui';
+import { debounce } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
+import { Keyed, WithIsValid } from '~/types/helpers';
 import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
 import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
+
+export type Choice = SymptomQuestionnaireQuestionChoiceInput;
+export type KeyedChoice = Keyed<WithIsValid<Choice>>;
+
+type DefaultChoiceGetter = (currentChoicesLength?: number) => KeyedChoice;
+export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => ({
+  nameForManagement: `Alternativa ${(currentChoicesLength || 0) + 1}`,
+  presentationOrder: (currentChoicesLength || 0) + 1,
+  text: '',
+  value: 1,
+  key: uuidv4(),
+  isValid: false,
+});
 
 type Data = {};
 type Methods = {
   emitDeleteChoice: () => void;
+  validateFormAndEmit: () => void;
   emitUpdateChoice: (updatedChoice: Props['choice']) => void;
   updateChoiceField: (value: any, fieldName: keyof Props['choice']) => void;
   updateChoicePresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof SymptomQuestionnaireQuestionChoiceInput>;
+  formProps: ElFormProps<keyof Choice>;
 };
 export type Props = {
-  choice: SymptomQuestionnaireQuestionChoiceInput;
+  choice: KeyedChoice;
   maxPresentationOrder: number;
 };
 export type Events = {
@@ -82,13 +100,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     choice: {
       type: Object,
       required: true,
-      default: () => ({
-        nameForManagement: '',
-        presentationOrder: 1,
-        text: '',
-        value: 1,
-        key: '',
-      }),
+      default: getDefaultChoice,
     },
     maxPresentationOrder: {
       type: Number,
@@ -99,6 +111,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   computed: {
     formProps() {
       return {
+        showMessage: true,
         size: 'mini',
         hideRequiredAsterisk: true,
         model: {
@@ -108,12 +121,30 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           presentationOrder: this.choice.presentationOrder,
         },
         rules: {
-          text: [{ type: 'string', required: true, max: 500 }],
-          value: [{ type: 'number', required: true }],
-          nameForManagement: [{ type: 'string', required: true, max: 500 }],
+          text: [{
+            type: 'string',
+            required: true,
+            max: 500,
+            message: 'Obrigatório',
+          }],
+          value: [{
+            type: 'number',
+            required: true,
+          }],
+          nameForManagement: [{
+            type: 'string',
+            required: true,
+            max: 500,
+            message: 'Obrigatório',
+          }],
           presentationOrder: [],
         },
       };
+    },
+  },
+  watch: {
+    choice() {
+      debounce(this.validateFormAndEmit, 50)();
     },
   },
   methods: {
@@ -133,6 +164,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     emitDeleteChoice() {
       this.$emit<Events, 'delete-choice'>('delete-choice', this.choice);
+    },
+    async validateFormAndEmit() {
+      const isValid = await (this.$refs.form as Form)?.validate().catch(() => false);
+      if (isValid === this.choice.isValid) return;
+      this.emitUpdateChoice({ ...this.choice, isValid });
     },
   },
 });

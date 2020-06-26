@@ -1,6 +1,6 @@
 <template lang="pug">
   .questionnaire-form-wrapper
-    .form-section-title Dados do questionário
+    .form-section-title.mb-6 Dados do questionário
 
     el-form(v-bind="formProps" ref="form")
       .mb-7: el-form-item(label="Nome do questionário para uso interno" prop="nameForManagement")
@@ -42,28 +42,35 @@
           @input="updateQuestionnaireField($event, 'isPublished')"
         ) Público
 
-    .form-section-title.my-6 Perguntas do questionário
-      .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
 
-    questions-container(
-      v-if="hasAnyQuestions"
-      :questions="value.questions"
-      @update:questions="updateQuestionnaireField($event, 'questions')"
-    )
-    .text-gray-500.mt-2(v-else) Nenhuma pergunta no questionário, adicione uma com o botão acima.
+      .form-section-title.mt-4 Perguntas do questionário
+        .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
+      el-form-item.pb-6(prop="questions")
+
+      questions-container(
+        v-if="hasAnyQuestions"
+        :questions="value.questions"
+        @update:questions="updateQuestionnaireField($event, 'questions')"
+      )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { merge } from 'lodash';
+import { merge, every } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
+import { Form } from 'element-ui';
+import { Override } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
 import { SymptomQuestionnaireInput } from '~/types/gql';
-import QuestionsContainer, { getDefaultQuestion, removeKeysFromQuestionsChoices } from './QuestionsContainer.vue';
+import QuestionsContainer, { unkeyQuestionsChoices } from './QuestionsContainer.vue';
+import { getDefaultQuestion, KeyedQuestion } from './QuestionForm.vue';
 
-type QuestionnaireKeyRemover = (questionnaire: Props['value']) => Props['value'];
-export const removeKeysFromQuestionnaire: QuestionnaireKeyRemover = (questionnaire) => {
-  const questionsWithKeylessChoices = removeKeysFromQuestionsChoices(questionnaire.questions);
+export type Questionnaire = SymptomQuestionnaireInput;
+export type QuestionnaireWithKeyedChildren = Override<Questionnaire, { questions: KeyedQuestion[] }>;
+
+type QuestionnaireKeyRemover = (questionnaire: Props['value']) => Questionnaire;
+export const unkeyQuestionnaire: QuestionnaireKeyRemover = (questionnaire) => {
+  const questionsWithKeylessChoices = unkeyQuestionsChoices(questionnaire.questions);
   const keylessQuestionnaire = {
     ...questionnaire,
     questions: questionsWithKeylessChoices,
@@ -82,11 +89,11 @@ type Computed = {
   formProps: ElFormProps<keyof Props['value']>;
 };
 export type Props = {
-  value: SymptomQuestionnaireInput;
+  value: QuestionnaireWithKeyedChildren;
   isValid: boolean;
 };
 export type Events = {
-  input: SymptomQuestionnaireInput; // emits keyed choices
+  input: Props['value'];
   'update:isValid': Props['isValid'];
 };
 
@@ -129,19 +136,32 @@ export default Vue.extend<Data, Methods, Computed, Props>({
             max: 500,
             type: 'string',
             required: true,
-            message: 'O nome para uso interno é obrigatório',
+            message: 'Obrigatório',
           }],
           nameForPresentation: [{
             max: 500,
             type: 'string',
             required: true,
-            message: 'O nome do questionário para pacientes é obrigatório',
+            message: 'Obrigatório',
           }],
           isPublished: [{ type: 'boolean', required: true }],
           questions: [
-            // TODO ADD CUSTOM VALIDATOR HERE
-            // HAVE A SYNC PROP LIKE isQuestionsValid
-            // return if its true
+            {
+              type: 'array',
+              required: true,
+              validator: (rule, value: Props['value']['questions'] = [], callback) => {
+                const invalidQuestionsMessage = 'Preencha todas as perguntas corretamente';
+                const minLengthQuestionsMessage = 'Crie pelo menos uma pergunta';
+
+                const hasMinLengthError = value.length < 1;
+                if (hasMinLengthError) return callback(minLengthQuestionsMessage);
+
+                const hasInvalidQuestionsError = !every(value, 'isValid');
+                if (hasInvalidQuestionsError) return callback(invalidQuestionsMessage);
+
+                return callback();
+              },
+            },
           ],
         },
       };
@@ -153,9 +173,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.value.questions.push(newQuestion);
     },
     emitInput(updatedData) {
-      // TODO update isValid here
-
       this.$emit<Events, 'input'>('input', updatedData);
+      this.$nextTick(() => (this.$refs.form as Form).validate((newIsValid) => {
+        if (newIsValid !== this.isValid) {
+          this.$emit<Events, 'update:isValid'>('update:isValid', newIsValid);
+        }
+      }));
     },
     updateQuestionnaireField(updatedValue, fieldName) {
       const updatedQuestionnaire = merge({}, this.value, { [fieldName]: updatedValue });
@@ -168,7 +191,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .questionnaire-form-wrapper {
   .form-section-title {
-    @apply mb-6 text-lg font-semibold text-gray-800 flex items-center;
+    @apply text-lg font-semibold text-gray-800 flex items-center;
   }
 
   & >>> .form-item-helper-text {

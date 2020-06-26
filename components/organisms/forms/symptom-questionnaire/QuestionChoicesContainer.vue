@@ -14,32 +14,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { v4 as uuidv4 } from 'uuid';
-import { sortBy, pull, omit } from 'lodash';
+import { pull, omit, sortBy } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
-import ChoiceForm, { Events as ChoiceEvents } from './QuestionChoiceForm.vue';
+import ChoiceForm, {
+  Choice,
+  KeyedChoice,
+  getDefaultChoice,
+  Events as ChoiceEvents,
+} from './QuestionChoiceForm.vue';
 
-type DefaultChoiceGetter = (currentChoicesLength: number) => Props['choices'][0];
-export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => ({
-  nameForManagement: '',
-  presentationOrder: currentChoicesLength + 1,
-  text: '',
-  value: 1,
-  key: uuidv4(),
-});
+type ChoiceKeyRemover = (choice: KeyedChoice) => Choice;
+const unkeyChoice: ChoiceKeyRemover = (choice) => omit(choice, ['key', 'isValid']);
 
-type ChoiceKeyRemover = (choice: Props['choices'][0]) => Props['choices'][0];
-const removeKeyFromChoice: ChoiceKeyRemover = (choice) => omit(choice, 'key');
-
-type ChoicesKeyRemover = (choices: Props['choices']) => Props['choices'];
-export const removeKeysFromChoices: ChoicesKeyRemover = (choices) => choices.map(removeKeyFromChoice);
+type ChoicesKeyRemover = (choices: KeyedChoice[]) => Choice[];
+export const unkeyChoices: ChoicesKeyRemover = (choices) => choices.map(unkeyChoice);
 
 type Data = {};
 type Methods = {
   addNewChoice: () => void;
-  emitUpdate: (updatedChoices: Props['choices']) => void;
-  updateChoice: (updatedChoice: Props['choices'][0]) => void;
+  emitUpdate: (updatedChoices: KeyedChoice[]) => void;
+  updateChoice: (updatedChoice: KeyedChoice) => void;
   deleteChoice: (choiceToDelete: ChoiceEvents['delete-choice']) => void;
   updateChoicesOrder: (args: ChoiceEvents['update-presentation-order']) => void;
 };
@@ -48,7 +42,7 @@ type Computed = {
   maxPresentationOrder: number;
 };
 export type Props = {
-  choices: SymptomQuestionnaireQuestionChoiceInput[];
+  choices: KeyedChoice[];
 };
 export type Events = {
   'update:choices': Props['choices'];

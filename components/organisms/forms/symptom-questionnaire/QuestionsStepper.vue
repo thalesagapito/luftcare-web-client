@@ -1,24 +1,26 @@
 <template lang="pug">
   el-steps.questions-stepper(v-bind="stepperProps")
     el-step(
-      v-for="({ nameForManagement, presentationOrder }) in orderedQuestions"
-      icon="_"
-      :key="presentationOrder"
-      :title="nameForManagement || 'Pergunta sem nome'"
-      :status="activeStepNumber === presentationOrder ? 'finish' : 'wait'"
-      @click.native="updateActiveStepNumber(presentationOrder)"
+      v-for="question in orderedQuestions"
+      :key="question.key"
+      :title="question.nameForManagement || 'Pergunta sem nome'"
+      :icon="getStepIcon(question)"
+      :status="getStepStatus(question)"
+      @click.native="updateActiveStepNumber(question.presentationOrder)"
     )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { sortBy } from 'lodash';
-import { Steps } from 'element-ui';
+import { Steps, Step } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { SymptomQuestionnaireQuestionInput } from '~/types/gql';
+import { KeyedQuestion } from './QuestionForm.vue';
 
 type Data = {};
 type Methods = {
+  getStepIcon: (question: Props['questions'][0]) => Step['icon'];
+  getStepStatus: (question: Props['questions'][0]) => Step['status'];
   updateActiveStepNumber: (newStepNumber: number) => void;
 };
 type Computed = {
@@ -27,7 +29,7 @@ type Computed = {
 };
 export type Props = {
   activeStepNumber: number;
-  questions: SymptomQuestionnaireQuestionInput[];
+  questions: KeyedQuestion[];
 };
 export type Events = {
   'update:activeStepNumber': Props['activeStepNumber'];
@@ -62,6 +64,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     updateActiveStepNumber(newActiveStepNumber) {
       this.$emit<Events, 'update:activeStepNumber'>('update:activeStepNumber', newActiveStepNumber);
     },
+    getStepStatus({ presentationOrder }) {
+      const isCurrentQuestion = presentationOrder === this.activeStepNumber;
+      return isCurrentQuestion ? 'process' : 'wait';
+    },
+    getStepIcon({ isValid }) {
+      return isValid ? 'el-icon-success' : 'el-icon-error';
+    },
   },
 });
 </script>
@@ -70,9 +79,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 .questions-stepper {
   @apply rounded-lg px-4;
 
-  .el-step.is-simple >>> .el-step__head {
+  /* .el-step.is-simple >>> .el-step__head {
     @apply hidden;
-  }
+  } */
   .el-step.is-simple >>> .el-step__title {
     @apply break-normal text-center text-base cursor-pointer;
   }
