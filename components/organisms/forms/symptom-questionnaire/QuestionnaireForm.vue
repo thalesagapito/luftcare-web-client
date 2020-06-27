@@ -12,7 +12,7 @@
           maxlength="500"
           placeholder="Digite aqui"
           :value="value.nameForManagement"
-          @input="updateQuestionnaireField($event, 'nameForManagement')"
+          @input="updateQuestionnaireField('nameForManagement', $event)"
         )
 
       .mb-7: el-form-item(label="Nome do questionário para pacientes" prop="nameForPresentation")
@@ -24,7 +24,7 @@
           maxlength="500"
           placeholder="Digite aqui"
           :value="value.nameForPresentation"
-          @input="updateQuestionnaireField($event, 'nameForPresentation')"
+          @input="updateQuestionnaireField('nameForPresentation', $event)"
         )
 
       el-form-item(label="Visibilidade" prop="isPublished")
@@ -34,12 +34,12 @@
         el-radio(
           :label="false"
           :value="value.isPublished"
-          @input="updateQuestionnaireField($event, 'isPublished')"
+          @input="updateQuestionnaireField('isPublished', $event)"
         ) Privado
         el-radio(
           :label="true"
           :value="value.isPublished"
-          @input="updateQuestionnaireField($event, 'isPublished')"
+          @input="updateQuestionnaireField('isPublished', $event)"
         ) Público
 
 
@@ -56,12 +56,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { merge, every } from 'lodash';
+import { every } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { Form } from 'element-ui';
-import { Override } from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
 import { SymptomQuestionnaireInput } from '~/types/gql';
+import { Override, UpdateFieldWithValueFunction } from '~/types/helpers';
 import QuestionsContainer, { unkeyQuestionsChoices } from './QuestionsContainer.vue';
 import { getDefaultQuestion, KeyedQuestion } from './QuestionForm.vue';
 
@@ -82,7 +82,7 @@ type Data = {};
 type Methods = {
   addNewQuestion: () => void;
   emitInput: (value: Props['value']) => void;
-  updateQuestionnaireField: <K extends keyof Props['value']>(value: Props['value'][K], fieldName: K) => void;
+  updateQuestionnaireField: UpdateFieldWithValueFunction<Props['value']>;
 };
 type Computed = {
   hasAnyQuestions: boolean;
@@ -180,8 +180,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         }
       }));
     },
-    updateQuestionnaireField(updatedValue, fieldName) {
-      const updatedQuestionnaire = merge({}, this.value, { [fieldName]: updatedValue });
+    updateQuestionnaireField(field, value) {
+      const updatedQuestionnaire = { ...this.value, [field]: value };
       this.emitInput(updatedQuestionnaire);
     },
   },

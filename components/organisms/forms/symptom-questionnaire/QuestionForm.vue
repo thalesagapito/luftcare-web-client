@@ -26,7 +26,7 @@
         maxlength="500"
         placeholder="Digite aqui"
         :value="question.nameForManagement"
-        @input="updateQuestionField($event, 'nameForManagement')"
+        @input="updateQuestionField('nameForManagement', $event)"
       )
 
     .mb-7: el-form-item(label="Enunciado da pergunta" prop="text")
@@ -39,13 +39,13 @@
         placeholder="Digite aqui"
         :value="question.text"
         :autosize="{ minRows: 4 }"
-        @input="updateQuestionField($event, 'text')"
+        @input="updateQuestionField('text', $event)"
       )
 
     .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
       el-select(
         :value="question.kind"
-        @input="updateQuestionField($event, 'kind')"
+        @input="updateQuestionField('kind', $event)"
       )
         el-option(
           v-for="option in questionKindSelectOptions"
@@ -61,17 +61,22 @@
 
       choices-container(
         :choices="question.possibleChoices"
-        @update:choices="updateQuestionField($event, 'possibleChoices')"
+        @update:choices="updateQuestionField('possibleChoices', $event)"
       )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { merge, every, debounce } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
+import { every, debounce } from 'lodash';
 import { Option, Form } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { WithIsValid, Override, Keyed } from '~/types/helpers';
+import {
+  Keyed,
+  Override,
+  WithIsValid,
+  UpdateFieldWithValueFunction,
+} from '~/types/helpers';
 import { ElFormProps } from '~/types/element-ui';
 import { getDefaultChoice, KeyedChoice } from './QuestionChoiceForm.vue';
 import ChoicesContainer from './QuestionChoicesContainer.vue';
@@ -98,7 +103,7 @@ type Methods = {
   addNewChoice: () => void;
   validateFormAndEmit: () => void;
   emitUpdateQuestion:(question: Props['question']) => void;
-  updateQuestionField: <K extends keyof Props['question']>(value: Props['question'][K], fieldName: K) => void;
+  updateQuestionField: UpdateFieldWithValueFunction<Props['question']>;
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
@@ -205,8 +210,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     emitUpdateQuestion(question) {
       this.$emit<Events, 'update:question'>('update:question', question);
     },
-    updateQuestionField(value, fieldName) {
-      const updatedQuestion = merge({}, this.question, { [fieldName]: value });
+    updateQuestionField(field, value) {
+      const updatedQuestion = { ...this.question, [field]: value };
       this.emitUpdateQuestion(updatedQuestion);
     },
     updateQuestionPresentationOrder(newPresentationOrder) {
@@ -221,7 +226,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       const currentChoices = this.question.possibleChoices || [];
       const updatedQuestionChoicesArray = [...currentChoices, newChoice];
 
-      this.updateQuestionField(updatedQuestionChoicesArray, 'possibleChoices');
+      this.updateQuestionField('possibleChoices', updatedQuestionChoicesArray);
     },
     async validateFormAndEmit() {
       const isValid = await (this.$refs.form as Form)?.validate().catch(() => false);
