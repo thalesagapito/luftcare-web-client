@@ -51,7 +51,7 @@ import { Query, QuerySymptomQuestionnairesArgs } from '@/types/gql';
 import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
 import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
 import questionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
-import changePublishStatusMutation from '@/graphql/queries/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+import changePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
