@@ -19,13 +19,13 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
-import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
+import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
+import { MutationCreateSymptomQuestionnaireArgs } from '@/types/gql';
+import CreateSymptomQuestionnaireMutationGQL from '@/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
 
-import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
+import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
+import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
   isFormValid: boolean;

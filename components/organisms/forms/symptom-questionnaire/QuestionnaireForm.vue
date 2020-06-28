@@ -59,9 +59,9 @@ import Vue from 'vue';
 import { every } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { Form } from 'element-ui';
-import { ElFormProps } from '~/types/element-ui';
-import { SymptomQuestionnaireInput } from '~/types/gql';
-import { Override, UpdateFieldWithValueFunction } from '~/types/helpers';
+import { ElFormProps } from '@/types/element-ui';
+import { SymptomQuestionnaireInput } from '@/types/gql';
+import { Override, UpdateFieldWithValueFunction } from '@/types/helpers';
 import QuestionsContainer, { unkeyQuestionsChoices } from './QuestionsContainer.vue';
 import { getDefaultQuestion, KeyedQuestion } from './QuestionForm.vue';
 

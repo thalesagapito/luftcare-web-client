@@ -38,7 +38,8 @@ function handleValidationError(errors: Readonly<GraphQLError[]>) {
   });
 }
 
-function notifyError(message: string): void {
+function notifyError(untreatedMessage: string): void {
+  const message = untreatedMessage.replace('GraphQL error: ', '');
   (Vue.prototype.$notify as ElNotification)({ title: 'Erro', type: 'error', message });
 }
 
@@ -62,6 +63,5 @@ export function errorHandler(error: ApolloError, enableErrorNotification: boolea
 const registerClientErrorHandler: Plugin = (context, inject) => {
   inject('clientErrorHandler', errorHandler);
 };
-
 
 export default registerClientErrorHandler;

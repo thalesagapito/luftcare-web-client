@@ -55,10 +55,10 @@ import { Form } from 'element-ui';
 import { debounce } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { ElFormProps } from '~/types/element-ui';
-import { Keyed, WithIsValid } from '~/types/helpers';
-import { SymptomQuestionnaireQuestionChoiceInput } from '~/types/gql';
-import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
+import { ElFormProps } from '@/types/element-ui';
+import { Keyed, WithIsValid } from '@/types/helpers';
+import { SymptomQuestionnaireQuestionChoiceInput } from '@/types/gql';
+import NumberStepper from '@/components/atoms/controls/VerticalNumberStepper.vue';
 
 export type Choice = SymptomQuestionnaireQuestionChoiceInput;
 export type KeyedChoice = Keyed<WithIsValid<Choice>>;

@@ -27,11 +27,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Form } from 'element-ui';
-import { ExecutionResult } from 'graphql';
 import { ElFormProps } from '@/types/element-ui';
-import { MutationLoginArgs, Mutation } from '@/types/gql';
+import { MutationLoginArgs } from '@/types/gql';
 import LoginMutationGQL from '@/graphql/mutations/User/login';
-import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { MutationResponseHandler } from '@/types/helpers';
+import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 
 type Data = {
   email?: string;
@@ -40,7 +40,7 @@ type Data = {
 type Methods = {
   loginUser: () => void;
   validateFormAndLogin: () => void;
-  passTokenToApolloClient: (result: ExecutionResult<Mutation>) => void;
+  passTokenToApolloClient: MutationResponseHandler['Success'];
 };
 type Computed = {
   formProps: ElFormProps<'email'|'password'>;
@@ -89,8 +89,8 @@ export default Vue.extend<Data, Methods, Computed, {}>({
         .finally(() => loading.close());
     },
     async passTokenToApolloClient({ data }) {
-      const authToken = data?.login?.authorization || '';
-      const refreshToken = data?.login?.authorization || '';
+      const authToken = data?.login.authorization || '';
+      const refreshToken = data?.login.authorization || '';
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
       this.$router.push('/dashboard');

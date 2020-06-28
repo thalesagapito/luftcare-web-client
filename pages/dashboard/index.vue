@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 
 export default Vue.extend({
   middleware: RegisteredMiddleware.isUserAuthenticated,

@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TheSideMenu from '~/components/organisms/single-instance/side-menu/TheSideMenu.vue';
+import TheSideMenu from '@/components/organisms/single-instance/side-menu/TheSideMenu.vue';
 
 type Data = {};
 type Methods = {};

@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { authMethods } from '~/mixins/RegisteredMixins';
+import { authMethods } from '@/mixins/RegisteredMixins';
 
 type SideMenuLinkIndex = 'home' | 'questionnaires';
 

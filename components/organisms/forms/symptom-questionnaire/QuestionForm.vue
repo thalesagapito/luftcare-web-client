@@ -76,11 +76,11 @@ import {
   Override,
   WithIsValid,
   UpdateFieldWithValueFunction,
-} from '~/types/helpers';
-import { ElFormProps } from '~/types/element-ui';
+} from '@/types/helpers';
+import { ElFormProps } from '@/types/element-ui';
+import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '@/types/gql';
 import { getDefaultChoice, KeyedChoice } from './QuestionChoiceForm.vue';
 import ChoicesContainer from './QuestionChoicesContainer.vue';
-import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '~/types/gql';
 
 export type Question = SymptomQuestionnaireQuestionInput;
 type QuestionWithKeyedChoices = Override<Question, { possibleChoices?: KeyedChoice[] }>;

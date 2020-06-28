@@ -46,16 +46,16 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
-import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
-import { UpdateFieldWithValueFunction, MutationResponseHandler } from '~/types/helpers';
-import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
-import questionnairesQuery from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
-import changePublishStatusMutation from '~/graphql/queries/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
+import { Query, QuerySymptomQuestionnairesArgs } from '@/types/gql';
+import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
+import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
+import questionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import changePublishStatusMutation from '@/graphql/queries/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
-import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnairesTable, { Props as TableProps } from '~/components/molecules/tables/TableOrderablePaginated.vue';
+import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
+import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
+import QuestionnairesTable, { Props as TableProps } from '@/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Questionnaire = Query['symptomQuestionnaires']['results'][0];
 
@@ -70,7 +70,6 @@ type Methods = {
   handleDelete: (questionnaire: Questionnaire) => void;
   updateQuestionnairesFilters: UpdateFieldWithValueFunction<Data['questionnairesFilters']>;
   handlePublishStatusChangeSuccess: MutationResponseHandler['Success'];
-  handlePublishStatusChangeError: MutationResponseHandler['Error'];
   changePublishStatus: (id: string, isPublished: boolean) => void;
   handleDropdownClick: (Questionnaire: Questionnaire, command: string) => void;
 };
@@ -165,7 +164,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           variables: { id, isPublished },
         })
         .then(this.handlePublishStatusChangeSuccess)
-        .catch(this.handlePublishStatusChangeError);
+        .catch(this.$clientErrorHandler);
     },
     handlePublishStatusChangeSuccess({ data }) {
       this.$notify({
@@ -174,13 +173,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         type: 'success',
       });
       this.refetchQuestionnaires();
-    },
-    handlePublishStatusChangeError({ message }) {
-      this.$notify({
-        title: 'Erro',
-        type: 'error',
-        message,
-      });
     },
     handleDropdownClick(questionnaire, command) {
       switch (command) {
