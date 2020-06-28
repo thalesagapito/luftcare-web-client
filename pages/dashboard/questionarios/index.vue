@@ -1,57 +1,61 @@
 <template lang="pug">
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
-      el-button(type="default" plain @click="refreshQuery") Atualizar
+      el-button(type="default" plain @click="refetchQuestionnaires") Atualizar
       el-button(type="primary" @click="$router.push('questionarios/novo')") Criar novo questionário
     shadowed-card.mt-7
       questionnaires-table(
         v-bind="questionnairesTableProps"
-        @update-sort="updateSort"
-        @update-page-size="updatePageSize"
-        @update-current-page="updateCurrentPage"
+        @update-sort="updateQuestionnairesFilters('orderBy', $event)"
+        @update-page-size="updateQuestionnairesFilters('resultsPerPage', $event)"
+        @update-current-page="updateQuestionnairesFilters('pageNumber', $event)"
       )
+        el-table-column(
+          label="Status"
+          align="center"
+          width="100"
+        )
+          template(slot-scope="{ row }")
+            el-tag(v-if="row.isPublished" size="small") Público
+            el-tag(v-else size="small" type="info") Privado
         el-table-column(
           fixed="right"
           label="Ações"
           align="right"
+          width="235"
         )
           .action-buttons(slot-scope="{ row }")
-            el-button(
-              round
-              size="mini"
-              type="text"
-              @click="handleEdit(row)"
-            ) Editar
-            el-button(
-              round
-              size="mini"
-              type="text"
-              @click="handleDelete(row)"
-            ) Remover
-            el-dropdown
-              el-button(
-                plain
-                round
-                size="mini"
-                icon="el-icon-more-outline"
-                @click="handleEdit(row)"
-              )
+            el-button(round size="mini" type="text" @click="handleEdit(row)") Editar
+            el-popconfirm(
+              title="Remover o questionário?"
+              confirmButtonText="Sim, remover"
+              cancelButtonText="Cancelar"
+              hide-icon
+              @onConfirm="handleDelete(row)"
+            )
+              el-button(round size="mini" type="text" slot="reference") Remover
+            el-dropdown(:show-timeout="100" @command="handleDropdownClick(row, $event)")
+              el-button(plain round size="mini" icon="el-icon-more-outline")
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item Action 1
-                el-dropdown-item Action 1
+                el-dropdown-item(v-if="row.isPublished" command="unpublish") Tornar privado
+                el-dropdown-item(v-else command="publish") Publicar
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
-import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { Query, QuerySymptomQuestionnairesArgs } from '~/types/gql';
-import currentSymptomQuestionnaires from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import { UpdateFieldWithValueFunction, MutationResponseHandler } from '~/types/helpers';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
+import questionnairesQuery from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import changePublishStatusMutation from '~/graphql/queries/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnairesTable, { Props as TableProps, Events as TableEvents } from '~/components/molecules/tables/TableOrderablePaginated.vue';
+import QuestionnairesTable, { Props as TableProps } from '~/components/molecules/tables/TableOrderablePaginated.vue';
 
 type Questionnaire = Query['symptomQuestionnaires']['results'][0];
 
@@ -61,12 +65,14 @@ type Data = {
   isQuestionnairesTableLoading: 0;
 };
 type Methods = {
-  refreshQuery: () => void;
+  refetchQuestionnaires: () => void;
   handleEdit: (questionnaire: Questionnaire) => void;
   handleDelete: (questionnaire: Questionnaire) => void;
-  updateSort: (args: TableEvents['update-sort']) => void;
-  updatePageSize: (newSize: TableEvents['update-page-size']) => void;
-  updateCurrentPage: (newCurrentPage: TableEvents['update-current-page']) => void;
+  updateQuestionnairesFilters: UpdateFieldWithValueFunction<Data['questionnairesFilters']>;
+  handlePublishStatusChangeSuccess: MutationResponseHandler['Success'];
+  handlePublishStatusChangeError: MutationResponseHandler['Error'];
+  changePublishStatus: (id: string, isPublished: boolean) => void;
+  handleDropdownClick: (Questionnaire: Questionnaire, command: string) => void;
 };
 type Computed = {
   headerProps: HeaderProps;
@@ -93,7 +99,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     questionnaires: {
-      query: currentSymptomQuestionnaires,
+      query: questionnairesQuery,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
       update: ({ symptomQuestionnaires }) => symptomQuestionnaires,
@@ -142,23 +148,49 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    refreshQuery() {
+    refetchQuestionnaires() {
       this.$apollo.queries.questionnaires?.refetch();
     },
-    updateSort(orderBy) {
-      this.questionnairesFilters = { ...this.questionnairesFilters, orderBy };
+    updateQuestionnairesFilters(field, value) {
+      this.questionnairesFilters = { ...this.questionnairesFilters, [field]: value };
     },
-    updatePageSize(resultsPerPage) {
-      this.questionnairesFilters = { ...this.questionnairesFilters, resultsPerPage };
+    handleEdit() {
     },
-    updateCurrentPage(pageNumber) {
-      this.questionnairesFilters = { ...this.questionnairesFilters, pageNumber };
+    handleDelete() {
     },
-    handleEdit(questionnaire) {
-      console.log(questionnaire);
+    changePublishStatus(id, isPublished) {
+      this.$apollo
+        .mutate({
+          mutation: changePublishStatusMutation,
+          variables: { id, isPublished },
+        })
+        .then(this.handlePublishStatusChangeSuccess)
+        .catch(this.handlePublishStatusChangeError);
     },
-    handleDelete(questionnaire) {
-      console.log(questionnaire);
+    handlePublishStatusChangeSuccess({ data }) {
+      this.$notify({
+        title: 'Sucesso',
+        message: data?.changeSymptomQuestionnairePublishStatus.userFriendlyMessage || '',
+        type: 'success',
+      });
+      this.refetchQuestionnaires();
+    },
+    handlePublishStatusChangeError({ message }) {
+      this.$notify({
+        title: 'Erro',
+        type: 'error',
+        message,
+      });
+    },
+    handleDropdownClick(questionnaire, command) {
+      switch (command) {
+        case 'publish': this.changePublishStatus(questionnaire.id, true);
+          break;
+        case 'unpublish': this.changePublishStatus(questionnaire.id, false);
+          break;
+        default:
+          break;
+      }
     },
   },
   head: {

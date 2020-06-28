@@ -11,11 +11,20 @@ export type Scalars = {
 };
 
 
+/** Response padrão informativo para quando não se espera dados como resposta */
+export type GenericResponse = {
+  __typename?: 'GenericResponse';
+  userFriendlyMessage: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login: TokenSet;
   createSymptomQuestionnaire: SymptomQuestionnaire;
   updateSymptomQuestionnaire: SymptomQuestionnaire;
+  publishSymptomQuestionnaire: GenericResponse;
+  unpublishSymptomQuestionnaire: GenericResponse;
+  changeSymptomQuestionnairePublishStatus: GenericResponse;
   registerUser: User;
 };
 
@@ -34,6 +43,22 @@ export type MutationCreateSymptomQuestionnaireArgs = {
 export type MutationUpdateSymptomQuestionnaireArgs = {
   idSharedBetweenVersions: Scalars['ID'];
   questionnaire: SymptomQuestionnaireInput;
+};
+
+
+export type MutationPublishSymptomQuestionnaireArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationUnpublishSymptomQuestionnaireArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationChangeSymptomQuestionnairePublishStatusArgs = {
+  isPublished: Scalars['Boolean'];
+  id: Scalars['String'];
 };
 
 
@@ -247,6 +272,32 @@ export type CurrentSymptomQuestionnairesQuery = (
         & Pick<SymptomQuestionnaireQuestion, 'nameForManagement'>
       )>> }
     )> }
+  ) }
+);
+
+export type PublishSymptomQuestionnaireMutationVariables = {
+  id: Scalars['String'];
+};
+
+
+export type PublishSymptomQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { publishSymptomQuestionnaire: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
+  ) }
+);
+
+export type UnpublishSymptomQuestionnaireMutationVariables = {
+  id: Scalars['String'];
+};
+
+
+export type UnpublishSymptomQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { unpublishSymptomQuestionnaire: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
   ) }
 );
 

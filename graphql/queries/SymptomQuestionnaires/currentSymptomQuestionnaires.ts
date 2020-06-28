@@ -18,11 +18,13 @@ query currentSymptomQuestionnaires(
     ) {
     results {
       id
+      idSharedBetweenVersions
       nameForManagement
       nameForPresentation
       createdAt
       updatedAt
       version
+      isPublished
       questions {
         nameForManagement
       }

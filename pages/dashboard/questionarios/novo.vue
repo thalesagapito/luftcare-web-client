@@ -18,12 +18,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ExecutionResult } from 'graphql';
-import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { Mutation, MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
-import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import { MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
 import CreateSymptomQuestionnaireMutationGQL from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
+
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
@@ -32,7 +33,7 @@ type Data = {
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
-  handleFormCreationSuccess: (args: ExecutionResult<Mutation>) => void;
+  handleFormCreationSuccess: () => void;
 };
 type Computed = {
   headerProps: HeaderProps;

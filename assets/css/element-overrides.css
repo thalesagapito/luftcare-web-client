@@ -86,12 +86,9 @@ button.el-button--danger:focus {
     thead tr th {
       @apply py-2 bg-white;
       & > .cell {
-        @apply px-6 text-sm;
+        @apply text-sm;
       }
     }
-  }
-  .el-table__body-wrapper .cell {
-    @apply px-6;
   }
 }
 /* Table default styling */
@@ -105,3 +102,16 @@ button.el-button--danger:focus {
   }
 }
 /* Breadcrumbs default styling */
+
+
+/* ElPopConfirm default styling */
+.el-popconfirm {
+  .el-popconfirm__main {
+    @apply mb-4;
+  }
+
+  .el-button.el-button--text {
+    @apply px-3;
+  }
+}
+/* ElPopConfirm default styling */
