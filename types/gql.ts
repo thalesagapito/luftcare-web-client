@@ -144,7 +144,7 @@ export type SymptomQuestionnaire = {
   nameForPresentation: Scalars['String'];
   version: Scalars['Int'];
   isPublished: Scalars['Boolean'];
-  questions?: Maybe<Array<SymptomQuestionnaireQuestion>>;
+  questions: Array<SymptomQuestionnaireQuestion>;
 };
 
 export type SymptomQuestionnaireInput = {
@@ -327,10 +327,10 @@ export type CurrentSymptomQuestionnairesQuery = (
     & { results: Array<(
       { __typename?: 'SymptomQuestionnaire' }
       & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version' | 'isPublished'>
-      & { questions?: Maybe<Array<(
+      & { questions: Array<(
         { __typename?: 'SymptomQuestionnaireQuestion' }
         & Pick<SymptomQuestionnaireQuestion, 'nameForManagement'>
-      )>> }
+      )> }
     )> }
   ) }
 );
@@ -345,14 +345,14 @@ export type GetQuestionnaireQuery = (
   & { symptomQuestionnaire: (
     { __typename?: 'SymptomQuestionnaire' }
     & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'isPublished' | 'nameForManagement' | 'nameForPresentation'>
-    & { questions?: Maybe<Array<(
+    & { questions: Array<(
       { __typename?: 'SymptomQuestionnaireQuestion' }
       & Pick<SymptomQuestionnaireQuestion, 'id' | 'kind' | 'nameForManagement' | 'presentationOrder' | 'text'>
       & { possibleChoices?: Maybe<Array<(
         { __typename?: 'SymptomQuestionnaireQuestionChoice' }
         & Pick<SymptomQuestionnaireQuestionChoice, 'id' | 'nameForManagement' | 'text' | 'presentationOrder' | 'value'>
       )>> }
-    )>> }
+    )> }
   ) }
 );
 

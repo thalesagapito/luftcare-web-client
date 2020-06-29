@@ -17,9 +17,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 import { find, pull, omit } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { unkeyChoices } from './QuestionChoicesContainer.vue';
+import { unkeyChoices, keyChoices } from './QuestionChoicesContainer.vue';
 import QuestionsStepper, { Props as StepperProps } from './QuestionsStepper.vue';
 import QuestionForm, {
   Question,
@@ -37,6 +38,17 @@ const unkeyQuestionChoices: QuestionKeyRemover = (question) => ({
 
 type QuestionsKeyRemover = (questions: Props['questions']) => Question[];
 export const unkeyQuestionsChoices: QuestionsKeyRemover = (questions) => questions.map(unkeyQuestionChoices);
+
+type QuestionKeyAttacher = (question: Question) => Props['questions'][0];
+const keyQuestionChoices: QuestionKeyAttacher = (keylessQuestion) => ({
+  ...keylessQuestion,
+  key: uuidv4(),
+  isValid: true,
+  possibleChoices: keyChoices(keylessQuestion.possibleChoices || []),
+});
+
+type QuestionsKeyAttacher = (questions: Question[]) => Props['questions'];
+export const keyQuestionsChoices: QuestionsKeyAttacher = (questions) => questions.map(keyQuestionChoices);
 
 type Data = {
   activeStepNumber: number;

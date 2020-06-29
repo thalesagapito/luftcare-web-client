@@ -8,7 +8,7 @@
       )
 
       .form-section-footer
-        el-button(type="default" @click="$router.back()") Cancelar
+        el-button(type="default" @click="$router.push('/dashboard/questionarios')") Cancelar
         el-button(
           type="primary"
           :disabled="!isFormValid"

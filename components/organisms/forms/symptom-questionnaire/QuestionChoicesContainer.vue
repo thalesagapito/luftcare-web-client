@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 import { pull, omit, sortBy } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import ChoiceForm, {
@@ -28,6 +29,12 @@ const unkeyChoice: ChoiceKeyRemover = (choice) => omit(choice, ['key', 'isValid'
 
 type ChoicesKeyRemover = (choices: KeyedChoice[]) => Choice[];
 export const unkeyChoices: ChoicesKeyRemover = (choices) => choices.map(unkeyChoice);
+
+type ChoiceKeyAttacher = (choice: Choice) => KeyedChoice;
+const keyChoice: ChoiceKeyAttacher = (choice) => ({ ...choice, key: uuidv4(), isValid: true });
+
+type ChoicesKeyAttacher = (choices: Choice[]) => KeyedChoice[];
+export const keyChoices: ChoicesKeyAttacher = (choices) => choices.map(keyChoice);
 
 type Data = {};
 type Methods = {

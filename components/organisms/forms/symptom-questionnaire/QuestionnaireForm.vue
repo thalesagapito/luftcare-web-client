@@ -62,7 +62,7 @@ import { Form } from 'element-ui';
 import { ElFormProps } from '@/types/element-ui';
 import { SymptomQuestionnaireInput } from '@/types/gql';
 import { Override, UpdateFieldWithValueFunction } from '@/types/helpers';
-import QuestionsContainer, { unkeyQuestionsChoices } from './QuestionsContainer.vue';
+import QuestionsContainer, { unkeyQuestionsChoices, keyQuestionsChoices } from './QuestionsContainer.vue';
 import { getDefaultQuestion, KeyedQuestion } from './QuestionForm.vue';
 
 export type Questionnaire = SymptomQuestionnaireInput;
@@ -76,6 +76,16 @@ export const unkeyQuestionnaire: QuestionnaireKeyRemover = (questionnaire) => {
     questions: questionsWithKeylessChoices,
   };
   return keylessQuestionnaire;
+};
+
+type QuestionnaireKeyAttacher = (questionnaire: Questionnaire) => Props['value'];
+export const keyQuestionnaire: QuestionnaireKeyAttacher = (keylessQuestionnaire) => {
+  const questionsWithKeyedChoices = keyQuestionsChoices(keylessQuestionnaire.questions);
+  const keyedQuestionnaire = {
+    ...keylessQuestionnaire,
+    questions: questionsWithKeyedChoices,
+  };
+  return keyedQuestionnaire;
 };
 
 type Data = {};
@@ -174,11 +184,16 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     emitInput(updatedData) {
       this.$emit<Events, 'input'>('input', updatedData);
-      this.$nextTick(() => (this.$refs.form as Form).validate((newIsValid) => {
-        if (newIsValid !== this.isValid) {
-          this.$emit<Events, 'update:isValid'>('update:isValid', newIsValid);
-        }
-      }));
+      this.$nextTick(() => {
+        const { form } = this.$refs;
+        if (!form) return;
+
+        (form as Form).validate((newIsValid) => {
+          if (newIsValid !== this.isValid) {
+            this.$emit<Events, 'update:isValid'>('update:isValid', newIsValid);
+          }
+        });
+      });
     },
     updateQuestionnaireField(field, value) {
       const updatedQuestionnaire = { ...this.value, [field]: value };

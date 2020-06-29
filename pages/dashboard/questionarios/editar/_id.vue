@@ -8,7 +8,7 @@
       )
 
       .form-section-footer
-        el-button(type="default" @click="$router.back()") Cancelar
+        el-button(type="default" @click="$router.push('/dashboard/questionarios')") Cancelar
         el-button(
           type="primary"
           :disabled="!isFormValid"
@@ -18,6 +18,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { debounce } from 'lodash';
+import isUUID from 'validator/lib/isUUID';
 
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 import { MutationUpdateSymptomQuestionnaireArgs, Query } from '@/types/gql';
@@ -26,7 +28,8 @@ import GetQuestionnaireQuery from '@/graphql/queries/SymptomQuestionnaires/getSy
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire, keyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import smartQueryErrorHandler from '../../../../errorHandling/apollo/smartQueryErrorHandler';
 
 type Data = {
   isFormValid: boolean;
@@ -35,7 +38,6 @@ type Data = {
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
   handleFormCreationSuccess: () => void;
-  keyQuestionsAndChoices: (questionnaire: Query['symptomQuestionnaire']) => FormProps['value'];
 };
 type Computed = {
   headerProps: HeaderProps;
@@ -60,11 +62,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   apollo: {
     questionnaireData: {
       query: GetQuestionnaireQuery,
-      variables() {
-        return { id: this.$route.params.id };
-      },
-      update({ symptomQuestionnaire }: Query) {
-        return this.keyQuestionsAndChoices(symptomQuestionnaire);
+      error: debounce(smartQueryErrorHandler, 10),
+      variables() { return { id: this.$route.params.id }; },
+      update({ symptomQuestionnaire }: Partial<Query>) {
+        if (!symptomQuestionnaire) return this.$router.push('/dashboard/questionarios');
+        return keyQuestionnaire(symptomQuestionnaire);
       },
     },
   },
@@ -100,14 +102,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });
       this.$router.push('/dashboard/questionarios');
     },
-    keyQuestionsAndChoices(questionnaire) {
-      console.log(questionnaire);
-      return {
-        nameForManagement: '', nameForPresentation: '', questions: [], isPublished: false,
-      };
-    },
   },
-
+  validate({ params }) {
+    const { id } = params;
+    if (!id) throw new Error('Identificador do formulário ausente na url');
+    if (!isUUID(id)) throw new Error('Identificador do formulário inválido');
+    return true;
+  },
 });
 </script>
 
