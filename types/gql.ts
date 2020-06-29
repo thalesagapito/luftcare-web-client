@@ -47,18 +47,18 @@ export type MutationUpdateSymptomQuestionnaireArgs = {
 
 
 export type MutationPublishSymptomQuestionnaireArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 
 export type MutationUnpublishSymptomQuestionnaireArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 
 export type MutationChangeSymptomQuestionnairePublishStatusArgs = {
   isPublished: Scalars['Boolean'];
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 
@@ -93,6 +93,7 @@ export type Query = {
   __typename?: 'Query';
   authorizationToken: Scalars['String'];
   symptomQuestionnaires: PaginatedSymptomQuestionnaireResponse;
+  symptomQuestionnaire: SymptomQuestionnaire;
   currentUser?: Maybe<User>;
   user?: Maybe<User>;
   users?: Maybe<Array<User>>;
@@ -115,8 +116,13 @@ export type QuerySymptomQuestionnairesArgs = {
 };
 
 
+export type QuerySymptomQuestionnaireArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryUserArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 /** Required data to register an application user from the register form */
@@ -223,6 +229,20 @@ export enum UserRole {
   NonAdmin = 'NON_ADMIN'
 }
 
+export type ChangePublishStatusMutationVariables = {
+  id: Scalars['ID'];
+  isPublished: Scalars['Boolean'];
+};
+
+
+export type ChangePublishStatusMutation = (
+  { __typename?: 'Mutation' }
+  & { changeSymptomQuestionnairePublishStatus: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
+  ) }
+);
+
 export type CreateSymptomQuestionnaireMutationVariables = {
   questionnaire: SymptomQuestionnaireInput;
 };
@@ -231,6 +251,46 @@ export type CreateSymptomQuestionnaireMutationVariables = {
 export type CreateSymptomQuestionnaireMutation = (
   { __typename?: 'Mutation' }
   & { createSymptomQuestionnaire: (
+    { __typename?: 'SymptomQuestionnaire' }
+    & Pick<SymptomQuestionnaire, 'id'>
+  ) }
+);
+
+export type PublishSymptomQuestionnaireMutationVariables = {
+  id: Scalars['ID'];
+};
+
+
+export type PublishSymptomQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { publishSymptomQuestionnaire: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
+  ) }
+);
+
+export type UnpublishSymptomQuestionnaireMutationVariables = {
+  id: Scalars['ID'];
+};
+
+
+export type UnpublishSymptomQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { unpublishSymptomQuestionnaire: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
+  ) }
+);
+
+export type UpdateQuestionnaireMutationVariables = {
+  idSharedBetweenVersions: Scalars['ID'];
+  questionnaire: SymptomQuestionnaireInput;
+};
+
+
+export type UpdateQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSymptomQuestionnaire: (
     { __typename?: 'SymptomQuestionnaire' }
     & Pick<SymptomQuestionnaire, 'id'>
   ) }
@@ -266,7 +326,7 @@ export type CurrentSymptomQuestionnairesQuery = (
     & Pick<PaginatedSymptomQuestionnaireResponse, 'hasMorePages' | 'totalResultsCount'>
     & { results: Array<(
       { __typename?: 'SymptomQuestionnaire' }
-      & Pick<SymptomQuestionnaire, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version'>
+      & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version' | 'isPublished'>
       & { questions?: Maybe<Array<(
         { __typename?: 'SymptomQuestionnaireQuestion' }
         & Pick<SymptomQuestionnaireQuestion, 'nameForManagement'>
@@ -275,29 +335,24 @@ export type CurrentSymptomQuestionnairesQuery = (
   ) }
 );
 
-export type PublishSymptomQuestionnaireMutationVariables = {
-  id: Scalars['String'];
+export type GetQuestionnaireQueryVariables = {
+  id: Scalars['ID'];
 };
 
 
-export type PublishSymptomQuestionnaireMutation = (
-  { __typename?: 'Mutation' }
-  & { publishSymptomQuestionnaire: (
-    { __typename?: 'GenericResponse' }
-    & Pick<GenericResponse, 'userFriendlyMessage'>
-  ) }
-);
-
-export type UnpublishSymptomQuestionnaireMutationVariables = {
-  id: Scalars['String'];
-};
-
-
-export type UnpublishSymptomQuestionnaireMutation = (
-  { __typename?: 'Mutation' }
-  & { unpublishSymptomQuestionnaire: (
-    { __typename?: 'GenericResponse' }
-    & Pick<GenericResponse, 'userFriendlyMessage'>
+export type GetQuestionnaireQuery = (
+  { __typename?: 'Query' }
+  & { symptomQuestionnaire: (
+    { __typename?: 'SymptomQuestionnaire' }
+    & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'isPublished' | 'nameForManagement' | 'nameForPresentation'>
+    & { questions?: Maybe<Array<(
+      { __typename?: 'SymptomQuestionnaireQuestion' }
+      & Pick<SymptomQuestionnaireQuestion, 'id' | 'kind' | 'nameForManagement' | 'presentationOrder' | 'text'>
+      & { possibleChoices?: Maybe<Array<(
+        { __typename?: 'SymptomQuestionnaireQuestionChoice' }
+        & Pick<SymptomQuestionnaireQuestionChoice, 'id' | 'nameForManagement' | 'text' | 'presentationOrder' | 'value'>
+      )>> }
+    )>> }
   ) }
 );
 

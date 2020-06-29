@@ -20,8 +20,9 @@
 import Vue from 'vue';
 
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { MutationCreateSymptomQuestionnaireArgs } from '@/types/gql';
-import CreateSymptomQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
+import { MutationUpdateSymptomQuestionnaireArgs, Query } from '@/types/gql';
+import UpdateQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
+import GetQuestionnaireQuery from '@/graphql/queries/SymptomQuestionnaires/getSymptomQuestionnaire';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
@@ -29,11 +30,12 @@ import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '@/com
 
 type Data = {
   isFormValid: boolean;
-  questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'] & FormProps['value'];
+  questionnaireData: MutationUpdateSymptomQuestionnaireArgs['questionnaire'] & FormProps['value'];
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
   handleFormCreationSuccess: () => void;
+  keyQuestionsAndChoices: (questionnaire: Query['symptomQuestionnaire']) => FormProps['value'];
 };
 type Computed = {
   headerProps: HeaderProps;
@@ -55,15 +57,26 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       },
     };
   },
+  apollo: {
+    questionnaireData: {
+      query: GetQuestionnaireQuery,
+      variables() {
+        return { id: this.$route.params.id };
+      },
+      update({ symptomQuestionnaire }: Query) {
+        return this.keyQuestionsAndChoices(symptomQuestionnaire);
+      },
+    },
+  },
   computed: {
     headerProps() {
       return {
-        title: 'Criar novo questionário',
+        title: 'Editar questionário',
         breadcrumbs: {
           items: [
             { label: 'Início', to: '/dashboard' },
             { label: 'Questionários', to: '/dashboard/questionarios' },
-            { label: 'Criar', to: '' },
+            { label: 'Editar', to: '' },
           ],
         },
       };
@@ -71,13 +84,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     async runCreateQuestionnaireMutation() {
-      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
+      const mutationArgs: MutationUpdateSymptomQuestionnaireArgs = {
+        idSharedBetweenVersions: '1',
         questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
       await this.$apollo
-        .mutate({ mutation: CreateSymptomQuestionnaireMutation, variables: mutationArgs })
+        .mutate({ mutation: UpdateQuestionnaireMutation, variables: mutationArgs })
         .then(this.handleFormCreationSuccess)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
@@ -85,6 +99,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     handleFormCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });
       this.$router.push('/dashboard/questionarios');
+    },
+    keyQuestionsAndChoices(questionnaire) {
+      console.log(questionnaire);
+      return {
+        nameForManagement: '', nameForPresentation: '', questions: [], isPublished: false,
+      };
     },
   },
 

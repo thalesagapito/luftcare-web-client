@@ -50,8 +50,8 @@ import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 import { Query, QuerySymptomQuestionnairesArgs } from '@/types/gql';
 import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
 import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
-import questionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
-import changePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+import QuestionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import ChangePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
@@ -98,7 +98,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     questionnaires: {
-      query: questionnairesQuery,
+      query: QuestionnairesQuery,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
       update: ({ symptomQuestionnaires }) => symptomQuestionnaires,
@@ -153,14 +153,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     updateQuestionnairesFilters(field, value) {
       this.questionnairesFilters = { ...this.questionnairesFilters, [field]: value };
     },
-    handleEdit() {
+    handleEdit({ id }) {
+      this.$router.push({ name: 'dashboard-questionarios-editar-id', params: { id } });
     },
     handleDelete() {
     },
     changePublishStatus(id, isPublished) {
       this.$apollo
         .mutate({
-          mutation: changePublishStatusMutation,
+          mutation: ChangePublishStatusMutation,
           variables: { id, isPublished },
         })
         .then(this.handlePublishStatusChangeSuccess)

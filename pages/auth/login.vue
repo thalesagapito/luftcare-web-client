@@ -29,7 +29,7 @@ import Vue from 'vue';
 import { Form } from 'element-ui';
 import { ElFormProps } from '@/types/element-ui';
 import { MutationLoginArgs } from '@/types/gql';
-import LoginMutationGQL from '@/graphql/mutations/User/login';
+import LoginMutation from '@/graphql/mutations/User/login';
 import { MutationResponseHandler } from '@/types/helpers';
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 
@@ -83,7 +83,7 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       const loading = this.$loading({ lock: true, text: 'Entrando' });
 
       await this.$apollo
-        .mutate({ mutation: LoginMutationGQL, variables: loginArgs })
+        .mutate({ mutation: LoginMutation, variables: loginArgs })
         .then(this.passTokenToApolloClient)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
