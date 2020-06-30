@@ -146,6 +146,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       };
     },
   },
+  mounted() {
+    if (this.$route.params.refetch) this.refetchQuestionnaires();
+  },
   methods: {
     refetchQuestionnaires() {
       this.$apollo.queries.questionnaires?.refetch();
