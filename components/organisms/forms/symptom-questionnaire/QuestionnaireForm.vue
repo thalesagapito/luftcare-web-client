@@ -60,33 +60,10 @@ import { every } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { Form } from 'element-ui';
 import { ElFormProps } from '@/types/element-ui';
-import { SymptomQuestionnaireInput } from '@/types/gql';
-import { Override, UpdateFieldWithValueFunction } from '@/types/helpers';
-import QuestionsContainer, { unkeyQuestionsChoices, keyQuestionsChoices } from './QuestionsContainer.vue';
-import { getDefaultQuestion, KeyedQuestion } from './QuestionForm.vue';
-
-export type Questionnaire = SymptomQuestionnaireInput;
-export type QuestionnaireWithKeyedChildren = Override<Questionnaire, { questions: KeyedQuestion[] }>;
-
-type QuestionnaireKeyRemover = (questionnaire: Props['value']) => Questionnaire;
-export const unkeyQuestionnaire: QuestionnaireKeyRemover = (questionnaire) => {
-  const questionsWithKeylessChoices = unkeyQuestionsChoices(questionnaire.questions);
-  const keylessQuestionnaire = {
-    ...questionnaire,
-    questions: questionsWithKeylessChoices,
-  };
-  return keylessQuestionnaire;
-};
-
-type QuestionnaireKeyAttacher = (questionnaire: Questionnaire) => Props['value'];
-export const keyQuestionnaire: QuestionnaireKeyAttacher = (keylessQuestionnaire) => {
-  const questionsWithKeyedChoices = keyQuestionsChoices(keylessQuestionnaire.questions);
-  const keyedQuestionnaire = {
-    ...keylessQuestionnaire,
-    questions: questionsWithKeyedChoices,
-  };
-  return keyedQuestionnaire;
-};
+import { UpdateFieldWithValueFunction } from '@/types/helpers';
+import QuestionsContainer from './QuestionsContainer.vue';
+import { getDefaultQuestion } from './factoryFunctions';
+import { KeyedQuestionnaireInput } from './types';
 
 type Data = {};
 type Methods = {
@@ -99,7 +76,7 @@ type Computed = {
   formProps: ElFormProps<keyof Props['value']>;
 };
 export type Props = {
-  value: QuestionnaireWithKeyedChildren;
+  value: KeyedQuestionnaireInput;
   isValid: boolean;
 };
 export type Events = {

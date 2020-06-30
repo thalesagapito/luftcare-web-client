@@ -53,25 +53,11 @@
 import Vue from 'vue';
 import { Form } from 'element-ui';
 import { debounce } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '@/types/element-ui';
-import { Keyed, WithIsValid } from '@/types/helpers';
-import { SymptomQuestionnaireQuestionChoiceInput } from '@/types/gql';
 import NumberStepper from '@/components/atoms/controls/VerticalNumberStepper.vue';
-
-export type Choice = SymptomQuestionnaireQuestionChoiceInput;
-export type KeyedChoice = Keyed<WithIsValid<Choice>>;
-
-type DefaultChoiceGetter = (currentChoicesLength?: number) => KeyedChoice;
-export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => ({
-  nameForManagement: `Alternativa ${(currentChoicesLength || 0) + 1}`,
-  presentationOrder: (currentChoicesLength || 0) + 1,
-  text: '',
-  value: 1,
-  key: uuidv4(),
-  isValid: false,
-});
+import { KeyedChoiceInput, ChoiceInput } from './types';
+import { getDefaultChoice } from './factoryFunctions';
 
 type Data = {};
 type Methods = {
@@ -82,10 +68,10 @@ type Methods = {
   updateChoicePresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof Choice>;
+  formProps: ElFormProps<keyof ChoiceInput>;
 };
 export type Props = {
-  choice: KeyedChoice;
+  choice: KeyedChoiceInput;
   maxPresentationOrder: number;
 };
 export type Events = {

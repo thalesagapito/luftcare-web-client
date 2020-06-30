@@ -25,11 +25,12 @@ import CreateSymptomQuestionnaireMutation from '@/graphql/mutations/SymptomQuest
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import { unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
+import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 
 type Data = {
   isFormValid: boolean;
-  questionnaireData: MutationCreateSymptomQuestionnaireArgs['questionnaire'] & FormProps['value'];
+  questionnaireData: FormProps['value'];
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;

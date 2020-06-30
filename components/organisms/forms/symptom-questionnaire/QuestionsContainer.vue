@@ -5,49 +5,25 @@
       @update:activeStepNumber="activeStepNumber = $event"
     )
 
-    .current-question-form
-      question-form(
-        :question.sync="currentQuestion"
-        :max-presentation-order="maxPresentationOrder"
-        @delete-question="deleteQuestion($event)"
-        @update-presentation-order="updateQuestionsOrder"
-      )
+    client-only
+      .current-question-form
+        question-form(
+          :question.sync="currentQuestion"
+          :max-presentation-order="maxPresentationOrder"
+          @delete-question="deleteQuestion($event)"
+          @update-presentation-order="updateQuestionsOrder"
+        )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { v4 as uuidv4 } from 'uuid';
-import { find, pull, omit } from 'lodash';
+import { find, pull } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { unkeyChoices, keyChoices } from './QuestionChoicesContainer.vue';
 import QuestionsStepper, { Props as StepperProps } from './QuestionsStepper.vue';
-import QuestionForm, {
-  Question,
-  getDefaultQuestion,
-  KeyedQuestion,
-  Props as QuestionProps,
-  Events as QuestionEvents,
-} from './QuestionForm.vue';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
+import { getDefaultQuestion } from './factoryFunctions';
+import { KeyedQuestionInput } from './types';
 
-type QuestionKeyRemover = (question: Props['questions'][0]) => Question;
-const unkeyQuestionChoices: QuestionKeyRemover = (question) => ({
-  ...omit(question, ['key', 'isValid']),
-  possibleChoices: unkeyChoices(question.possibleChoices || []),
-});
-
-type QuestionsKeyRemover = (questions: Props['questions']) => Question[];
-export const unkeyQuestionsChoices: QuestionsKeyRemover = (questions) => questions.map(unkeyQuestionChoices);
-
-type QuestionKeyAttacher = (question: Question) => Props['questions'][0];
-const keyQuestionChoices: QuestionKeyAttacher = (keylessQuestion) => ({
-  ...keylessQuestion,
-  key: uuidv4(),
-  isValid: true,
-  possibleChoices: keyChoices(keylessQuestion.possibleChoices || []),
-});
-
-type QuestionsKeyAttacher = (questions: Question[]) => Props['questions'];
-export const keyQuestionsChoices: QuestionsKeyAttacher = (questions) => questions.map(keyQuestionChoices);
 
 type Data = {
   activeStepNumber: number;
@@ -65,7 +41,7 @@ type Computed = {
   maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 export type Props = {
-  questions: KeyedQuestion[];
+  questions: KeyedQuestionInput[];
 };
 export type Events = {
   'update:questions': Props['questions'];

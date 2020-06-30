@@ -13,7 +13,7 @@
           type="primary"
           :disabled="!isFormValid"
           @click="runCreateQuestionnaireMutation"
-        ) Criar questionário
+        ) Atualizar questionário
 </template>
 
 <script lang="ts">
@@ -21,19 +21,23 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import isUUID from 'validator/lib/isUUID';
 
+import { Nullable } from '@/types/helpers';
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 import { MutationUpdateSymptomQuestionnaireArgs, Query } from '@/types/gql';
-import UpdateQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
+import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
 import GetQuestionnaireQuery from '@/graphql/queries/SymptomQuestionnaires/getSymptomQuestionnaire';
+import UpdateQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnaireForm, { Props as FormProps, unkeyQuestionnaire, keyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
-import smartQueryErrorHandler from '../../../../errorHandling/apollo/smartQueryErrorHandler';
+import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import { mapQuestionnaireTypeToInput } from '@/components/organisms/forms/symptom-questionnaire/typeInputMapperFunctions';
+import { keyQuestionnaire, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
 
 type Data = {
   isFormValid: boolean;
-  questionnaireData: MutationUpdateSymptomQuestionnaireArgs['questionnaire'] & FormProps['value'];
+  questionnaireData: FormProps['value'];
+  idSharedBetweenVersions: Nullable<string>;
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
@@ -51,11 +55,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   data() {
     return {
       isFormValid: false,
+      idSharedBetweenVersions: undefined,
       questionnaireData: {
+        questions: [],
+        isPublished: false,
         nameForManagement: '',
         nameForPresentation: '',
-        isPublished: false,
-        questions: [],
       },
     };
   },
@@ -66,7 +71,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       variables() { return { id: this.$route.params.id }; },
       update({ symptomQuestionnaire }: Partial<Query>) {
         if (!symptomQuestionnaire) return this.$router.push('/dashboard/questionarios');
-        return keyQuestionnaire(symptomQuestionnaire);
+        this.idSharedBetweenVersions = symptomQuestionnaire.idSharedBetweenVersions;
+        const symptomQuestionnaireInput = mapQuestionnaireTypeToInput(symptomQuestionnaire);
+        return keyQuestionnaire(symptomQuestionnaireInput);
       },
     },
   },
@@ -86,8 +93,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     async runCreateQuestionnaireMutation() {
+      if (!this.questionnaireData || !this.idSharedBetweenVersions) return;
       const mutationArgs: MutationUpdateSymptomQuestionnaireArgs = {
-        idSharedBetweenVersions: '1',
+        idSharedBetweenVersions: this.idSharedBetweenVersions,
         questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
@@ -100,7 +108,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     handleFormCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });
-      this.$router.push('/dashboard/questionarios');
+      this.$router.push({ name: 'dashboard-questionarios', params: { refetch: '1' } });
     },
   },
   validate({ params }) {

@@ -15,7 +15,7 @@ import Vue from 'vue';
 import { sortBy } from 'lodash';
 import { Steps, Step } from 'element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { KeyedQuestion } from './QuestionForm.vue';
+import { KeyedQuestionInput } from './types';
 
 type Data = {};
 type Methods = {
@@ -29,7 +29,7 @@ type Computed = {
 };
 export type Props = {
   activeStepNumber: number;
-  questions: KeyedQuestion[];
+  questions: KeyedQuestionInput[];
 };
 export type Events = {
   'update:activeStepNumber': Props['activeStepNumber'];

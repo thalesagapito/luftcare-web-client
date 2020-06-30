@@ -14,33 +14,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { v4 as uuidv4 } from 'uuid';
-import { pull, omit, sortBy } from 'lodash';
+import { pull, sortBy } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import ChoiceForm, {
-  Choice,
-  KeyedChoice,
-  getDefaultChoice,
-  Events as ChoiceEvents,
-} from './QuestionChoiceForm.vue';
+import ChoiceForm, { Events as ChoiceEvents } from './QuestionChoiceForm.vue';
+import { getDefaultChoice } from './factoryFunctions';
+import { KeyedChoiceInput } from './types';
 
-type ChoiceKeyRemover = (choice: KeyedChoice) => Choice;
-const unkeyChoice: ChoiceKeyRemover = (choice) => omit(choice, ['key', 'isValid']);
-
-type ChoicesKeyRemover = (choices: KeyedChoice[]) => Choice[];
-export const unkeyChoices: ChoicesKeyRemover = (choices) => choices.map(unkeyChoice);
-
-type ChoiceKeyAttacher = (choice: Choice) => KeyedChoice;
-const keyChoice: ChoiceKeyAttacher = (choice) => ({ ...choice, key: uuidv4(), isValid: true });
-
-type ChoicesKeyAttacher = (choices: Choice[]) => KeyedChoice[];
-export const keyChoices: ChoicesKeyAttacher = (choices) => choices.map(keyChoice);
 
 type Data = {};
 type Methods = {
   addNewChoice: () => void;
-  emitUpdate: (updatedChoices: KeyedChoice[]) => void;
-  updateChoice: (updatedChoice: KeyedChoice) => void;
+  emitUpdate: (updatedChoices: KeyedChoiceInput[]) => void;
+  updateChoice: (updatedChoice: KeyedChoiceInput) => void;
   deleteChoice: (choiceToDelete: ChoiceEvents['delete-choice']) => void;
   updateChoicesOrder: (args: ChoiceEvents['update-presentation-order']) => void;
 };
@@ -49,7 +34,7 @@ type Computed = {
   maxPresentationOrder: number;
 };
 export type Props = {
-  choices: KeyedChoice[];
+  choices: KeyedChoiceInput[];
 };
 export type Events = {
   'update:choices': Props['choices'];

@@ -67,35 +67,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { v4 as uuidv4 } from 'uuid';
 import { every, debounce } from 'lodash';
 import { Option, Form } from 'element-ui';
-import { RecordPropsDefinition } from 'vue/types/options';
-import {
-  Keyed,
-  Override,
-  WithIsValid,
-  UpdateFieldWithValueFunction,
-} from '@/types/helpers';
 import { ElFormProps } from '@/types/element-ui';
-import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireQuestionInput } from '@/types/gql';
-import { getDefaultChoice, KeyedChoice } from './QuestionChoiceForm.vue';
+import { RecordPropsDefinition } from 'vue/types/options';
+import { UpdateFieldWithValueFunction } from '@/types/helpers';
+import { SymptomQuestionnaireQuestionKind } from '@/types/gql';
 import ChoicesContainer from './QuestionChoicesContainer.vue';
+import { KeyedQuestionInput, QuestionInput } from './types';
+import { getDefaultQuestion, getDefaultChoice } from './factoryFunctions';
 
-export type Question = SymptomQuestionnaireQuestionInput;
-type QuestionWithKeyedChoices = Override<Question, { possibleChoices?: KeyedChoice[] }>;
-export type KeyedQuestion = Keyed<WithIsValid<QuestionWithKeyedChoices>>;
-
-type DefaultQuestionGetter = (currentQuestionsLength?: number) => Props['question'];
-export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength) => ({
-  nameForManagement: `Pergunta ${(currentQuestionsLength || 0) + 1}`,
-  presentationOrder: (currentQuestionsLength || 0) + 1,
-  text: '',
-  kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
-  possibleChoices: [],
-  isValid: false,
-  key: uuidv4(),
-});
 
 type Data = {};
 type Methods = {
@@ -107,12 +88,12 @@ type Methods = {
   updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
-  formProps: ElFormProps<keyof Question>;
+  formProps: ElFormProps<keyof QuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
   isQuestionMultipleChoice: boolean;
 };
 export type Props = {
-  question: KeyedQuestion;
+  question: KeyedQuestionInput;
   maxPresentationOrder: number;
 };
 export type Events = {
