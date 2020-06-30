@@ -109,6 +109,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     if (!isUUID(id)) throw new Error('Identificador do formulário inválido');
     return true;
   },
+  head: {
+    titleTemplate: (base) => `${base} - Editar questionário`,
+  },
 });
 </script>
 

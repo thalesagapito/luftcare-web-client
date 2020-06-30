@@ -96,6 +96,9 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       this.$router.push('/dashboard');
     },
   },
+  head: {
+    titleTemplate: (base) => `${base} - Login`,
+  },
 });
 </script>
 

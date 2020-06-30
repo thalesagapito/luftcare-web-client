@@ -8,6 +8,9 @@ import UnderConstruction from '@/components/organisms/single-instance/under-cons
 
 export default Vue.extend({
   components: { UnderConstruction },
+  head: {
+    titleTemplate: (base) => base,
+  },
 });
 </script>
 

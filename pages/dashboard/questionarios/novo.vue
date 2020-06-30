@@ -87,7 +87,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$router.push('/dashboard/questionarios');
     },
   },
-
+  head: {
+    titleTemplate: (base) => `${base} - Criar questionário`,
+  },
 });
 </script>
 
