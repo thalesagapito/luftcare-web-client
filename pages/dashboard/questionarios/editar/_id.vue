@@ -107,7 +107,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         .finally(() => loading.close());
     },
     handleFormCreationSuccess() {
-      this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário criado com sucesso' });
+      this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário alterado com sucesso' });
       this.$router.push({ name: 'dashboard-questionarios', params: { refetch: '1' } });
     },
   },
