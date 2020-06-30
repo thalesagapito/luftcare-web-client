@@ -33,7 +33,6 @@ export type Props = {
 };
 export type Events = {
   'update:activeStepNumber': Props['activeStepNumber'];
-  'update:questions': Props['questions'];
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({

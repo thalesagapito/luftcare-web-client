@@ -3,7 +3,6 @@
     questions-stepper(
       v-bind="stepperProps"
       @update:activeStepNumber="activeStepNumber = $event"
-      @update:questions="$set(questionnaireData, 'questions', $event)"
     )
 
     .current-question-form

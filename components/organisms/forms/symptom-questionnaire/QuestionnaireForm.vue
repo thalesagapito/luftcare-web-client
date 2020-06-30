@@ -50,7 +50,7 @@
       questions-container(
         v-if="hasAnyQuestions"
         :questions="value.questions"
-        @update:questions="updateQuestionnaireField($event, 'questions')"
+        @update:questions="updateQuestionnaireField('questions', $event)"
       )
 </template>
 
