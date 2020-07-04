@@ -15,7 +15,7 @@
           @input="updateQuestionnaireField('nameForManagement', $event)"
         )
 
-      .mb-7: el-form-item(label="Nome do questionário para pacientes" prop="nameForPresentation")
+      .mb-7: el-form-item(label="Nome do questionário para os pacientes" prop="nameForPresentation")
         .form-item-helper-text
           |Esse nome será mostrado aos pacientes,
           |é recomendado escolher um nome de fácil entendimento.

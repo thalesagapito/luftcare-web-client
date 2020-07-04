@@ -30,8 +30,8 @@ import UpdateQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnair
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 import { mapQuestionnaireTypeToInput } from '@/components/organisms/forms/symptom-questionnaire/typeInputMapperFunctions';
+import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
 import { keyQuestionnaire, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
 
 type Data = {
@@ -107,14 +107,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         .finally(() => loading.close());
     },
     handleFormCreationSuccess() {
-      this.$notify({ title: 'Sucesso', type: 'success', message: 'Formulário alterado com sucesso' });
+      this.$notify({ title: 'Sucesso', type: 'success', message: 'Questionário alterado com sucesso' });
       this.$router.push({ name: 'dashboard-questionarios', params: { refetch: '1' } });
     },
   },
   validate({ params }) {
     const { id } = params;
-    if (!id) throw new Error('Identificador do formulário ausente na url');
-    if (!isUUID(id)) throw new Error('Identificador do formulário inválido');
+    if (!id) throw new Error('Identificador do questionário ausente na url');
+    if (!isUUID(id)) throw new Error('Identificador do questionário inválido');
     return true;
   },
   head: {
