@@ -25,6 +25,7 @@ export type Mutation = {
   publishSymptomQuestionnaire: GenericResponse;
   unpublishSymptomQuestionnaire: GenericResponse;
   changeSymptomQuestionnairePublishStatus: GenericResponse;
+  deleteSymptomQuestionnaire: GenericResponse;
   registerUser: User;
 };
 
@@ -41,7 +42,7 @@ export type MutationCreateSymptomQuestionnaireArgs = {
 
 
 export type MutationUpdateSymptomQuestionnaireArgs = {
-  idSharedBetweenVersions: Scalars['ID'];
+  id: Scalars['ID'];
   questionnaire: SymptomQuestionnaireInput;
 };
 
@@ -58,6 +59,11 @@ export type MutationUnpublishSymptomQuestionnaireArgs = {
 
 export type MutationChangeSymptomQuestionnairePublishStatusArgs = {
   isPublished: Scalars['Boolean'];
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteSymptomQuestionnaireArgs = {
   id: Scalars['ID'];
 };
 
@@ -135,11 +141,10 @@ export type RegisterUserInput = {
 
 export type SymptomQuestionnaire = {
   __typename?: 'SymptomQuestionnaire';
-  id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
-  idSharedBetweenVersions: Scalars['ID'];
+  id: Scalars['ID'];
   nameForManagement: Scalars['String'];
   nameForPresentation: Scalars['String'];
   version: Scalars['Int'];
@@ -156,10 +161,10 @@ export type SymptomQuestionnaireInput = {
 
 export type SymptomQuestionnaireQuestion = {
   __typename?: 'SymptomQuestionnaireQuestion';
-  id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
   /** Question name only for internal use. Only admins will see this. */
   nameForManagement: Scalars['String'];
   /** Question text, what will be shown to the user. Localization is not a concern. */
@@ -171,10 +176,10 @@ export type SymptomQuestionnaireQuestion = {
 
 export type SymptomQuestionnaireQuestionChoice = {
   __typename?: 'SymptomQuestionnaireQuestionChoice';
-  id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
   /** Choice name only for internal use. Only questionnaire-creator admins will see this. */
   nameForManagement: Scalars['String'];
   /** Choice text, what will be shown to the user. Localization is not a concern. */
@@ -212,10 +217,10 @@ export type TokenSet = {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
   name: Scalars['String'];
   /** Unique email address used for logging in */
   email: Scalars['String'];
@@ -256,6 +261,19 @@ export type CreateSymptomQuestionnaireMutation = (
   ) }
 );
 
+export type DeleteQuestionnaireMutationVariables = {
+  id: Scalars['ID'];
+};
+
+
+export type DeleteQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteSymptomQuestionnaire: (
+    { __typename?: 'GenericResponse' }
+    & Pick<GenericResponse, 'userFriendlyMessage'>
+  ) }
+);
+
 export type PublishSymptomQuestionnaireMutationVariables = {
   id: Scalars['ID'];
 };
@@ -283,7 +301,7 @@ export type UnpublishSymptomQuestionnaireMutation = (
 );
 
 export type UpdateQuestionnaireMutationVariables = {
-  idSharedBetweenVersions: Scalars['ID'];
+  id: Scalars['ID'];
   questionnaire: SymptomQuestionnaireInput;
 };
 
@@ -326,7 +344,7 @@ export type CurrentSymptomQuestionnairesQuery = (
     & Pick<PaginatedSymptomQuestionnaireResponse, 'hasMorePages' | 'totalResultsCount'>
     & { results: Array<(
       { __typename?: 'SymptomQuestionnaire' }
-      & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version' | 'isPublished'>
+      & Pick<SymptomQuestionnaire, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version' | 'isPublished'>
       & { questions: Array<(
         { __typename?: 'SymptomQuestionnaireQuestion' }
         & Pick<SymptomQuestionnaireQuestion, 'nameForManagement'>
@@ -344,7 +362,7 @@ export type GetQuestionnaireQuery = (
   { __typename?: 'Query' }
   & { symptomQuestionnaire: (
     { __typename?: 'SymptomQuestionnaire' }
-    & Pick<SymptomQuestionnaire, 'id' | 'idSharedBetweenVersions' | 'isPublished' | 'nameForManagement' | 'nameForPresentation'>
+    & Pick<SymptomQuestionnaire, 'id' | 'isPublished' | 'nameForManagement' | 'nameForPresentation'>
     & { questions: Array<(
       { __typename?: 'SymptomQuestionnaireQuestion' }
       & Pick<SymptomQuestionnaireQuestion, 'id' | 'kind' | 'nameForManagement' | 'presentationOrder' | 'text'>

@@ -18,7 +18,6 @@ query currentSymptomQuestionnaires(
     ) {
     results {
       id
-      idSharedBetweenVersions
       nameForManagement
       nameForPresentation
       createdAt

@@ -51,6 +51,7 @@ import { Query, QuerySymptomQuestionnairesArgs } from '@/types/gql';
 import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
 import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
 import QuestionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import DeleteQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/deleteSymptomQuestionnaire';
 import ChangePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
@@ -70,6 +71,7 @@ type Methods = {
   handleDelete: (questionnaire: Questionnaire) => void;
   updateQuestionnairesFilters: UpdateFieldWithValueFunction<Data['questionnairesFilters']>;
   handlePublishStatusChangeSuccess: MutationResponseHandler['Success'];
+  handleDeleteSuccess: MutationResponseHandler['Success'];
   changePublishStatus: (id: string, isPublished: boolean) => void;
   handleDropdownClick: (Questionnaire: Questionnaire, command: string) => void;
 };
@@ -159,7 +161,22 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     handleEdit({ id }) {
       this.$router.push({ name: 'dashboard-questionarios-editar-id', params: { id } });
     },
-    handleDelete() {
+    handleDelete({ id }) {
+      this.$apollo
+        .mutate({
+          mutation: DeleteQuestionnaireMutation,
+          variables: { id },
+        })
+        .then(this.handleDeleteSuccess)
+        .catch(this.$clientErrorHandler);
+    },
+    handleDeleteSuccess({ data }) {
+      this.$notify({
+        title: 'Sucesso',
+        message: data?.deleteSymptomQuestionnaire.userFriendlyMessage || '',
+        type: 'success',
+      });
+      this.refetchQuestionnaires();
     },
     changePublishStatus(id, isPublished) {
       this.$apollo

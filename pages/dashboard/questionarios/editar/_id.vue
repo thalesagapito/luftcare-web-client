@@ -37,7 +37,7 @@ import { keyQuestionnaire, unkeyQuestionnaire } from '@/components/organisms/for
 type Data = {
   isFormValid: boolean;
   questionnaireData: FormProps['value'];
-  idSharedBetweenVersions: Nullable<string>;
+  id: Nullable<string>;
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
@@ -54,8 +54,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   components: { TheHeader, ShadowedCard, QuestionnaireForm },
   data() {
     return {
-      isFormValid: false,
-      idSharedBetweenVersions: undefined,
+      isFormValid: true,
+      id: undefined,
       questionnaireData: {
         questions: [],
         isPublished: false,
@@ -71,7 +71,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       variables() { return { id: this.$route.params.id }; },
       update({ symptomQuestionnaire }: Partial<Query>) {
         if (!symptomQuestionnaire) return this.$router.push('/dashboard/questionarios');
-        this.idSharedBetweenVersions = symptomQuestionnaire.idSharedBetweenVersions;
+        this.id = symptomQuestionnaire.id;
         const symptomQuestionnaireInput = mapQuestionnaireTypeToInput(symptomQuestionnaire);
         return keyQuestionnaire(symptomQuestionnaireInput);
       },
@@ -93,12 +93,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     async runCreateQuestionnaireMutation() {
-      if (!this.questionnaireData || !this.idSharedBetweenVersions) return;
+      if (!this.questionnaireData || !this.id) return;
       const mutationArgs: MutationUpdateSymptomQuestionnaireArgs = {
-        idSharedBetweenVersions: this.idSharedBetweenVersions,
+        id: this.id,
         questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
-      const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
+      const loading = this.$loading({ lock: true, text: 'Salvando questionário...' });
 
       await this.$apollo
         .mutate({ mutation: UpdateQuestionnaireMutation, variables: mutationArgs })

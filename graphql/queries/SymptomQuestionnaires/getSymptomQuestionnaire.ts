@@ -4,7 +4,6 @@ export default gql`
   query getQuestionnaire($id: ID!) {
     symptomQuestionnaire(id: $id) {
       id
-      idSharedBetweenVersions
       isPublished
       nameForManagement
       nameForPresentation

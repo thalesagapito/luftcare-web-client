@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation updateQuestionnaire($idSharedBetweenVersions: ID!, $questionnaire: SymptomQuestionnaireInput!) {
+  mutation updateQuestionnaire($id: ID!, $questionnaire: SymptomQuestionnaireInput!) {
     updateSymptomQuestionnaire(
-      idSharedBetweenVersions: $idSharedBetweenVersions,
+      id: $id,
       questionnaire: $questionnaire
     ) {
       id
