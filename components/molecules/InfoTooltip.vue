@@ -2,7 +2,7 @@
   el-tooltip(v-bind="$props")
     template(v-slot:content)
       .text-center(v-html="content")
-    i.el-icon-info.text-lg.text-avocado
+    i.el-icon-info.text-lg.text-lapis
 </template>
 
 <script lang="ts">

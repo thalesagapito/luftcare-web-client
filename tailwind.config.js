@@ -23,7 +23,8 @@ module.exports = {
       current: 'currentColor',
       inherit: 'inherit',
 
-      avocado: '#3aafa2',
+      lapis: '#5C6AC4',
+      avocado: '#3AAFA2',
       info: '#a8d5e2',
       danger: '#fe6364',
       warning: '#ffba49',
@@ -218,7 +219,7 @@ module.exports = {
       '2xl-center': '0 0 50px -12px rgba(0, 0, 0, 0.25)',
       inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
       outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
-      'outline-avocado': '0 0 0 3px rgba(58, 175, 162, 0.3)',
+      'outline-lapis': '0 0 0 3px rgba(92, 106, 196, 0.5)',
       'outline-danger': '0 0 0 3px rgba(254, 99, 100, 0.3)',
       none: 'none',
     },

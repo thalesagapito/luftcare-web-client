@@ -39,8 +39,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .under-construction-wrapper {
-  @apply w-full h-full bg-avocado flex flex-col items-center justify-center text-white;
-  background-image: linear-gradient(to top right, #3AAFA2 0%, #f9f586 170%);
+  @apply w-full h-full bg-lapis flex flex-col items-center justify-center text-white;
+  background-image: linear-gradient(to top right, #5C6AC4 0%, #3AAFA2 170%);
 
   .logo {
     @apply mb-9 h-7;

@@ -43,7 +43,7 @@ export default Vue.extend({});
     }
     .image {
       @apply flex flex-1;
-      background-image: linear-gradient(to top right, #3AAFA2 0%, #f9f586 120%);
+      background-image: linear-gradient(to top right, #5C6AC4 0%, #3AAFA2 140%);
     }
   }
 }

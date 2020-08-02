@@ -60,7 +60,7 @@ textarea,
 
 .el-input__inner:focus,
 .el-textarea__inner:focus {
-  @apply shadow-outline-avocado;
+  @apply shadow-outline-lapis;
 }
 
 /* Input default styling */
@@ -70,7 +70,7 @@ textarea,
   @apply shadow;
 }
 button:focus {
-  @apply shadow-outline-avocado outline-none;
+  @apply shadow-outline-lapis outline-none;
 }
 button.el-button--danger:focus {
   @apply shadow-outline-danger outline-none;
@@ -97,7 +97,7 @@ button.el-button--danger:focus {
 .el-breadcrumb {
   .el-breadcrumb__item:not(:last-of-type) {
     .el-breadcrumb__inner.is-link {
-      @apply text-avocado font-semibold;
+      @apply text-lapis font-semibold;
     }
   }
 }

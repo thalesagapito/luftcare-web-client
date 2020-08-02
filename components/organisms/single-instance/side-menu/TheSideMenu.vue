@@ -97,7 +97,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   li {
     @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700;
     &.is-active {
-      @apply text-avocado bg-avocado bg-opacity-10;
+      @apply text-lapis bg-lapis bg-opacity-10;
     }
   }
 }
