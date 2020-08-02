@@ -12,6 +12,7 @@
     "start:prod": "pm2 start --name web-client npm -- start",
     "logs": "pm2 logs web-client",
     "stop": "pm2 stop web-client",
+    "reload": "pm2 reload web-client",
     "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore --ignore-pattern '**/types/gql.ts' .",
     "lintfix": "eslint --ext .ts,.js,.vue --ignore-path .gitignore --ignore-pattern '**/types/gql.ts' . --fix",
     "gql-codegen": "graphql-codegen",
