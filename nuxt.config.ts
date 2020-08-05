@@ -71,7 +71,6 @@ const nuxtConfig: NuxtConfiguration = {
     '@nuxtjs/apollo',
     '@nuxtjs/dotenv',
     '@nuxtjs/proxy',
-    ['@nuxtjs/proxy', { pathRewrite: { '^/api': '/' } }],
   ],
   /*
   ** Apollo configuration
@@ -87,7 +86,10 @@ const nuxtConfig: NuxtConfiguration = {
   ** Proxy configuration
   */
   proxy: {
-    '/api': (process.env as ProcessEnv).API_URL,
+    '/api': {
+      target: (process.env as ProcessEnv).API_URL,
+      pathRewrite: { '^/api': '/' },
+    },
   },
   /*
   ** Build configuration
