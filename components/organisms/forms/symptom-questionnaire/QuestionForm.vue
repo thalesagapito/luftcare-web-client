@@ -4,7 +4,7 @@
       .texts
         .question-name {{ question.nameForManagement || 'Pergunta sem nome' }}
         .success(v-if="question.isValid") (Válida)
-        .error(v-else) (Contém erros)
+        .error(v-else) (Inválida)
       .actions
         el-input-number(
           size="small"
@@ -257,6 +257,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         }
       }
     }
+  }
+
+  & >>> > div[role="tab"],
+  & >>> > div[role="tabpanel"] {
+    @apply relative;
   }
 
   .question-choices-wrapper {

@@ -52,26 +52,20 @@
         :questions="value.questions"
         @update:questions="updateQuestionnaireField('questions', $event)"
       )
-
-      .flex.justify-center
-        el-button.w-full(type="text" @click="addNewQuestion") Adicionar pergunta
-      hr.border-gray-200
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { every } from 'lodash';
 import { Form } from 'element-ui';
+import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import { ElFormProps } from '@/types/element-ui';
 import { KeyedQuestionnaireInput } from './types';
-import { getDefaultQuestion } from './factoryFunctions';
 import QuestionsContainer from './QuestionsContainer.vue';
 
 type Data = {};
 type Methods = {
-  addNewQuestion: () => void;
   emitInput: (value: Props['value']) => void;
   updateQuestionnaireField: UpdateFieldWithValueFunction<Props['value']>;
 };
@@ -143,9 +137,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
               type: 'array',
               required: true,
               validator: (rule, value: Props['value']['questions'] = [], callback) => {
+                const invalidQuestionsMessage = 'Preencha todas as perguntas corretamente';
                 const minLengthQuestionsMessage = 'Crie pelo menos uma pergunta';
+
                 const hasMinLengthError = value.length < 1;
                 if (hasMinLengthError) return callback(minLengthQuestionsMessage);
+
+                const hasInvalidQuestionsError = !every(value, 'isValid');
+                if (hasInvalidQuestionsError) return callback(invalidQuestionsMessage);
+
                 return callback();
               },
             },
@@ -173,10 +173,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
-    addNewQuestion() {
-      const newQuestion = getDefaultQuestion(this.value.questions?.length || 0);
-      this.value.questions.push(newQuestion);
-    },
     emitInput(updatedData) {
       this.$emit<Events, 'input'>('input', updatedData);
       this.$nextTick(() => {

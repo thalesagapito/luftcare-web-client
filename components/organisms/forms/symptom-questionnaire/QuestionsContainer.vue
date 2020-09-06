@@ -1,17 +1,21 @@
 <template lang="pug">
-  .questions-container-wrapper
-    client-only
-      el-collapse(v-model="visibleIndex" accordion)
-        transition-group(name="flip-list")
-          question-form(
-            v-for="(question) in orderedQuestions"
-            :key="question.key"
-            :question="question"
-            :max-presentation-order="maxPresentationOrder"
-            @update:question="updateQuestion($event)"
-            @delete-question="deleteQuestion($event)"
-            @update-presentation-order="updateQuestionsOrder"
-          )
+  div
+    .questions-container-wrapper
+      client-only
+        el-collapse(v-model="visibleIndex" accordion)
+          transition-group(name="flip-list")
+            question-form(
+              v-for="(question) in orderedQuestions"
+              :key="question.key"
+              :question="question"
+              :max-presentation-order="maxPresentationOrder"
+              @update:question="updateQuestion($event)"
+              @delete-question="deleteQuestion($event)"
+              @update-presentation-order="updateQuestionsOrder"
+            )
+    .flex.justify-center.pt-1
+      el-button.w-full(type="text" @click="addNewQuestion") Adicionar pergunta
+    hr.border-gray-200
 </template>
 
 <script lang="ts">
@@ -66,6 +70,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     addNewQuestion() {
       const newQuestion = getDefaultQuestion(this.questions.length);
       const updatedQuestions = [...this.questions, newQuestion];
+      this.visibleIndex = updatedQuestions.length;
 
       this.emitUpdate(updatedQuestions);
     },
