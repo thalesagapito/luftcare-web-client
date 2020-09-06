@@ -5,5 +5,6 @@ export enum RegisteredMiddleware {
 
 export enum RegisteredLayout {
   dashboard = 'dashboard',
-  auth = 'auth'
+  empty = 'empty',
+  auth = 'auth',
 }

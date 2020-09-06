@@ -22,7 +22,7 @@ export type Props = {};
 export type Events = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  layout: RegisteredLayout.dashboard,
+  layout: RegisteredLayout.empty,
   props: {
     error: {
       type: Object,
@@ -40,7 +40,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .container {
-  @apply w-full h-full flex flex-col items-center justify-center text-gray-600 mt-32;
+  @apply w-full h-full mx-auto flex flex-col items-center justify-center text-gray-600 pb-32;
 
   .title {
     @apply flex items-end;
