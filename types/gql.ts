@@ -26,6 +26,7 @@ export type Mutation = {
   unpublishSymptomQuestionnaire: GenericResponse;
   changeSymptomQuestionnairePublishStatus: GenericResponse;
   deleteSymptomQuestionnaire: GenericResponse;
+  createSymptomQuestionnaireResponse: GenericResponse;
   registerUser: User;
 };
 
@@ -68,6 +69,11 @@ export type MutationDeleteSymptomQuestionnaireArgs = {
 };
 
 
+export type MutationCreateSymptomQuestionnaireResponseArgs = {
+  response: SymptomQuestionnaireResponseInput;
+};
+
+
 export type MutationRegisterUserArgs = {
   userData: RegisterUserInput;
 };
@@ -88,8 +94,15 @@ export enum OrderByClauseNullsPosition {
   NullsLast = 'NULLS_LAST'
 }
 
-export type PaginatedSymptomQuestionnaireResponse = {
-  __typename?: 'PaginatedSymptomQuestionnaireResponse';
+export type PaginatedSymptomQuestionnaireResponses = {
+  __typename?: 'PaginatedSymptomQuestionnaireResponses';
+  totalResultsCount: Scalars['Int'];
+  hasMorePages: Scalars['Boolean'];
+  results: Array<SymptomQuestionnaireResponse>;
+};
+
+export type PaginatedSymptomQuestionnaires = {
+  __typename?: 'PaginatedSymptomQuestionnaires';
   totalResultsCount: Scalars['Int'];
   hasMorePages: Scalars['Boolean'];
   results: Array<SymptomQuestionnaire>;
@@ -98,8 +111,9 @@ export type PaginatedSymptomQuestionnaireResponse = {
 export type Query = {
   __typename?: 'Query';
   authorizationToken: Scalars['String'];
-  symptomQuestionnaires: PaginatedSymptomQuestionnaireResponse;
+  symptomQuestionnaires: PaginatedSymptomQuestionnaires;
   symptomQuestionnaire: SymptomQuestionnaire;
+  symptomQuestionnaireResponses: PaginatedSymptomQuestionnaireResponses;
   currentUser?: Maybe<User>;
   user?: Maybe<User>;
   users?: Maybe<Array<User>>;
@@ -112,18 +126,29 @@ export type QueryAuthorizationTokenArgs = {
 
 
 export type QuerySymptomQuestionnairesArgs = {
-  pageNumber?: Maybe<Scalars['Int']>;
-  resultsPerPage?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<OrderByClause>>;
   nameForManagement?: Maybe<Scalars['String']>;
   isPublished?: Maybe<Scalars['Boolean']>;
   currentVersionsOnly?: Maybe<Scalars['Boolean']>;
   withDeleted?: Maybe<Scalars['Boolean']>;
+  pageNumber?: Maybe<Scalars['Int']>;
+  resultsPerPage?: Maybe<Scalars['Int']>;
 };
 
 
 export type QuerySymptomQuestionnaireArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QuerySymptomQuestionnaireResponsesArgs = {
+  orderBy?: Maybe<Array<OrderByClause>>;
+  patientId?: Maybe<Scalars['String']>;
+  responseDateAfter?: Maybe<Scalars['DateTime']>;
+  responseDateBefore?: Maybe<Scalars['DateTime']>;
+  withDeleted?: Maybe<Scalars['Boolean']>;
+  pageNumber?: Maybe<Scalars['Int']>;
+  resultsPerPage?: Maybe<Scalars['Int']>;
 };
 
 
@@ -139,6 +164,17 @@ export type RegisterUserInput = {
   phoneNumber: Scalars['String'];
 };
 
+export type ResponseScore = {
+  __typename?: 'ResponseScore';
+  /** Numerical value. */
+  value: Scalars['Int'];
+  color: SymptomQuestionnaireScoreRangeColor;
+  /** Title of this range to be shown to users. Could be "Good", "Bad", etc. */
+  title: Scalars['String'];
+  /** Description of this range to be shown to users. */
+  description: Scalars['String'];
+};
+
 export type SymptomQuestionnaire = {
   __typename?: 'SymptomQuestionnaire';
   createdAt: Scalars['DateTime'];
@@ -150,6 +186,8 @@ export type SymptomQuestionnaire = {
   version: Scalars['Int'];
   isPublished: Scalars['Boolean'];
   questions: Array<SymptomQuestionnaireQuestion>;
+  responses: Array<SymptomQuestionnaireResponse>;
+  scoreRanges: Array<SymptomQuestionnaireScoreRange>;
 };
 
 export type SymptomQuestionnaireInput = {
@@ -157,6 +195,7 @@ export type SymptomQuestionnaireInput = {
   nameForPresentation: Scalars['String'];
   isPublished?: Maybe<Scalars['Boolean']>;
   questions: Array<SymptomQuestionnaireQuestionInput>;
+  scoreRanges: Array<SymptomQuestionnaireScoreRangeInput>;
 };
 
 export type SymptomQuestionnaireQuestion = {
@@ -208,6 +247,81 @@ export enum SymptomQuestionnaireQuestionKind {
   MultipleChoice = 'MULTIPLE_CHOICE',
   FreeResponse = 'FREE_RESPONSE'
 }
+
+export type SymptomQuestionnaireResponse = {
+  __typename?: 'SymptomQuestionnaireResponse';
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  responseDate: Scalars['DateTime'];
+  patient: User;
+  questionnaire: SymptomQuestionnaire;
+  questionAnswers: Array<SymptomQuestionnaireResponseAnswer>;
+  score: ResponseScore;
+};
+
+export type SymptomQuestionnaireResponseAnswer = {
+  __typename?: 'SymptomQuestionnaireResponseAnswer';
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  response: SymptomQuestionnaireResponse;
+  question: SymptomQuestionnaireQuestion;
+  selectedChoice?: Maybe<SymptomQuestionnaireQuestionChoice>;
+  writtenText?: Maybe<Scalars['String']>;
+};
+
+export type SymptomQuestionnaireResponseAnswerInput = {
+  questionId: Scalars['ID'];
+  choiceId: Scalars['ID'];
+  /** Can be null, in cases where the answer has multiple choices */
+  writtenText?: Maybe<Scalars['String']>;
+};
+
+export type SymptomQuestionnaireResponseInput = {
+  /** DateTime in ISO-8601 format: 2020-12-31T23:59:59+0300 */
+  responseDate: Scalars['DateTime'];
+  userId: Scalars['ID'];
+  questionnaireId: Scalars['ID'];
+  questionnaireVersion: Scalars['Int'];
+  questionAnswers: Array<SymptomQuestionnaireResponseAnswerInput>;
+};
+
+export type SymptomQuestionnaireScoreRange = {
+  __typename?: 'SymptomQuestionnaireScoreRange';
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  questionnaire: SymptomQuestionnaire;
+  /** Minimum score value in order for response to be included in this range. */
+  minScore: Scalars['Int'];
+  /** Maximum score value in order for response to be included in this range. */
+  maxScore: Scalars['Int'];
+  color: SymptomQuestionnaireScoreRangeColor;
+  /** Title of this range to be shown to users. Could be "Good", "Bad", etc. */
+  title: Scalars['String'];
+  /** Description of this range to be shown to users. */
+  description: Scalars['String'];
+};
+
+export enum SymptomQuestionnaireScoreRangeColor {
+  Green = 'GREEN',
+  Blue = 'BLUE',
+  Yellow = 'YELLOW',
+  Orange = 'ORANGE',
+  Red = 'RED'
+}
+
+export type SymptomQuestionnaireScoreRangeInput = {
+  minScore: Scalars['Int'];
+  maxScore: Scalars['Int'];
+  color: SymptomQuestionnaireScoreRangeColor;
+  title: Scalars['String'];
+  description: Scalars['String'];
+};
 
 export type TokenSet = {
   __typename?: 'TokenSet';
@@ -340,8 +454,8 @@ export type CurrentSymptomQuestionnairesQueryVariables = {
 export type CurrentSymptomQuestionnairesQuery = (
   { __typename?: 'Query' }
   & { symptomQuestionnaires: (
-    { __typename?: 'PaginatedSymptomQuestionnaireResponse' }
-    & Pick<PaginatedSymptomQuestionnaireResponse, 'hasMorePages' | 'totalResultsCount'>
+    { __typename?: 'PaginatedSymptomQuestionnaires' }
+    & Pick<PaginatedSymptomQuestionnaires, 'hasMorePages' | 'totalResultsCount'>
     & { results: Array<(
       { __typename?: 'SymptomQuestionnaire' }
       & Pick<SymptomQuestionnaire, 'id' | 'nameForManagement' | 'nameForPresentation' | 'createdAt' | 'updatedAt' | 'version' | 'isPublished'>

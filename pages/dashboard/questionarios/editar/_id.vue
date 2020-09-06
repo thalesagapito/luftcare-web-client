@@ -1,7 +1,7 @@
 <template lang="pug">
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
-    shadowed-card.p-5.mt-6
+    shadowed-card.p-5.mt-4
       questionnaire-form(
         v-model="questionnaireData"
         :is-valid.sync="isFormValid"
@@ -58,6 +58,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       id: undefined,
       questionnaireData: {
         questions: [],
+        scoreRanges: [],
         isPublished: false,
         nameForManagement: '',
         nameForPresentation: '',

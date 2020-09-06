@@ -17,6 +17,9 @@ $ yarn start
 
 # generate static project
 $ yarn generate
+
+# generate TS types, interfaces and enums from graphql schema
+$ yarn gql-codegen
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).

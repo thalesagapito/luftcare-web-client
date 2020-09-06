@@ -17,7 +17,7 @@
         )
           template(slot-scope="{ row }")
             el-tag(v-if="row.isPublished" size="small") Público
-            el-tag.opacity-40(v-else size="small") Privado
+            el-tag.opacity-50(v-else size="small") Privado
         el-table-column(
           fixed="right"
           label="Ações"

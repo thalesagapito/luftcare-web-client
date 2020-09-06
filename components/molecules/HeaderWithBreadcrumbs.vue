@@ -42,7 +42,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   @apply flex flex-col justify-start w-full;
 
   .title-and-action-wrapper {
-    @apply flex justify-between items-center mt-2;
+    @apply flex justify-between items-center mt-4;
     min-height: 3rem;
 
     .title {

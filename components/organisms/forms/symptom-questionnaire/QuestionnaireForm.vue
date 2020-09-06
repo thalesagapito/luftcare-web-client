@@ -99,6 +99,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       required: true,
       default: () => ({
         questions: [],
+        scoreRanges: [],
         isPublished: false,
         nameForManagement: '',
         nameForPresentation: '',
@@ -117,6 +118,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           nameForPresentation: this.value.nameForPresentation,
           isPublished: this.value.isPublished,
           questions: this.value.questions,
+          scoreRanges: this.value.scoreRanges,
         },
         rules: {
           nameForManagement: [{
@@ -145,6 +147,24 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
                 const hasInvalidQuestionsError = !every(value, 'isValid');
                 if (hasInvalidQuestionsError) return callback(invalidQuestionsMessage);
+
+                return callback();
+              },
+            },
+          ],
+          scoreRanges: [
+            {
+              type: 'array',
+              required: true,
+              validator: (rule, value: Props['value']['scoreRanges'] = [], callback) => {
+                const invalidScoreRangesMessage = 'Preencha todos os intervalos de pontuação corretamente';
+                const minLengthScoreRangesMessage = 'Crie pelo menos um intervalo de pontuação';
+
+                const hasMinLengthError = value.length < 1;
+                if (hasMinLengthError) return callback(minLengthScoreRangesMessage);
+
+                const hasInvalidScoreRangesError = !every(value, 'isValid');
+                if (hasInvalidScoreRangesError) return callback(invalidScoreRangesMessage);
 
                 return callback();
               },

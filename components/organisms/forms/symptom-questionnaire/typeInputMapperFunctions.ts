@@ -44,6 +44,8 @@ export const mapQuestionnaireTypeToInput: QuestionnaireTypeToInputMapper = (ques
   nameForManagement: questionnaire.nameForManagement,
   nameForPresentation: questionnaire.nameForPresentation,
   questions: (questionnaire.questions || []).map(mapQuestionTypeToInput),
+  // TODO
+  scoreRanges: (questionnaire.scoreRanges || []).map((a) => a),
   isPublished: questionnaire.isPublished,
 });
 /* Questionnaire */
