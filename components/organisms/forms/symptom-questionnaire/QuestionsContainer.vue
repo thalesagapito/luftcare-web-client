@@ -1,43 +1,37 @@
 <template lang="pug">
   .questions-container-wrapper
-    questions-stepper(
-      v-bind="stepperProps"
-      @update:activeStepNumber="activeStepNumber = $event"
-    )
-
     client-only
-      .current-question-form
-        question-form(
-          :question.sync="currentQuestion"
-          :max-presentation-order="maxPresentationOrder"
-          @delete-question="deleteQuestion($event)"
-          @update-presentation-order="updateQuestionsOrder"
-        )
+      el-collapse(v-model="visibleIndex" accordion)
+        transition-group(name="flip-list")
+          question-form(
+            v-for="(question) in orderedQuestions"
+            :key="question.key"
+            :question="question"
+            :max-presentation-order="maxPresentationOrder"
+            @update:question="updateQuestion($event)"
+            @delete-question="deleteQuestion($event)"
+            @update-presentation-order="updateQuestionsOrder"
+          )
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { find, pull } from 'lodash';
+import { pull, sortBy } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import QuestionsStepper, { Props as StepperProps } from './QuestionsStepper.vue';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
-import { getDefaultQuestion } from './factoryFunctions';
 import { KeyedQuestionInput } from './types';
+import { getDefaultQuestion } from './factoryFunctions';
+import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
 
-
-type Data = {
-  activeStepNumber: number;
-};
+type Data = { visibleIndex: number; };
 type Methods = {
   addNewQuestion: () => void;
   emitUpdate: (updatedQuestions: Props['questions']) => void;
-  updateQuestion: (updatedQuestion: Props['questions'][0]) => void;
+  updateQuestion: (updatedQuestion: QuestionEvents['update:question']) => void;
   deleteQuestion: (questionToDelete: QuestionEvents['delete-question']) => void;
   updateQuestionsOrder: (args: QuestionEvents['update-presentation-order']) => void;
 };
 type Computed = {
-  stepperProps: StepperProps;
-  currentQuestion: QuestionProps['question'];
+  orderedQuestions: Props['questions'];
   maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 export type Props = {
@@ -48,7 +42,7 @@ export type Events = {
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  components: { QuestionsStepper, QuestionForm },
+  components: { QuestionForm },
   props: {
     questions: {
       type: Array,
@@ -56,36 +50,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       default: () => [],
     },
   } as RecordPropsDefinition<Props>,
-  data() {
-    return {
-      activeStepNumber: 1,
-    };
-  },
+  data: () => ({ visibleIndex: 1 }),
   computed: {
-    stepperProps() {
-      return {
-        activeStepNumber: this.activeStepNumber,
-        questions: this.questions,
-      };
+    orderedQuestions() {
+      return sortBy(this.questions, ['presentationOrder']);
     },
     maxPresentationOrder() {
       return this.questions.length;
-    },
-    currentQuestion: {
-      get() {
-        return find(
-          this.questions,
-          ['presentationOrder', this.activeStepNumber],
-        ) as Computed['currentQuestion'];
-      },
-      set(updatedQuestion) {
-        const updatedQuestions = this.questions.map((originalQuestion) => {
-          const isCurrentQuestionTheOne = originalQuestion.presentationOrder === this.activeStepNumber;
-          return isCurrentQuestionTheOne ? updatedQuestion : originalQuestion;
-        });
-
-        this.$emit<Events, 'update:questions'>('update:questions', updatedQuestions);
-      },
     },
   },
   methods: {
@@ -106,7 +77,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         }
         return question;
       });
-      this.activeStepNumber = 1;
       this.emitUpdate(questionsWithNormalizedOrders);
     },
     updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
@@ -122,7 +92,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       });
 
       this.emitUpdate(questionsWithUpdatedOrders);
-      this.activeStepNumber = newPresentationOrder;
     },
     updateQuestion(updatedQuestion) {
       const questionsWithUpdatedQuestion = this.questions.map((question) => {

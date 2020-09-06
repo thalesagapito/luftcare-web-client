@@ -1,26 +1,38 @@
 /* FADE */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   @apply transition-all duration-300 ease-in-out;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   @apply opacity-0;
 }
 /* FADE */
 
 /* SLIDE LEFT */
-.slide-left-enter-active, .slide-left-leave-active {
+.slide-left-enter-active,
+.slide-left-leave-active {
   @apply transition-all duration-300 ease-in-out;
 }
-.slide-left-enter, .slide-left-leave-to {
+.slide-left-enter,
+.slide-left-leave-to {
   @apply transform -translate-x-full opacity-0;
 }
 /* SLIDE LEFT */
 
 /* SLIDE RIGHT */
-.slide-right-enter-active, .slide-right-leave-active {
+.slide-right-enter-active,
+.slide-right-leave-active {
   @apply transition-all duration-300 ease-in-out;
 }
-.slide-right-enter, .slide-right-leave-to {
+.slide-right-enter,
+.slide-right-leave-to {
   @apply transform translate-x-full opacity-0;
 }
 /* SLIDE RIGHT */
+
+/* FLIP LIST */
+.flip-list-move {
+  @apply transition-transform duration-500 ease-out;
+}
+/* FLIP LIST */

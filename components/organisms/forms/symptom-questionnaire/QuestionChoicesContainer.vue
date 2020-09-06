@@ -105,9 +105,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .question-choices-container-wrapper {
   @apply px-4;
-  .flip-list-move {
-    transition: transform .5s;
-  }
 
   .choice {
     @apply mt-5 shadow-sm;

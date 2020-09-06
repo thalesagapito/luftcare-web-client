@@ -1,68 +1,77 @@
 <template lang="pug">
-  el-form.question-form-wrapper(v-bind="formProps" ref="form")
-    .delete
-      el-button(
-        plain
-        size="mini"
-        type="danger"
-        @click="emitDelete"
-      ) Remover pergunta
-    .mb-7: el-form-item(label="Ordem da pergunta" prop="presentationOrder")
-      .form-item-helper-text
-        |Posição em que a pergunta vai aparecer no questionário
-      el-input-number(
-        :min="1"
-        :max="maxPresentationOrder"
-        :value="question.presentationOrder"
-        @change="updateQuestionPresentationOrder($event)"
-      )
-
-    .mb-7: el-form-item(label="Nome da pergunta para uso interno" prop="nameForManagement")
-      .form-item-helper-text
-        |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
-      el-input(
-        autofocus
-        type="text"
-        maxlength="500"
-        placeholder="Digite aqui"
-        :value="question.nameForManagement"
-        @input="updateQuestionField('nameForManagement', $event)"
-      )
-
-    .mb-7: el-form-item(label="Enunciado da pergunta" prop="text")
-      .form-item-helper-text
-        |O enunciado da pergunta que será mostrado ao paciente.
-      el-input(
-        show-word-limit
-        type="textarea"
-        maxlength="500"
-        placeholder="Digite aqui"
-        :value="question.text"
-        :autosize="{ minRows: 4 }"
-        @input="updateQuestionField('text', $event)"
-      )
-
-    .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
-      el-select(
-        :value="question.kind"
-        @input="updateQuestionField('kind', $event)"
-      )
-        el-option(
-          v-for="option in questionKindSelectOptions"
-          :key="option.label"
-          v-bind="option"
+  el-collapse-item.question-form-wrapper(:name="question.presentationOrder")
+    template(slot="title"): .collapsible-item-title
+      .texts
+        .question-name {{ question.nameForManagement || 'Pergunta sem nome' }}
+        .success(v-if="question.isValid") (Válida)
+        .error(v-else) (Contém erros)
+      .actions
+        el-input-number(
+          size="small"
+          controls-position="right"
+          :min="1"
+          :max="maxPresentationOrder"
+          :value="question.presentationOrder"
+          @click.native.stop
+          @change="updateQuestionPresentationOrder($event)"
         )
 
-    .question-choices-wrapper(v-if="isQuestionMultipleChoice")
-      .header
-        .title Alternativas da pergunta
-        el-button(type="default" size="mini" @click="addNewChoice") Adicionar alternativa
-      el-form-item.mt-2.pb-3(prop="possibleChoices")
+        el-popconfirm(
+          hide-icon
+          title="Remover a pergunta?"
+          cancelButtonText="Cancelar"
+          confirmButtonText="Sim, remover"
+          @onConfirm="emitDelete"
+        )
+          el-button(round type="text" size="mini" slot="reference" @click.stop) Remover
 
-      choices-container(
-        :choices="question.possibleChoices"
-        @update:choices="updateQuestionField('possibleChoices', $event)"
-      )
+    el-form.px-1(v-bind="formProps" ref="form")
+      .mb-7: el-form-item(label="Nome da pergunta para uso interno" prop="nameForManagement")
+        .form-item-helper-text
+          |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
+        el-input(
+          autofocus
+          type="text"
+          maxlength="500"
+          placeholder="Digite aqui"
+          :value="question.nameForManagement"
+          @input="updateQuestionField('nameForManagement', $event)"
+        )
+
+      .mb-7: el-form-item(label="Enunciado da pergunta" prop="text")
+        .form-item-helper-text
+          |O enunciado da pergunta que será mostrado ao paciente.
+        el-input(
+          show-word-limit
+          type="textarea"
+          maxlength="500"
+          placeholder="Digite aqui"
+          :value="question.text"
+          :autosize="{ minRows: 4 }"
+          @input="updateQuestionField('text', $event)"
+        )
+
+      .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
+        el-select(
+          :value="question.kind"
+          @input="updateQuestionField('kind', $event)"
+        )
+          el-option(
+            v-for="option in questionKindSelectOptions"
+            :key="option.label"
+            v-bind="option"
+          )
+
+      .question-choices-wrapper(v-if="isQuestionMultipleChoice")
+        .header
+          .title Alternativas da pergunta
+          el-button(type="default" size="mini" @click="addNewChoice") Adicionar alternativa
+        el-form-item.mt-2.pb-3(prop="possibleChoices")
+
+        choices-container(
+          :choices="question.possibleChoices"
+          @update:choices="updateQuestionField('possibleChoices', $event)"
+        )
 </template>
 
 <script lang="ts">
@@ -220,10 +229,34 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .question-form-wrapper {
-  @apply relative;
+  .collapsible-item-title {
+    @apply flex flex-grow justify-between items-center;
 
-  .delete {
-    @apply absolute right-0 top-0;
+    .texts {
+      @apply flex items-baseline;
+
+      .success,
+      .error {
+        @apply text-xs ml-1;
+      }
+      .success { @apply text-success }
+      .error { @apply text-danger }
+    }
+
+    .actions {
+      .el-button {
+        @apply mx-4;
+      }
+      & >>> .el-input-number {
+        @apply w-18;
+        transform: rotateX(180deg);
+
+        input {
+          @apply pl-1 pr-9;
+          transform: rotateX(180deg);
+        }
+      }
+    }
   }
 
   .question-choices-wrapper {

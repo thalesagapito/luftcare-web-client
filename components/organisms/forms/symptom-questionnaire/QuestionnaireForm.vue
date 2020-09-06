@@ -45,7 +45,7 @@
 
       .form-section-title.mt-4 Perguntas do questionário
         .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
-      el-form-item.pb-6(prop="questions")
+      el-form-item.pb-2(prop="questions")
 
       questions-container(
         v-if="hasAnyQuestions"
@@ -57,13 +57,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { every } from 'lodash';
-import { RecordPropsDefinition } from 'vue/types/options';
 import { Form } from 'element-ui';
-import { ElFormProps } from '@/types/element-ui';
+import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import QuestionsContainer from './QuestionsContainer.vue';
-import { getDefaultQuestion } from './factoryFunctions';
+import { ElFormProps } from '@/types/element-ui';
 import { KeyedQuestionnaireInput } from './types';
+import { getDefaultQuestion } from './factoryFunctions';
+import QuestionsContainer from './QuestionsContainer.vue';
 
 type Data = {};
 type Methods = {
@@ -139,15 +139,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
               type: 'array',
               required: true,
               validator: (rule, value: Props['value']['questions'] = [], callback) => {
-                const invalidQuestionsMessage = 'Preencha todas as perguntas corretamente';
                 const minLengthQuestionsMessage = 'Crie pelo menos uma pergunta';
-
                 const hasMinLengthError = value.length < 1;
                 if (hasMinLengthError) return callback(minLengthQuestionsMessage);
-
-                const hasInvalidQuestionsError = !every(value, 'isValid');
-                if (hasInvalidQuestionsError) return callback(invalidQuestionsMessage);
-
                 return callback();
               },
             },
