@@ -50,7 +50,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       default: () => [],
     },
   } as RecordPropsDefinition<Props>,
-  data: () => ({ visibleIndex: 1 }),
+  data: () => ({ visibleIndex: 0 }),
   computed: {
     orderedQuestions() {
       return sortBy(this.questions, ['presentationOrder']);

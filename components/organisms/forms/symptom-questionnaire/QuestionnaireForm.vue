@@ -43,15 +43,19 @@
         ) Público
 
 
-      .form-section-title.mt-4 Perguntas do questionário
-        .ml-2: el-button(type="default" size="mini" @click="addNewQuestion") Adicionar pergunta
-      el-form-item.pb-2(prop="questions")
+      .form-section-title.mt-4.mb-2
+        div Perguntas do questionário
+        .questions-error: el-form-item(prop="questions")
 
       questions-container(
         v-if="hasAnyQuestions"
         :questions="value.questions"
         @update:questions="updateQuestionnaireField('questions', $event)"
       )
+
+      .flex.justify-center
+        el-button.w-full(type="text" @click="addNewQuestion") Adicionar pergunta
+      hr.border-gray-200
 </template>
 
 <script lang="ts">
@@ -197,7 +201,17 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .questionnaire-form-wrapper {
   .form-section-title {
-    @apply text-lg font-semibold text-gray-800 flex items-center;
+    @apply text-lg font-semibold text-gray-800 flex items-baseline;
+  }
+
+  .questions-error {
+    @apply ml-2;
+
+    & >>> .el-form-item::before,
+    & >>> .el-form-item__content::before {
+      @apply hidden;
+    }
+    & >>> .el-form-item__error { @apply static }
   }
 
   & >>> .form-item-helper-text {
