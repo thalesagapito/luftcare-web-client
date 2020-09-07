@@ -4,7 +4,7 @@ import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireScoreRangeColor }
 
 type DefaultQuestionGetter = (currentQuestionsLength?: number) => KeyedQuestionInput;
 export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength) => ({
-  nameForManagement: `Pergunta ${(currentQuestionsLength || 0) + 1}`,
+  nameForManagement: '',
   presentationOrder: (currentQuestionsLength || 0) + 1,
   text: '',
   kind: SymptomQuestionnaireQuestionKind.MultipleChoice,

@@ -230,6 +230,8 @@ module.exports = {
       wait: 'wait',
       text: 'text',
       move: 'move',
+      grab: 'grab',
+      grabbing: 'grabbing',
       'not-allowed': 'not-allowed',
     },
     divideColor: (theme) => theme('borderColor'),

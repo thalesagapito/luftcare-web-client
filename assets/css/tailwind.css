@@ -1,9 +1,9 @@
 /* purgecss start ignore */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
 /* purgecss end ignore */
-@import 'tailwindcss/utilities';
-@import './animations';
+@import "tailwindcss/utilities";
+@import "./animations";
 
 html {
   @apply h-full;
@@ -32,3 +32,9 @@ body,
   }
 }
 /* Default dashboard styling */
+
+.sortable-drag,
+.sortable-ghost,
+.sortable-chosen {
+  @apply cursor-grabbing !important;
+}

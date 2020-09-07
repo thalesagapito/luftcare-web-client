@@ -3,21 +3,22 @@
     .questions-container-wrapper
       client-only
         el-collapse(v-model="visibleIndex" accordion)
-          transition-group(
-            name="flip-list"
-            @before-enter="beforeEnterList"
-            @enter="enterList"
-            @leave="leaveList"
-          )
-            question-form(
-              v-for="(question) in orderedQuestions"
-              :key="question.key"
-              :question="question"
-              :max-presentation-order="maxPresentationOrder"
-              @update:question="updateQuestion($event)"
-              @delete-question="deleteQuestion($event)"
-              @update-presentation-order="updateQuestionsOrder"
+          draggable(v-model="questions" :force-fallback="true")
+            transition-group(
+              name="flip-list"
+              @before-enter="beforeEnterList"
+              @enter="enterList"
+              @leave="leaveList"
             )
+              question-form(
+                v-for="(question) in orderedQuestions"
+                :key="question.key"
+                :question="question"
+                :max-presentation-order="maxPresentationOrder"
+                @update:question="updateQuestion($event)"
+                @delete-question="deleteQuestion($event)"
+                @update-presentation-order="updateQuestionsOrder"
+              )
     .flex.justify-center.pt-1.px-1
       el-button.w-full(type="text" @click="addNewQuestion") Adicionar pergunta
     hr.border-gray-200
@@ -26,6 +27,7 @@
 <script lang="ts">
 /* eslint-disable no-param-reassign */
 import Vue from 'vue';
+import draggable from 'vuedraggable';
 import { pull, sortBy } from 'lodash';
 import { VelocityCallbackFn } from 'velocity-animate';
 import { RecordPropsDefinition } from 'vue/types/options';
@@ -56,7 +58,7 @@ export type Events = {
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  components: { QuestionForm },
+  components: { QuestionForm, draggable },
   props: {
     questions: {
       type: Array,
