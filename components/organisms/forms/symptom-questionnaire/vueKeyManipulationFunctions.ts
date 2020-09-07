@@ -3,9 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   ChoiceInput,
   QuestionInput,
+  ScoreRangeInput,
   KeyedChoiceInput,
   KeyedQuestionInput,
   QuestionnaireInput,
+  KeyedScoreRangeInput,
   KeyedQuestionnaireInput,
 } from './types';
 
@@ -37,17 +39,33 @@ const keyQuestion: QuestionInputKeyer = (keylessQuestion) => ({
 /** ******** */
 
 
+/** ******** */
+/* ScoreRanges */
+type ScoreRangeInputUnkeyer = (scoreRange: KeyedScoreRangeInput) => ScoreRangeInput;
+const unkeyScoreRange: ScoreRangeInputUnkeyer = (scoreRange) => omit(scoreRange, ['key', 'isValid']);
+type ScoreRangeInputKeyer = (scoreRange: ScoreRangeInput) => KeyedScoreRangeInput;
+const keyScoreRange: ScoreRangeInputKeyer = (keylessScoreRange) => ({
+  ...keylessScoreRange,
+  key: uuidv4(),
+  isValid: true,
+});
+/* ScoreRanges */
+/** ******** */
+
+
 /** ************ */
 /* Questionnaire */
 type QuestionnaireInputUnkeyer = (questionnaire: KeyedQuestionnaireInput) => QuestionnaireInput;
 export const unkeyQuestionnaire: QuestionnaireInputUnkeyer = (questionnaire) => ({
   ...questionnaire,
   questions: (questionnaire.questions || []).map(unkeyQuestion),
+  scoreRanges: (questionnaire.scoreRanges || []).map(unkeyScoreRange),
 });
 type QuestionnaireInputKeyer = (questionnaire: QuestionnaireInput) => KeyedQuestionnaireInput;
 export const keyQuestionnaire: QuestionnaireInputKeyer = (keylessQuestionnaire) => ({
   ...keylessQuestionnaire,
   questions: (keylessQuestionnaire.questions || []).map(keyQuestion),
+  scoreRanges: (keylessQuestionnaire.scoreRanges || []).map(keyScoreRange),
 });
 /* Questionnaire */
 /** ************ */

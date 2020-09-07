@@ -319,7 +319,9 @@ export type SymptomQuestionnaireScoreRangeInput = {
   minScore: Scalars['Int'];
   maxScore: Scalars['Int'];
   color: SymptomQuestionnaireScoreRangeColor;
+  /** maxLength: 500 */
   title: Scalars['String'];
+  /** maxLength: 2000 */
   description: Scalars['String'];
 };
 

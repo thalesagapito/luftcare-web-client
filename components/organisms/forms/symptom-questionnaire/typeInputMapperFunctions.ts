@@ -3,6 +3,8 @@ import {
   ChoiceInput,
   QuestionType,
   QuestionInput,
+  ScoreRangeType,
+  ScoreRangeInput,
   QuestionnaireType,
   QuestionnaireInput,
 } from './types';
@@ -37,6 +39,20 @@ export const mapQuestionTypeToInput: QuestionTypeToInputMapper = (question) => (
 /** ******** */
 
 
+/** ******** */
+/* ScoreRanges */
+type ScoreRangeTypeToInputMapper = (scoreRange: ScoreRangeType) => ScoreRangeInput;
+export const mapScoreRangeTypeToInput: ScoreRangeTypeToInputMapper = (scoreRange) => ({
+  color: scoreRange.color,
+  description: scoreRange.description,
+  maxScore: scoreRange.maxScore,
+  minScore: scoreRange.minScore,
+  title: scoreRange.title,
+});
+/* ScoreRanges */
+/** ******** */
+
+
 /** ************ */
 /* Questionnaire */
 type QuestionnaireTypeToInputMapper = (questionnaire: QuestionnaireType) => QuestionnaireInput;
@@ -44,8 +60,7 @@ export const mapQuestionnaireTypeToInput: QuestionnaireTypeToInputMapper = (ques
   nameForManagement: questionnaire.nameForManagement,
   nameForPresentation: questionnaire.nameForPresentation,
   questions: (questionnaire.questions || []).map(mapQuestionTypeToInput),
-  // TODO
-  scoreRanges: (questionnaire.scoreRanges || []).map((a) => a),
+  scoreRanges: (questionnaire.scoreRanges || []).map(mapScoreRangeTypeToInput),
   isPublished: questionnaire.isPublished,
 });
 /* Questionnaire */

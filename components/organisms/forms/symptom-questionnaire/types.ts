@@ -7,8 +7,10 @@ import {
   SymptomQuestionnaire,
   SymptomQuestionnaireInput,
   SymptomQuestionnaireQuestion,
+  SymptomQuestionnaireScoreRange,
   SymptomQuestionnaireQuestionInput,
   SymptomQuestionnaireQuestionChoice,
+  SymptomQuestionnaireScoreRangeInput,
   SymptomQuestionnaireQuestionChoiceInput,
 } from '~/types/gql';
 
@@ -31,10 +33,22 @@ export type KeyedQuestionInput = Keyed<WithIsValid<QuestionWithKeyedChoices>>;
 /** ******** */
 
 
+/** ******** */
+/* ScoreRanges */
+export type ScoreRangeType = SymptomQuestionnaireScoreRange;
+export type ScoreRangeInput = SymptomQuestionnaireScoreRangeInput;
+export type KeyedScoreRangeInput = Keyed<WithIsValid<ScoreRangeInput>>;
+/* ScoreRanges */
+/** ******** */
+
+
 /** ************ */
 /* Questionnaire */
 export type QuestionnaireType = SymptomQuestionnaire;
 export type QuestionnaireInput = SymptomQuestionnaireInput;
-export type KeyedQuestionnaireInput = Override<QuestionnaireInput, { questions: KeyedQuestionInput[] }>;
+export type KeyedQuestionnaireInput = Override<QuestionnaireInput, {
+  questions: KeyedQuestionInput[],
+  scoreRanges: KeyedScoreRangeInput[],
+}>;
 /* Questionnaire */
 /** ************ */
