@@ -103,7 +103,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     deleteQuestion(questionToDelete) {
       const deletedQuestionWasVisible = questionToDelete.presentationOrder === this.visibleIndex;
-      const updatedQuestions = pull(this.questions, questionToDelete);
+      const updatedQuestions = [...pull(this.questions, questionToDelete)];
       const questionsWithNormalizedOrders = updatedQuestions.map((question) => {
         if (question.presentationOrder > questionToDelete.presentationOrder) {
           return { ...question, presentationOrder: question.presentationOrder - 1 };

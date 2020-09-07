@@ -68,7 +68,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.emitUpdate(updatedChoices);
     },
     deleteChoice(choiceToDelete) {
-      const updatedChoices = pull(this.choices, choiceToDelete);
+      const updatedChoices = [...pull(this.choices, choiceToDelete)];
       const choicesWithNormalizedOrders = updatedChoices.map((choice) => {
         if (choice.presentationOrder > choiceToDelete.presentationOrder) {
           return { ...choice, presentationOrder: choice.presentationOrder - 1 };
