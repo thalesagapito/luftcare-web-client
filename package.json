@@ -47,6 +47,7 @@
     "typed-vuex": "^0.1.18",
     "uuid": "^8.1.0",
     "validator": "^13.1.1",
+    "velocity-animate": "^2.0.6",
     "vue": "^2.6.11",
     "vuex-persistedstate": "^3.0.1"
   },

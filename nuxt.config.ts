@@ -52,6 +52,7 @@ const nuxtConfig: NuxtConfiguration = {
   */
   plugins: [
     { src: './plugins/element-ui/index', mode: 'all' },
+    { src: './plugins/velocity/velocity', mode: 'client' },
     { src: './plugins/vuex-persist/vuexCookies', mode: 'client' },
     { src: './errorHandling/apollo/clientErrorHandler', mode: 'client' },
   ],

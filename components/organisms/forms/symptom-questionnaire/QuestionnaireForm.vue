@@ -48,10 +48,13 @@
         .questions-error: el-form-item(prop="questions")
 
       questions-container(
-        v-if="hasAnyQuestions"
         :questions="value.questions"
         @update:questions="updateQuestionnaireField('questions', $event)"
       )
+
+      .form-section-title.mt-5.mb-2
+        div Intervalos de pontuação
+        div (TODO)
 </template>
 
 <script lang="ts">
@@ -70,7 +73,6 @@ type Methods = {
   updateQuestionnaireField: UpdateFieldWithValueFunction<Props['value']>;
 };
 type Computed = {
-  hasAnyQuestions: boolean;
   formProps: ElFormProps<keyof Props['value']>;
 };
 export type Props = {
@@ -105,9 +107,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   computed: {
-    hasAnyQuestions() {
-      return this.value.questions.length > 0;
-    },
     formProps() {
       return {
         hideRequiredAsterisk: true,
