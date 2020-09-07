@@ -3,9 +3,9 @@
     .questions-container-wrapper
       client-only
         el-collapse(v-model="visibleIndex" accordion)
-          draggable(v-model="questions" :force-fallback="true")
+          draggable(:value="questions" @input="reorderQuestions" :force-fallback="true")
             transition-group(
-              name="flip-list"
+              name="quick-flip-list"
               @before-enter="beforeEnterList"
               @enter="enterList"
               @leave="leaveList"
@@ -17,7 +17,6 @@
                 :max-presentation-order="maxPresentationOrder"
                 @update:question="updateQuestion($event)"
                 @delete-question="deleteQuestion($event)"
-                @update-presentation-order="updateQuestionsOrder"
               )
     .flex.justify-center.pt-1.px-1
       el-button.w-full(type="text" @click="addNewQuestion") Adicionar pergunta
@@ -37,6 +36,7 @@ import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from '
 
 type Data = { visibleIndex: number; };
 type Methods = {
+  reorderQuestions: (reorderedQuestions: Props['questions']) => void;
   beforeEnterList: (el: HTMLElement) => void;
   enterList: (el: HTMLElement, complete: VelocityCallbackFn) => void;
   leaveList: (el: HTMLElement, complete: VelocityCallbackFn) => void;
@@ -44,7 +44,6 @@ type Methods = {
   emitUpdate: (updatedQuestions: Props['questions']) => void;
   updateQuestion: (updatedQuestion: QuestionEvents['update:question']) => void;
   deleteQuestion: (questionToDelete: QuestionEvents['delete-question']) => void;
-  updateQuestionsOrder: (args: QuestionEvents['update-presentation-order']) => void;
 };
 type Computed = {
   orderedQuestions: Props['questions'];
@@ -76,6 +75,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   methods: {
+    reorderQuestions(reorderedQuestions) {
+      const questionsWithUpdatedOrderFields = reorderedQuestions.map((question, i) => ({
+        ...question, presentationOrder: i + 1,
+      }));
+      this.emitUpdate(questionsWithUpdatedOrderFields);
+    },
     beforeEnterList: (el) => {
       el.style.maxHeight = '0';
     },
@@ -115,20 +120,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.emitUpdate(questionsWithNormalizedOrders);
       if (deletedQuestionWasVisible) this.visibleIndex = 0;
     },
-    updateQuestionsOrder({ oldPresentationOrder, newPresentationOrder }) {
-      const questionsWithUpdatedOrders = this.questions.map((question) => {
-        if (question.presentationOrder === oldPresentationOrder) {
-          return { ...question, presentationOrder: newPresentationOrder };
-        }
-
-        if (question.presentationOrder === newPresentationOrder) {
-          return { ...question, presentationOrder: oldPresentationOrder };
-        }
-        return question;
-      });
-
-      this.emitUpdate(questionsWithUpdatedOrders);
-    },
     updateQuestion(updatedQuestion) {
       const questionsWithUpdatedQuestion = this.questions.map((question) => {
         const isCurrentTheOneBeingUpdated = question.presentationOrder === updatedQuestion.presentationOrder;
@@ -144,6 +135,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .questions-container-wrapper {
   @apply overflow-y-hidden;
+
+  .quick-flip-list-move {
+    @apply transition-transform duration-300 ease-out;
+    transition-delay: -200ms;
+  }
 
   .current-question-form {
     @apply px-5 pt-4;

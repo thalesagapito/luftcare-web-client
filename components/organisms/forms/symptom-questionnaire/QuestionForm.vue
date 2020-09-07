@@ -1,21 +1,11 @@
 <template lang="pug">
-  el-collapse-item.question-form-wrapper(:name="question.presentationOrder")
+  el-collapse-item.question-form-wrapper(:name="question.key")
     template(slot="title"): .collapsible-item-title
       .texts
-        .question-name {{ question.nameForManagement || 'Pergunta sem nome' }}
+        .question-name {{ collapsibleItemTitle }}
         .success(v-if="question.isValid") (Válida)
         .error(v-else) (Inválida)
       .actions
-        el-input-number(
-          size="small"
-          controls-position="right"
-          :min="1"
-          :max="maxPresentationOrder"
-          :value="question.presentationOrder"
-          @click.native.stop
-          @change="updateQuestionPresentationOrder($event)"
-        )
-
         el-popconfirm(
           hide-icon
           title="Remover a pergunta?"
@@ -94,9 +84,9 @@ type Methods = {
   validateFormAndEmit: () => void;
   emitUpdateQuestion:(question: Props['question']) => void;
   updateQuestionField: UpdateFieldWithValueFunction<Props['question']>;
-  updateQuestionPresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
+  collapsibleItemTitle: string;
   formProps: ElFormProps<keyof QuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
   isQuestionMultipleChoice: boolean;
@@ -106,7 +96,6 @@ export type Props = {
   maxPresentationOrder: number;
 };
 export type Events = {
-  'update-presentation-order': { oldPresentationOrder: number; newPresentationOrder: number };
   'delete-question': Props['question'];
   'update:question': Props['question'];
 };
@@ -126,6 +115,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   computed: {
+    collapsibleItemTitle() {
+      const { presentationOrder, nameForManagement } = this.question;
+      return `${presentationOrder}. ${nameForManagement || 'Pergunta sem nome'}`;
+    },
     formProps() {
       return {
         size: 'small',
@@ -204,13 +197,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       const updatedQuestion = { ...this.question, [field]: value };
       this.emitUpdateQuestion(updatedQuestion);
     },
-    updateQuestionPresentationOrder(newPresentationOrder) {
-      const eventArgs = {
-        oldPresentationOrder: this.question.presentationOrder,
-        newPresentationOrder,
-      };
-      this.$emit<Events, 'update-presentation-order'>('update-presentation-order', eventArgs);
-    },
     addNewChoice() {
       const newChoice = getDefaultChoice(this.question.possibleChoices?.length || 0);
       const currentChoices = this.question.possibleChoices || [];
@@ -230,10 +216,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .question-form-wrapper {
   .collapsible-item-title {
-    @apply flex flex-grow justify-between items-center;
+    @apply flex flex-grow justify-between items-center cursor-grab;
+
+    &:active {
+      @apply cursor-grabbing;
+    }
 
     .texts {
-      @apply flex items-baseline;
+      @apply flex items-baseline pl-4;
 
       .success,
       .error {
@@ -246,15 +236,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     .actions {
       .el-button {
         @apply mx-4;
-      }
-      & >>> .el-input-number {
-        @apply w-18;
-        transform: rotateX(180deg);
-
-        input {
-          @apply pl-1 pr-9;
-          transform: rotateX(180deg);
-        }
       }
     }
   }
