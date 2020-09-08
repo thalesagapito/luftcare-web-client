@@ -17,7 +17,7 @@
 
     el-form.px-2(v-bind="formProps" ref="form")
       el-form-item(label="Pontuação para atingir o intervalo")
-        el-slider.px-5.mt-1(
+        el-slider.slider(
           :value="[scoreRange.minScore, scoreRange.maxScore]"
           :disabled="minPossibleScoreIsSameAsMax"
           :min="minQuestionnaireScore"
@@ -269,10 +269,17 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply relative;
   }
 
+  .slider {
+    @apply px-5 mt-1;
+  }
+
+  .el-radio-button >>> span,
+  .slider >>> .el-slider__runway .el-slider__bar,
+  .slider >>> .el-slider__runway .el-slider__button-wrapper {
+    @apply transition-all duration-200 ease-out;
+  }
+
   .el-radio-button {
-    & >>> span {
-      @apply transition-all duration-200 ease-out;
-    }
     &.is-active {
       & >>> span {
         @apply shadow-none;
