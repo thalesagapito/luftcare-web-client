@@ -51,8 +51,8 @@
           type="textarea"
           maxlength="2000"
           placeholder="Digite aqui"
+          :autosize="{ minRows: 2 }"
           :value="scoreRange.description"
-          :autosize="{ minRows: 3 }"
           @input="updateScoreRangeField('description', $event)"
         )
 

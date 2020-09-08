@@ -41,7 +41,7 @@
           @input="updateQuestionField('text', $event)"
         )
 
-      .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
+      //- .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
         el-select(
           :value="question.kind"
           @input="updateQuestionField('kind', $event)"

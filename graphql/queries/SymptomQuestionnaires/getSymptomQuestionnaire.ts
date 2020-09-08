@@ -21,6 +21,14 @@ export default gql`
           value
         }
       }
+      scoreRanges {
+        id
+        color
+        title
+        minScore
+        maxScore
+        description
+      }
     }
   }
 `;
