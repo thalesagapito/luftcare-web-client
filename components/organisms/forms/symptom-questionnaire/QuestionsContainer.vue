@@ -3,7 +3,14 @@
     .questions-container-wrapper
       client-only
         el-collapse(v-model="visibleIndex" accordion)
-          draggable(:value="questions" @input="reorderQuestions" :force-fallback="true")
+          draggable(
+            filter=".no-drag"
+            handle=".drag"
+            :animation="250"
+            :value="questions"
+            :force-fallback="true"
+            @input="reorderQuestions"
+          )
             transition-group(
               name="quick-flip-list"
               @before-enter="beforeEnterList"
@@ -14,7 +21,6 @@
                 v-for="(question) in orderedQuestions"
                 :key="question.key"
                 :question="question"
-                :max-presentation-order="maxPresentationOrder"
                 @update:question="updateQuestion($event)"
                 @delete-question="deleteQuestion($event)"
               )
@@ -32,7 +38,7 @@ import { VelocityCallbackFn } from 'velocity-animate';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { KeyedQuestionInput } from './types';
 import { getDefaultQuestion } from './factoryFunctions';
-import QuestionForm, { Props as QuestionProps, Events as QuestionEvents } from './QuestionForm.vue';
+import QuestionForm, { Events as QuestionEvents } from './QuestionForm.vue';
 
 type Data = { visibleIndex: number; };
 type Methods = {
@@ -47,7 +53,6 @@ type Methods = {
 };
 type Computed = {
   orderedQuestions: Props['questions'];
-  maxPresentationOrder: QuestionProps['maxPresentationOrder'];
 };
 export type Props = {
   questions: KeyedQuestionInput[];
@@ -69,9 +74,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   computed: {
     orderedQuestions() {
       return sortBy(this.questions, ['presentationOrder']);
-    },
-    maxPresentationOrder() {
-      return this.questions.length;
     },
   },
   methods: {
@@ -139,10 +141,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   .quick-flip-list-move {
     @apply transition-transform duration-300 ease-out;
     transition-delay: -200ms;
-  }
-
-  .current-question-form {
-    @apply px-5 pt-4;
   }
 }
 </style>

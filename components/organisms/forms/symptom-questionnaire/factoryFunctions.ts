@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import { max, map, min } from 'lodash';
+import { MinMaxScorePair } from './scoreCalculationFunctions';
 import { KeyedQuestionInput, KeyedChoiceInput, KeyedScoreRangeInput } from './types';
 import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
 
@@ -18,19 +20,49 @@ export const getDefaultChoice: DefaultChoiceGetter = (currentChoicesLength) => (
   nameForManagement: `Alternativa ${(currentChoicesLength || 0) + 1}`,
   presentationOrder: (currentChoicesLength || 0) + 1,
   text: '',
-  value: 1,
+  value: 0,
   key: uuidv4(),
   isValid: false,
 });
 
-// TODO figure out the best args for making this work more intuitively
-type DefaultScoreRangeGetter = () => KeyedScoreRangeInput;
-export const getDefaultScoreRange: DefaultScoreRangeGetter = () => ({
-  title: 'Intervalo',
-  description: 'Descrição do intervalo',
-  color: SymptomQuestionnaireScoreRangeColor.Yellow,
-  maxScore: 0,
-  minScore: 0,
-  key: uuidv4(),
-  isValid: false,
-});
+type DefaultScoreRangeGetter = (
+  currentScoreRanges: KeyedScoreRangeInput[],
+  minAndMaxPossibleScores: MinMaxScorePair,
+) => KeyedScoreRangeInput;
+export const getDefaultScoreRange: DefaultScoreRangeGetter = (
+  currentScoreRanges,
+  { minScore: minPossibleScore, maxScore: maxPossibleScore },
+) => {
+  const currentMinScores = map(currentScoreRanges, 'minScore');
+  const currentLowestMinScore = min(currentMinScores) || minPossibleScore;
+  const currentMaxScores = map(currentScoreRanges, 'maxScore');
+  const currentHighestMaxScore = max(currentMaxScores) || maxPossibleScore;
+
+  let newRange: MinMaxScorePair = { minScore: minPossibleScore, maxScore: maxPossibleScore };
+
+  const hasSpaceForHigherScoreRange = currentHighestMaxScore < maxPossibleScore;
+  if (hasSpaceForHigherScoreRange) {
+    newRange = {
+      minScore: currentHighestMaxScore + 1,
+      maxScore: maxPossibleScore,
+    };
+  }
+
+  const hasSpaceForLowerScoreRange = currentLowestMinScore > minPossibleScore;
+  if (hasSpaceForLowerScoreRange) {
+    newRange = {
+      minScore: minPossibleScore,
+      maxScore: currentLowestMinScore - 1,
+    };
+  }
+
+  return {
+    title: '',
+    description: '',
+    color: SymptomQuestionnaireScoreRangeColor.Yellow,
+    minScore: newRange.minScore,
+    maxScore: newRange.maxScore,
+    key: uuidv4(),
+    isValid: false,
+  };
+};

@@ -54,7 +54,13 @@
 
       .form-section-title.mt-5.mb-2
         div Intervalos de pontuação
-        div (TODO)
+
+      score-ranges-container(
+        :score-ranges="value.scoreRanges"
+        :min-questionnaire-score="minQuestionnaireScore"
+        :max-questionnaire-score="maxQuestionnaireScore"
+        @update:scoreRanges="updateQuestionnaireField('scoreRanges', $event)"
+      )
 </template>
 
 <script lang="ts">
@@ -65,7 +71,9 @@ import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
 import { KeyedQuestionnaireInput } from './types';
+import { getMinAndMaxQuestionnaireScore, MinMaxScorePair } from './scoreCalculationFunctions';
 import QuestionsContainer from './QuestionsContainer.vue';
+import ScoreRangesContainer from './ScoreRangesContainer.vue';
 
 type Data = {};
 type Methods = {
@@ -74,6 +82,9 @@ type Methods = {
 };
 type Computed = {
   formProps: ElFormProps<keyof Props['value']>;
+  minAndMaxQuestionnaireScore: MinMaxScorePair;
+  minQuestionnaireScore: number;
+  maxQuestionnaireScore: number;
 };
 export type Props = {
   value: KeyedQuestionnaireInput;
@@ -87,6 +98,7 @@ export type Events = {
 export default Vue.extend<Data, Methods, Computed, Props>({
   components: {
     QuestionsContainer,
+    ScoreRangesContainer,
   },
   props: {
     isValid: {
@@ -169,6 +181,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           ],
         },
       };
+    },
+    minAndMaxQuestionnaireScore() {
+      return getMinAndMaxQuestionnaireScore(this.value);
+    },
+    minQuestionnaireScore() {
+      return this.minAndMaxQuestionnaireScore.minScore;
+    },
+    maxQuestionnaireScore() {
+      return this.minAndMaxQuestionnaireScore.maxScore;
     },
   },
   methods: {

@@ -1,8 +1,8 @@
 <template lang="pug">
-  el-collapse-item.score-range-form-wrapper(:name="scoreRange.presentationOrder")
+  el-collapse-item.score-range-form-wrapper(:name="scoreRange.key")
     template(slot="title"): .collapsible-item-title
       .texts
-        .score-range-name {{ friendlyScoreRangeName || 'Intervalo' }}
+        .score-range-name {{ friendlyScoreRangeName }}
         .success(v-if="scoreRange.isValid") (Válido)
         .error(v-else) (Inválido)
       .actions
@@ -15,38 +15,46 @@
         )
           el-button(round type="text" size="mini" slot="reference" @click.stop) Remover
 
-    el-form.px-1(v-bind="formProps" ref="form")
-      .mb-7: el-form-item(label="Nome da pergunta para uso interno" prop="nameForManagement")
+    el-form.px-2(v-bind="formProps" ref="form")
+      el-form-item(label="Pontuação para atingir o intervalo")
+        el-slider.px-5.mt-1(
+          :value="[scoreRange.minScore, scoreRange.maxScore]"
+          :disabled="minPossibleScoreIsSameAsMax"
+          :min="minQuestionnaireScore"
+          :max="maxQuestionnaireScore"
+          :show-tooltip="false"
+          :marks="[]"
+          show-stops
+          range
+          @input="updateMinAndMaxScore"
+        )
+        .text-danger.text-sm(v-if="minPossibleScoreIsSameAsMax")
+          |Preencha as perguntas e opções do questionário primeiro
+
+      .mb-5: el-form-item(label="Nome do intervalo" prop="title")
         .form-item-helper-text
-          |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
+          |Mostrado aos pacientes ao atingir a pontuação, "Bom", "Muito bom", etc.
         el-input(
           autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
-          :value="scoreRange.nameForManagement"
-          @input="updateScoreRangeField('nameForManagement', $event)"
+          :value="scoreRange.title"
+          @input="updateScoreRangeField('title', $event)"
         )
 
-      .mb-7: el-form-item(label="Enunciado da pergunta" prop="text")
+      .mb-5: el-form-item(label="Descrição do intervalo" prop="text")
         .form-item-helper-text
-          |O enunciado da pergunta que será mostrado ao paciente.
+          |Mostrado aos pacientes ao atingir a pontuação, pode conter instruções, avisos, encorajamento, etc.
         el-input(
           show-word-limit
           type="textarea"
-          maxlength="500"
+          maxlength="2000"
           placeholder="Digite aqui"
-          :value="scoreRange.text"
-          :autosize="{ minRows: 4 }"
-          @input="updateScoreRangeField('text', $event)"
+          :value="scoreRange.description"
+          :autosize="{ minRows: 3 }"
+          @input="updateScoreRangeField('description', $event)"
         )
-
-      .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
-        el-select(
-          :value="scoreRange.kind"
-          @input="updateScoreRangeField('kind', $event)"
-        )
-
 </template>
 
 <script lang="ts">
@@ -64,15 +72,19 @@ type Data = {};
 type Methods = {
   emitDelete: () => void;
   validateFormAndEmit: () => void;
+  updateMinAndMaxScore: (minAndMaxScore: [number, number]) => void;
   emitUpdateScoreRange:(scoreRange: Props['scoreRange']) => void;
   updateScoreRangeField: UpdateFieldWithValueFunction<Props['scoreRange']>;
 };
 type Computed = {
   friendlyScoreRangeName: string;
+  minPossibleScoreIsSameAsMax: boolean;
   formProps: ElFormProps<keyof ScoreRangeInput>;
 };
 export type Props = {
   scoreRange: KeyedScoreRangeInput;
+  minQuestionnaireScore: number;
+  maxQuestionnaireScore: number;
 };
 export type Events = {
   'delete-score-range': Props['scoreRange'];
@@ -84,13 +96,25 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     scoreRange: {
       type: Object,
       required: true,
-      default: getDefaultScoreRange,
+      default: () => getDefaultScoreRange([], { minScore: 0, maxScore: 0 }),
     },
+    minQuestionnaireScore: { type: Number, required: true, default: 0 },
+    maxQuestionnaireScore: { type: Number, required: true, default: 0 },
   } as RecordPropsDefinition<Props>,
   computed: {
     friendlyScoreRangeName() {
-      const { minScore = 0, maxScore = 0 } = this.scoreRange;
-      return `De ${minScore} até ${maxScore} pontos`;
+      const { title, minScore = 0, maxScore = 0 } = this.scoreRange;
+      const isSingular = Math.abs(maxScore) <= 1;
+      const isIntervalExact = minScore === maxScore;
+      const formattedTitle = title || 'Intervalo sem nome';
+      const formattedPoints = isSingular ? 'ponto' : 'pontos';
+
+      if (isIntervalExact) return `${formattedTitle}, exatamente ${maxScore} ${formattedPoints}`;
+
+      return `${formattedTitle}, de ${minScore} até ${maxScore} ${formattedPoints}`;
+    },
+    minPossibleScoreIsSameAsMax() {
+      return this.minQuestionnaireScore === this.maxQuestionnaireScore;
     },
     formProps() {
       return {
@@ -129,26 +153,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
             max: 2000,
             message: 'Obrigatório',
           }],
-          // possibleChoices: [
-          //   {
-          //     type: 'array',
-          //     required: this.isScoreRangeMultipleChoice,
-          //     validator: (rule, value: Props['scoreRange']['possibleChoices'] = [], callback) => {
-          //       const invalidChoicesMessage = 'Preencha todas as alternativas corretamente';
-          //       const minLengthChoicesMessage = 'Crie pelo menos duas alternativas';
-
-          //       if (!this.isScoreRangeMultipleChoice) return callback();
-
-          //       const hasMinLengthError = value.length < 2;
-          //       if (hasMinLengthError) return callback(minLengthChoicesMessage);
-
-          //       const hasInvalidChoicesError = !every(value, 'isValid');
-          //       if (hasInvalidChoicesError) return callback(invalidChoicesMessage);
-
-          //       return callback();
-          //     },
-          //   },
-          // ],
         },
       };
     },
@@ -169,6 +173,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       const updatedScoreRange = { ...this.scoreRange, [field]: value };
       this.emitUpdateScoreRange(updatedScoreRange);
     },
+    updateMinAndMaxScore([minScore, maxScore]) {
+      const updatedMinScore = this.scoreRange.minScore !== minScore;
+      const updatedMaxScore = this.scoreRange.maxScore !== maxScore;
+
+      if (updatedMinScore) this.updateScoreRangeField('minScore', minScore);
+      if (updatedMaxScore) this.updateScoreRangeField('maxScore', maxScore);
+    },
     async validateFormAndEmit() {
       const isValid = await (this.$refs.form as Form)?.validate().catch(() => false);
       if (isValid === this.scoreRange.isValid) return;
@@ -181,10 +192,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .score-range-form-wrapper {
   .collapsible-item-title {
-    @apply flex flex-grow justify-between items-center;
+    @apply flex flex-grow justify-between items-center cursor-grab;
+
+    &:active {
+      @apply cursor-grabbing;
+    }
 
     .texts {
-      @apply flex items-baseline;
+      @apply flex items-baseline pl-2 cursor-pointer;
 
       .success,
       .error {
@@ -198,15 +213,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       .el-button {
         @apply mx-4;
       }
-      & >>> .el-input-number {
-        @apply w-18;
-        transform: rotateX(180deg);
-
-        input {
-          @apply pl-1 pr-9;
-          transform: rotateX(180deg);
-        }
-      }
     }
   }
 
@@ -215,13 +221,5 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply relative;
   }
 
-  .scoreRange-choices-wrapper {
-    .header {
-      @apply flex items-center;
-      .title {
-        @apply font-bold text-gray-700 mr-2;
-      }
-    }
-  }
 }
 </style>

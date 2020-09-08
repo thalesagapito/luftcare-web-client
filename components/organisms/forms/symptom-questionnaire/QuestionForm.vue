@@ -1,7 +1,7 @@
 <template lang="pug">
   el-collapse-item.question-form-wrapper(:name="question.key")
-    template(slot="title"): .collapsible-item-title
-      .texts
+    template(slot="title"): .collapsible-item-title.drag
+      .texts.no-drag
         .question-name {{ collapsibleItemTitle }}
         .success(v-if="question.isValid") (Válida)
         .error(v-else) (Inválida)
@@ -15,7 +15,7 @@
         )
           el-button(round type="text" size="mini" slot="reference" @click.stop) Remover
 
-    el-form.px-1(v-bind="formProps" ref="form")
+    el-form.px-2(v-bind="formProps" ref="form")
       .mb-7: el-form-item(label="Nome da pergunta para uso interno" prop="nameForManagement")
         .form-item-helper-text
           |Esse é o nome que será mostrado apenas no painel de controle, nenhum paciente tem acesso.
@@ -37,7 +37,7 @@
           maxlength="500"
           placeholder="Digite aqui"
           :value="question.text"
-          :autosize="{ minRows: 4 }"
+          :autosize="{ minRows: 3 }"
           @input="updateQuestionField('text', $event)"
         )
 
@@ -93,7 +93,6 @@ type Computed = {
 };
 export type Props = {
   question: KeyedQuestionInput;
-  maxPresentationOrder: number;
 };
 export type Events = {
   'delete-question': Props['question'];
@@ -107,11 +106,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       type: Object,
       required: true,
       default: getDefaultQuestion,
-    },
-    maxPresentationOrder: {
-      type: Number,
-      required: true,
-      default: 1,
     },
   } as RecordPropsDefinition<Props>,
   computed: {
@@ -223,7 +217,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     }
 
     .texts {
-      @apply flex items-baseline pl-4;
+      @apply flex items-baseline pl-2 cursor-pointer;
 
       .success,
       .error {

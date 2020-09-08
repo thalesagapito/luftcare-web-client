@@ -1,10 +1,8 @@
 <template lang="pug">
   div
     .score-ranges-container-wrapper
-      pre minScore {{ minQuestionnaireScore }}
-      pre maxScore {{ maxQuestionnaireScore }}
       client-only
-        el-collapse(v-model="visibleIndex" accordion)
+        el-collapse(v-model="visibleIndex")
           transition-group(
             name="flip-list"
             @before-enter="beforeEnterList"
@@ -15,6 +13,8 @@
               v-for="(scoreRange) in orderedScoreRanges"
               :key="scoreRange.key"
               :scoreRange="scoreRange"
+              :min-questionnaire-score="minQuestionnaireScore"
+              :max-questionnaire-score="maxQuestionnaireScore"
               @update:scoreRange="updateScoreRange($event)"
               @delete-score-range="deleteScoreRange($event)"
             )
@@ -104,7 +104,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$emit<Events, 'update:scoreRanges'>('update:scoreRanges', updatedValue);
     },
     addNewScoreRange() {
-      const newScoreRange = getDefaultScoreRange();
+      const minAndMaxPossibleScores = {
+        minScore: this.minQuestionnaireScore,
+        maxScore: this.maxQuestionnaireScore,
+      };
+      const newScoreRange = getDefaultScoreRange(this.scoreRanges, minAndMaxPossibleScores);
       const updatedScoreRanges = [...this.scoreRanges, newScoreRange];
       this.emitUpdate(updatedScoreRanges);
     },
@@ -135,9 +139,5 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .score-ranges-container-wrapper {
   @apply overflow-y-hidden;
-
-  .current-scoreRange-form {
-    @apply px-5 pt-4;
-  }
 }
 </style>
