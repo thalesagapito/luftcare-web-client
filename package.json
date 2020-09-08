@@ -50,7 +50,7 @@
     "velocity-animate": "^2.0.6",
     "vue": "^2.6.11",
     "vuedraggable": "^2.24.1",
-    "vuex-persistedstate": "^3.0.1"
+    "vuex-persistedstate": "^3.1.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.14.0",

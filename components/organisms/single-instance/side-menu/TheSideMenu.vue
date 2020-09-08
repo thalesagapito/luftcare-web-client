@@ -26,7 +26,7 @@
 
       el-menu-item(@click="$authMethodsLogout")
         i.el-icon-switch-button
-        span Sair
+        span(v-if="isDrawerOpen") Sair
 </template>
 
 <script lang="ts">
@@ -119,7 +119,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply hidden h-full fixed flex-col left-0 top-0;
 
     .toggle-open {
-      @apply absolute right-0 mt-16 transform translate-x-1/4;
+      @apply absolute right-0 mt-16 transform translate-x-1/2;
     }
 
     .logo {
@@ -127,7 +127,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     }
 
     li {
-      @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700;
+      @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700 px-0;
       &.is-active {
         @apply text-lapis bg-lapis bg-opacity-10;
       }
@@ -138,6 +138,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 .the-side-menu-wrapper,
 .the-side-menu-wrapper .the-side-menu,
 .the-side-menu-wrapper .the-side-menu .logo,
+.the-side-menu-wrapper .the-side-menu li >>> i,
 .the-side-menu-wrapper .the-side-menu .toggle-open >>> i {
   @apply transition-all duration-300 ease-out;
 }
@@ -149,6 +150,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
   .logo {
     @apply w-14 mt-9 mb-12;
+  }
+  li >>> i {
+    margin-left: -8px;
   }
 }
 

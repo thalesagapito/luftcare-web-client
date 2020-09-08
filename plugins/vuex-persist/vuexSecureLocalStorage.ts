@@ -8,7 +8,7 @@ const ls = new SecureLS({ isCompression: false });
 export default ({ store }: Context) => {
   (window as typeof window & NuxtExtendedWindow).onNuxtReady(() => {
     createPersistedState({
-      key: 'vuex',
+      key: 'vuex-secure',
       paths: ['auth.refreshToken'],
       storage: {
         getItem: (key) => ls.get(key),

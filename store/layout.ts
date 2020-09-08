@@ -1,7 +1,7 @@
 import { getterTree, mutationTree, actionTree } from 'nuxt-typed-vuex';
 
 export const state = () => ({
-  isMenuDrawerOpen: false,
+  isMenuDrawerOpen: true,
 });
 
 export const getters = getterTree(state, {
