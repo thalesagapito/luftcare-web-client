@@ -1,6 +1,6 @@
 <template lang="pug">
   .dashboard-wrapper
-    the-side-menu
+    the-side-menu.menu
     .content
       .container.mx-auto
         nuxt
@@ -22,32 +22,31 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .dashboard-wrapper {
-  @apply grid;
-  grid-template-columns: 100vw;
+  @apply flex w-screen;
+
+  $side-menu-width: 16rem;
+  .menu:not(.collapsed),
+  .menu:not(.collapsed) >>> .the-side-menu {
+    width: $side-menu-width;
+  }
 
   .content {
-    @apply flex flex-col items-center justify-start w-full bg-gray-100 bg-opacity-60;
+    @apply flex flex-col items-center justify-start bg-gray-100 bg-opacity-60;
+    width: calc(100vw - $side-menu-width);
     & > div {
       @apply w-full;
     }
   }
 }
-@screen md {
-  $sidebar-width: 14rem;
-  .dashboard-wrapper {
-    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
-  }
-}
-@screen lg {
-  $sidebar-width: 16rem;
-  .dashboard-wrapper {
-    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
-  }
-}
+
+
 @screen xl {
-  $sidebar-width: 20rem;
   .dashboard-wrapper {
-    grid-template-columns: $sidebar-width calc(100vw - $sidebar-width);
+    $side-menu-width: 18rem;
+    .menu:not(.collapsed),
+    .menu:not(.collapsed) >>> .the-side-menu {
+      width: $side-menu-width;
+    }
   }
 }
 </style>

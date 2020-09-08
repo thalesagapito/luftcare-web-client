@@ -1,21 +1,32 @@
 <template lang="pug">
-  el-menu.the-side-menu-wrapper
-    img.logo(src="/logos/luftcare-logo-black.png")
+  .the-side-menu-wrapper(:class="wrapperClass")
+    el-menu.the-side-menu
 
-    el-menu-item(
-      v-for="({ iconName, label, index, onClick }) in topLinks"
-      @click="onClick"
-      :class="{ 'is-active': currentActiveLink === index }"
-      :key="index"
-    )
-      i(:class="iconName")
-      span {{ label }}
+      el-button(
+        circle
+        size="small"
+        type="default"
+        class="toggle-open"
+        icon="el-icon-arrow-left"
+        @click="toggleMenuDrawer"
+      )
 
-    .flex-grow
+      img.logo(src="/logos/luftcare-logo-black.png")
 
-    el-menu-item(@click="$authMethodsLogout")
-      i.el-icon-switch-button
-      span Sair
+      el-menu-item(
+        v-for="({ iconName, label, index, onClick }) in topLinks"
+        @click="onClick"
+        :class="{ 'is-active': currentActiveLink === index }"
+        :key="index"
+      )
+        i(:class="iconName")
+        span(v-if="isDrawerOpen") {{ label }}
+
+      .flex-grow
+
+      el-menu-item(@click="$authMethodsLogout")
+        i.el-icon-switch-button
+        span Sair
 </template>
 
 <script lang="ts">
@@ -32,8 +43,12 @@ type SideMenuLink = {
 };
 
 type Data = {};
-type Methods = {};
+type Methods = {
+  toggleMenuDrawer: () => void;
+};
 type Computed = {
+  isDrawerOpen: boolean;
+  wrapperClass: string;
   topLinks: SideMenuLink[];
   bottomLinks: SideMenuLink[];
   currentActiveLink: SideMenuLinkIndex | undefined;
@@ -43,6 +58,12 @@ type Props = {};
 export default Vue.extend<Data, Methods, Computed, Props>({
   mixins: [authMethods],
   computed: {
+    isDrawerOpen() {
+      return this.$accessor.layout.isMenuDrawerOpen;
+    },
+    wrapperClass() {
+      return this.isDrawerOpen ? '' : 'collapsed';
+    },
     topLinks() {
       return [
         {
@@ -82,28 +103,62 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       }
     },
   },
-  methods: {},
+  methods: {
+    toggleMenuDrawer() {
+      this.$accessor.layout.toggleMenuDrawer();
+    },
+  },
 });
 </script>
 
 <style lang="postcss" scoped>
 .the-side-menu-wrapper {
-  @apply hidden;
+  @apply hidden overflow-hidden flex-shrink-0 max-h-screen;
 
-  .logo {
-    @apply w-32 my-9 mx-auto;
-  }
+  .the-side-menu {
+    @apply hidden h-full fixed flex-col left-0 top-0;
 
-  li {
-    @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700;
-    &.is-active {
-      @apply text-lapis bg-lapis bg-opacity-10;
+    .toggle-open {
+      @apply absolute right-0 mt-16 transform translate-x-1/4;
+    }
+
+    .logo {
+      @apply w-24 my-9 mx-auto;
+    }
+
+    li {
+      @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700;
+      &.is-active {
+        @apply text-lapis bg-lapis bg-opacity-10;
+      }
     }
   }
 }
+
+.the-side-menu-wrapper,
+.the-side-menu-wrapper .the-side-menu,
+.the-side-menu-wrapper .the-side-menu .logo,
+.the-side-menu-wrapper .the-side-menu .toggle-open >>> i {
+  @apply transition-all duration-300 ease-out;
+}
+
+.the-side-menu-wrapper.collapsed,
+.the-side-menu-wrapper.collapsed .the-side-menu {
+  @apply w-20;
+
+  .toggle-open >>> i {
+    @apply transform rotate-180;
+  }
+  .logo {
+    @apply w-14 mt-9 mb-12;
+  }
+}
+
+
 @screen md {
-  .the-side-menu-wrapper {
-    @apply flex flex-col w-full;
+  .the-side-menu-wrapper,
+  .the-side-menu-wrapper .the-side-menu {
+    @apply flex;
   }
 }
 </style>
