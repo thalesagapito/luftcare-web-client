@@ -161,9 +161,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       const formattedTitle = title || 'Intervalo sem nome';
       const formattedPoints = isSingular ? 'ponto' : 'pontos';
 
-      if (isIntervalExact) return `${formattedTitle}, exatamente ${maxScore} ${formattedPoints}`;
+      if (isIntervalExact) return `${formattedTitle}, ${maxScore} ${formattedPoints}`;
 
-      return `${formattedTitle}, de ${minScore} até ${maxScore} ${formattedPoints}`;
+      return `${formattedTitle}, de ${minScore} a ${maxScore} ${formattedPoints}`;
     },
     minPossibleScoreIsSameAsMax() {
       return this.minQuestionnaireScore === this.maxQuestionnaireScore;

@@ -52,8 +52,12 @@
         @update:questions="updateQuestionnaireField('questions', $event)"
       )
 
-      .form-section-title.mt-5.mb-2
+      .form-section-title.mt-5
         div Intervalos de pontuação
+        .questions-error: el-form-item(prop="scoreRanges")
+      ul.text-gray-500.text-sm.my-1
+        li Menor pontuação possível: <strong class="text-gray-600">{{ minQuestionnaireScore }}</strong>
+        li Maior pontuação possível: <strong class="text-gray-600">{{ maxQuestionnaireScore }}</strong>
 
       score-ranges-container(
         :score-ranges="value.scoreRanges"
@@ -71,9 +75,13 @@ import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
 import { KeyedQuestionnaireInput } from './types';
-import { getMinAndMaxQuestionnaireScore, MinMaxScorePair } from './scoreCalculationFunctions';
 import QuestionsContainer from './QuestionsContainer.vue';
 import ScoreRangesContainer from './ScoreRangesContainer.vue';
+import {
+  MinMaxScorePair,
+  validateScoreRanges,
+  getMinAndMaxQuestionnaireScore,
+} from './scoreRangeFunctions';
 
 type Data = {};
 type Methods = {
@@ -172,8 +180,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
                 const hasMinLengthError = value.length < 1;
                 if (hasMinLengthError) return callback(minLengthScoreRangesMessage);
 
-                const hasInvalidScoreRangesError = !every(value, 'isValid');
-                if (hasInvalidScoreRangesError) return callback(invalidScoreRangesMessage);
+                const { isValid, errorMessage } = validateScoreRanges(this.value);
+                if (!isValid) return callback(errorMessage || 'has error though');
+
+                const hasInvalidRangeForm = !every(value, 'isValid');
+                if (hasInvalidRangeForm) return callback(invalidScoreRangesMessage);
 
                 return callback();
               },

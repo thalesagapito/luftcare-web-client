@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { max, map, min } from 'lodash';
-import { MinMaxScorePair } from './scoreCalculationFunctions';
+import { MinMaxScorePair } from './scoreRangeFunctions';
 import { KeyedQuestionInput, KeyedChoiceInput, KeyedScoreRangeInput } from './types';
 import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
 
@@ -34,9 +34,9 @@ export const getDefaultScoreRange: DefaultScoreRangeGetter = (
   { minScore: minPossibleScore, maxScore: maxPossibleScore },
 ) => {
   const currentMinScores = map(currentScoreRanges, 'minScore');
-  const currentLowestMinScore = min(currentMinScores) || minPossibleScore;
+  const currentLowestMinScore = min(currentMinScores || [minPossibleScore])!;
   const currentMaxScores = map(currentScoreRanges, 'maxScore');
-  const currentHighestMaxScore = max(currentMaxScores) || maxPossibleScore;
+  const currentHighestMaxScore = max(currentMaxScores || [maxPossibleScore])!;
 
   let newRange: MinMaxScorePair = { minScore: minPossibleScore, maxScore: maxPossibleScore };
 
