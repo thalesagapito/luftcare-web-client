@@ -144,8 +144,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 .the-side-menu-wrapper.collapsed,
 .the-side-menu-wrapper.collapsed .the-side-menu {
-  @apply w-20;
-
   .toggle-open >>> i {
     @apply transform rotate-180;
   }
@@ -153,7 +151,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply w-14 mt-9 mb-12;
   }
 }
-
 
 @screen md {
   .the-side-menu-wrapper,

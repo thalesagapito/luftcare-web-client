@@ -31,8 +31,20 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 
   .content {
-    @apply flex flex-col items-center justify-start bg-gray-100 bg-opacity-60;
+    @apply flex flex-col items-center justify-start bg-gray-100 bg-opacity-60 transition duration-300 ease-out;
     width: calc(100vw - $side-menu-width);
+    & > div {
+      @apply w-full;
+    }
+  }
+
+  $collapsed-side-menu-width: 5rem;
+  .menu.collapsed,
+  .menu.collapsed >>> .the-side-menu {
+    width: $collapsed-side-menu-width;
+  }
+  .menu.collapsed ~ .content {
+    width: calc(100vw - $collapsed-side-menu-width);
     & > div {
       @apply w-full;
     }
@@ -46,6 +58,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     .menu:not(.collapsed),
     .menu:not(.collapsed) >>> .the-side-menu {
       width: $side-menu-width;
+    }
+
+    .content {
+      width: calc(100vw - $side-menu-width);
     }
   }
 }
