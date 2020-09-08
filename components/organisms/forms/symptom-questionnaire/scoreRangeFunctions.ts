@@ -87,7 +87,8 @@ function getOverlapErrorMessage(overlappingRanges: KeyedScoreRangeInput[] = []):
   const { title: secondRangeTitle } = secondRange;
 
   if (firstRangeTitle && secondRangeTitle) {
-    return `Os intervalos ${firstRangeTitle} e ${secondRangeTitle} estão se sobrepondo em alguma pontuação`;
+    return `\
+    Os intervalos "${firstRangeTitle}" e "${secondRangeTitle}" estão se sobrepondo em alguma pontuação`;
   }
 
   return 'Dois ou mais intervalos estão se sobrepondo em alguma pontuação';

@@ -5,6 +5,19 @@
         .score-range-name {{ friendlyScoreRangeName }}
         .success(v-if="scoreRange.isValid") (Válido)
         .error(v-else) (Inválido)
+      .slider-wrapper
+        el-slider.slider(
+          :value="[scoreRange.minScore, scoreRange.maxScore]"
+          :disabled="minPossibleScoreIsSameAsMax"
+          :min="minQuestionnaireScore"
+          :max="maxQuestionnaireScore"
+          :class="selectedColorClass"
+          :show-tooltip="false"
+          size="mini"
+          range
+          @click.native.stop
+          @input="updateMinAndMaxScore"
+        )
       .actions
         el-popconfirm(
           hide-icon
@@ -13,24 +26,9 @@
           confirmButtonText="Sim, remover"
           @onConfirm="emitDelete"
         )
-          el-button(round type="text" size="mini" slot="reference" @click.stop) Remover
+          el-button(round type="text" size="mini" slot="reference" @mouseup.native.stop @click.stop) Remover
 
     el-form.px-2(v-bind="formProps" ref="form")
-      el-form-item(label="Pontuação para atingir o intervalo")
-        el-slider.slider(
-          :value="[scoreRange.minScore, scoreRange.maxScore]"
-          :disabled="minPossibleScoreIsSameAsMax"
-          :min="minQuestionnaireScore"
-          :max="maxQuestionnaireScore"
-          :show-tooltip="false"
-          :marks="[]"
-          show-stops
-          range
-          @input="updateMinAndMaxScore"
-        )
-        .text-danger.text-sm(v-if="minPossibleScoreIsSameAsMax")
-          |Preencha as perguntas e alternativas do questionário primeiro
-
       .mb-5: el-form-item(label="Nome do intervalo" prop="title")
         .form-item-helper-text
           |Mostrado aos pacientes ao atingir a pontuação, "Bom", "Muito bom", etc.
@@ -99,6 +97,7 @@ type Methods = {
   updateScoreRangeField: UpdateFieldWithValueFunction<Props['scoreRange']>;
 };
 type Computed = {
+  selectedColorClass: string;
   colorOptions: ColorOption[];
   friendlyScoreRangeName: string;
   minPossibleScoreIsSameAsMax: boolean;
@@ -125,6 +124,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     maxQuestionnaireScore: { type: Number, required: true, default: 0 },
   } as RecordPropsDefinition<Props>,
   computed: {
+    selectedColorClass() {
+      const selectedColorOption = this.colorOptions.find(({ value }) => this.scoreRange.color === value);
+      return selectedColorOption?.class || '';
+    },
     colorOptions() {
       return [
         {
@@ -247,7 +250,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply flex flex-grow justify-between items-center;
 
     .texts {
-      @apply flex items-baseline pl-2;
+      @apply flex items-baseline pl-2 truncate;
+      width: 35ch;
 
       .success,
       .error {
@@ -259,7 +263,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
     .actions {
       .el-button {
-        @apply mx-4;
+        @apply mr-4;
       }
     }
   }
@@ -269,13 +273,35 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     @apply relative;
   }
 
-  .slider {
-    @apply px-5 mt-1;
+  .slider-wrapper {
+    @apply px-6 flex-grow;
+
+    .red {
+      & >>> .el-slider__bar { @apply bg-red-500; }
+      & >>> .el-slider__button { @apply border-red-500; }
+    }
+    .orange {
+      & >>> .el-slider__bar { @apply bg-orange-500; }
+      & >>> .el-slider__button { @apply border-orange-500; }
+    }
+    .yellow {
+      & >>> .el-slider__bar { @apply bg-yellow-500; }
+      & >>> .el-slider__button { @apply border-yellow-500; }
+    }
+    .green-yellow {
+      & >>> .el-slider__bar { @apply bg-green-yellow; }
+      & >>> .el-slider__button { @apply border-green-yellow; }
+    }
+    .green {
+      & >>> .el-slider__bar { @apply bg-green-500; }
+      & >>> .el-slider__button { @apply border-green-500; }
+    }
   }
 
   .el-radio-button >>> span,
-  .slider >>> .el-slider__runway .el-slider__bar,
-  .slider >>> .el-slider__runway .el-slider__button-wrapper {
+  .slider-wrapper >>> .el-slider__runway .el-slider__bar,
+  .slider-wrapper >>> .el-slider__runway .el-slider__stop,
+  .slider-wrapper >>> .el-slider__runway .el-slider__button-wrapper {
     @apply transition-all duration-200 ease-out;
   }
 
