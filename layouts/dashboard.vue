@@ -31,7 +31,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 
   .content {
-    @apply flex flex-col items-center justify-start bg-gray-100 bg-opacity-60 transition duration-300 ease-out;
+    @apply flex flex-col items-center justify-start bg-gray-100 bg-opacity-60 transition-all duration-300 ease-out;
     width: calc(100vw - $side-menu-width);
     & > div {
       @apply w-full;
