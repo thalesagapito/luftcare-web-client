@@ -309,7 +309,7 @@ export type SymptomQuestionnaireScoreRange = {
 
 export enum SymptomQuestionnaireScoreRangeColor {
   Green = 'GREEN',
-  Blue = 'BLUE',
+  GreenYellow = 'GREEN_YELLOW',
   Yellow = 'YELLOW',
   Orange = 'ORANGE',
   Red = 'RED'

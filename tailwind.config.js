@@ -29,6 +29,7 @@ module.exports = {
       danger: '#fe6364',
       warning: '#ffba49',
       success: '#60d394',
+      'green-yellow': '#B2CD4B',
 
       black: '#000',
       white: '#fff',

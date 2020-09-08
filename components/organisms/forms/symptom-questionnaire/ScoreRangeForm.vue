@@ -29,7 +29,7 @@
           @input="updateMinAndMaxScore"
         )
         .text-danger.text-sm(v-if="minPossibleScoreIsSameAsMax")
-          |Preencha as perguntas e opções do questionário primeiro
+          |Preencha as perguntas e alternativas do questionário primeiro
 
       .mb-5: el-form-item(label="Nome do intervalo" prop="title")
         .form-item-helper-text
@@ -43,7 +43,7 @@
           @input="updateScoreRangeField('title', $event)"
         )
 
-      .mb-5: el-form-item(label="Descrição do intervalo" prop="text")
+      .mb-5: el-form-item(label="Descrição do intervalo" prop="description")
         .form-item-helper-text
           |Mostrado aos pacientes ao atingir a pontuação, pode conter instruções, avisos, encorajamento, etc.
         el-input(
@@ -55,6 +55,22 @@
           :autosize="{ minRows: 3 }"
           @input="updateScoreRangeField('description', $event)"
         )
+
+      .mb-5: el-form-item(label="Cor do intervalo" prop="color")
+        .form-item-helper-text
+          |Mostrado aos pacientes ao atingir a pontuação, para facilitar o entendimento da situação.
+        el-radio-group(
+          :value="scoreRange.color"
+          size="small"
+          @input="updateScoreRangeField('color', $event)"
+        )
+          el-radio-button(
+            v-for="color in colorOptions"
+            :class="color.class"
+            :label="color.value"
+            :name="color.label"
+            :key="color.value"
+          ) {{ color.label }}
 </template>
 
 <script lang="ts">
@@ -66,7 +82,13 @@ import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
 import { getDefaultScoreRange } from './factoryFunctions';
 import { KeyedScoreRangeInput, ScoreRangeInput } from './types';
+import { SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
 
+type ColorOption = {
+  value: SymptomQuestionnaireScoreRangeColor;
+  label: string;
+  class: string;
+};
 
 type Data = {};
 type Methods = {
@@ -77,6 +99,7 @@ type Methods = {
   updateScoreRangeField: UpdateFieldWithValueFunction<Props['scoreRange']>;
 };
 type Computed = {
+  colorOptions: ColorOption[];
   friendlyScoreRangeName: string;
   minPossibleScoreIsSameAsMax: boolean;
   formProps: ElFormProps<keyof ScoreRangeInput>;
@@ -102,6 +125,35 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     maxQuestionnaireScore: { type: Number, required: true, default: 0 },
   } as RecordPropsDefinition<Props>,
   computed: {
+    colorOptions() {
+      return [
+        {
+          label: 'Vermelho',
+          class: 'red',
+          value: SymptomQuestionnaireScoreRangeColor.Red,
+        },
+        {
+          label: 'Laranja',
+          class: 'orange',
+          value: SymptomQuestionnaireScoreRangeColor.Orange,
+        },
+        {
+          label: 'Amarelo',
+          class: 'yellow',
+          value: SymptomQuestionnaireScoreRangeColor.Yellow,
+        },
+        {
+          label: 'Amarelo-verde',
+          class: 'green-yellow',
+          value: SymptomQuestionnaireScoreRangeColor.GreenYellow,
+        },
+        {
+          label: 'Verde',
+          class: 'green',
+          value: SymptomQuestionnaireScoreRangeColor.Green,
+        },
+      ];
+    },
     friendlyScoreRangeName() {
       const { title, minScore = 0, maxScore = 0 } = this.scoreRange;
       const isSingular = Math.abs(maxScore) <= 1;
@@ -192,14 +244,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .score-range-form-wrapper {
   .collapsible-item-title {
-    @apply flex flex-grow justify-between items-center cursor-grab;
-
-    &:active {
-      @apply cursor-grabbing;
-    }
+    @apply flex flex-grow justify-between items-center;
 
     .texts {
-      @apply flex items-baseline pl-2 cursor-pointer;
+      @apply flex items-baseline pl-2;
 
       .success,
       .error {
@@ -219,6 +267,32 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   & >>> > div[role="tab"],
   & >>> > div[role="tabpanel"] {
     @apply relative;
+  }
+
+  .el-radio-button {
+    & >>> span {
+      @apply transition-all duration-200 ease-out;
+    }
+    &.is-active {
+      & >>> span {
+        @apply shadow-none;
+      }
+      &.red >>> span {
+        @apply bg-red-500 border-red-500;
+      }
+      &.orange >>> span {
+        @apply bg-orange-500 border-orange-500;
+      }
+      &.yellow >>> span {
+        @apply bg-yellow-500 border-yellow-500;
+      }
+      &.green-yellow >>> span {
+        @apply bg-green-yellow border-green-yellow;
+      }
+      &.green >>> span {
+        @apply bg-green-500 border-green-500;
+      }
+    }
   }
 
 }
