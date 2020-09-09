@@ -10,7 +10,8 @@
               maxlength="500"
               placeholder="Digite aqui"
               :value="choice.nameForManagement"
-              @input="updateChoiceField($event, 'nameForManagement')"
+              @input="updateChoiceField('nameForManagement', $event)"
+              @blur="updateChoiceField('nameForManagement', trim(choice.nameForManagement))"
             )
 
           el-form-item(label="Enunciado da alternativa" prop="text")
@@ -21,7 +22,8 @@
               placeholder="Digite aqui"
               :value="choice.text"
               :autosize="{ minRows: 3 }"
-              @input="updateChoiceField($event, 'text')"
+              @input="updateChoiceField('text', $event)"
+              @blur="updateChoiceField('text', trim(choice.text))"
             )
 
           el-form-item(label="Pontuação" prop="value")
@@ -30,7 +32,7 @@
               |esse é o valor dela no cálculo do resultado do questionário
             el-input-number(
               :value="choice.value"
-              @input="updateChoiceField($event, 'value')"
+              @input="updateChoiceField('value', $event)"
             )
         .right
           el-form-item(label="Ordem" prop="presentationOrder")
@@ -52,22 +54,24 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Form } from 'element-ui';
-import { debounce } from 'lodash';
+import { debounce, trim } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '@/types/element-ui';
 import NumberStepper from '@/components/atoms/controls/VerticalNumberStepper.vue';
 import { KeyedChoiceInput, ChoiceInput } from './types';
 import { getDefaultChoice } from './factoryFunctions';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
 
 type Data = {};
 type Methods = {
   emitDeleteChoice: () => void;
   validateFormAndEmit: () => void;
   emitUpdateChoice: (updatedChoice: Props['choice']) => void;
-  updateChoiceField: (value: any, fieldName: keyof Props['choice']) => void;
+  updateChoiceField: UpdateFieldWithValueFunction<Props['choice']>;
   updateChoicePresentationOrder: (newPresentationOrder: number) => void;
 };
 type Computed = {
+  trim: (value: string) => string;
   formProps: ElFormProps<keyof ChoiceInput>;
 };
 export type Props = {
@@ -95,6 +99,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   computed: {
+    trim: () => trim,
     formProps() {
       return {
         showMessage: true,
@@ -137,8 +142,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     emitUpdateChoice(updatedChoice) {
       this.$emit<Events, 'update:choice'>('update:choice', updatedChoice);
     },
-    updateChoiceField(value, fieldName) {
-      const updatedChoice = { ...this.choice, [fieldName]: value };
+    updateChoiceField(field, value) {
+      const updatedChoice = { ...this.choice, [field]: value };
       this.emitUpdateChoice(updatedChoice);
     },
     updateChoicePresentationOrder(newPresentationOrder) {

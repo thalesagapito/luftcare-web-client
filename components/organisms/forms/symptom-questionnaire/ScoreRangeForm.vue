@@ -39,6 +39,7 @@
           placeholder="Digite aqui"
           :value="scoreRange.title"
           @input="updateScoreRangeField('title', $event)"
+          @blur="updateScoreRangeField('title', trim(scoreRange.title))"
         )
 
       .mb-5: el-form-item(label="Descrição do intervalo" prop="description")
@@ -52,6 +53,7 @@
           :autosize="{ minRows: 2 }"
           :value="scoreRange.description"
           @input="updateScoreRangeField('description', $event)"
+          @blur="updateScoreRangeField('description', trim(scoreRange.description))"
         )
 
       .mb-5: el-form-item(label="Cor do intervalo" prop="color")
@@ -73,8 +75,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { debounce } from 'lodash';
 import { Form } from 'element-ui';
+import { debounce, trim } from 'lodash';
 import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
@@ -97,6 +99,7 @@ type Methods = {
   updateScoreRangeField: UpdateFieldWithValueFunction<Props['scoreRange']>;
 };
 type Computed = {
+  trim: (value: string) => string;
   selectedColorClass: string;
   colorOptions: ColorOption[];
   friendlyScoreRangeName: string;
@@ -124,6 +127,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     maxQuestionnaireScore: { type: Number, required: true, default: 0 },
   } as RecordPropsDefinition<Props>,
   computed: {
+    trim: () => trim,
     selectedColorClass() {
       const selectedColorOption = this.colorOptions.find(({ value }) => this.scoreRange.color === value);
       return selectedColorOption?.class || '';

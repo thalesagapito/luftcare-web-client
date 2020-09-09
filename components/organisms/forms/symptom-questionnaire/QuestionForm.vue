@@ -26,6 +26,7 @@
           placeholder="Digite aqui"
           :value="question.nameForManagement"
           @input="updateQuestionField('nameForManagement', $event)"
+          @blur="updateQuestionField('nameForManagement', trim(question.nameForManagement))"
         )
 
       .mb-7: el-form-item(label="Enunciado da pergunta" prop="text")
@@ -37,8 +38,9 @@
           maxlength="500"
           placeholder="Digite aqui"
           :value="question.text"
-          :autosize="{ minRows: 3 }"
+          :autosize="{ minRows: 2 }"
           @input="updateQuestionField('text', $event)"
+          @blur="updateQuestionField('text', trim(question.text))"
         )
 
       //- .mb-7: el-form-item(label="Tipo da pergunta" prop="kind")
@@ -66,8 +68,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { every, debounce } from 'lodash';
 import { Option, Form } from 'element-ui';
+import { every, debounce, trim } from 'lodash';
 import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
@@ -86,6 +88,7 @@ type Methods = {
   updateQuestionField: UpdateFieldWithValueFunction<Props['question']>;
 };
 type Computed = {
+  trim: (value: string) => string;
   collapsibleItemTitle: string;
   formProps: ElFormProps<keyof QuestionInput>;
   questionKindSelectOptions: Partial<Option>[];
@@ -109,6 +112,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   computed: {
+    trim: () => trim,
     collapsibleItemTitle() {
       const { presentationOrder, nameForManagement } = this.question;
       return `${presentationOrder}. ${nameForManagement || 'Pergunta sem nome'}`;

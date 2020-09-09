@@ -13,6 +13,7 @@
           placeholder="Digite aqui"
           :value="value.nameForManagement"
           @input="updateQuestionnaireField('nameForManagement', $event)"
+          @blur="updateQuestionnaireField('nameForManagement', trim(value.nameForManagement))"
         )
 
       .mb-7: el-form-item(label="Nome do questionário para os pacientes" prop="nameForPresentation")
@@ -25,6 +26,7 @@
           placeholder="Digite aqui"
           :value="value.nameForPresentation"
           @input="updateQuestionnaireField('nameForPresentation', $event)"
+          @blur="updateQuestionnaireField('nameForPresentation', trim(value.nameForPresentation))"
         )
 
       el-form-item(label="Visibilidade" prop="isPublished")
@@ -69,8 +71,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { every } from 'lodash';
 import { Form } from 'element-ui';
+import { every, trim } from 'lodash';
 import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
@@ -89,6 +91,7 @@ type Methods = {
   updateQuestionnaireField: UpdateFieldWithValueFunction<Props['value']>;
 };
 type Computed = {
+  trim: (value: string) => string;
   formProps: ElFormProps<keyof Props['value']>;
   minAndMaxQuestionnaireScore: MinMaxScorePair;
   minQuestionnaireScore: number;
@@ -127,6 +130,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   } as RecordPropsDefinition<Props>,
   computed: {
+    trim: () => trim,
     formProps() {
       return {
         hideRequiredAsterisk: true,
