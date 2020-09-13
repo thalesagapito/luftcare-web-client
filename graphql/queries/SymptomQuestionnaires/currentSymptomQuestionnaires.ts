@@ -8,6 +8,7 @@ query currentSymptomQuestionnaires(
   $isPublished: Boolean
   $resultsPerPage: Int
   ) {
+
   symptomQuestionnaires(
     currentVersionsOnly: true
     nameForManagement: $name
@@ -16,6 +17,7 @@ query currentSymptomQuestionnaires(
     isPublished: $isPublished
     resultsPerPage: $resultsPerPage
     ) {
+
     results {
       id
       nameForManagement

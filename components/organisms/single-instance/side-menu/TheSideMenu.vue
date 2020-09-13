@@ -33,7 +33,7 @@
 import Vue from 'vue';
 import { authMethods } from '@/mixins/RegisteredMixins';
 
-type SideMenuLinkIndex = 'home' | 'questionnaires';
+type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients';
 
 type SideMenuLink = {
   label: string;
@@ -50,7 +50,6 @@ type Computed = {
   isDrawerOpen: boolean;
   wrapperClass: string;
   topLinks: SideMenuLink[];
-  bottomLinks: SideMenuLink[];
   currentActiveLink: SideMenuLinkIndex | undefined;
 };
 type Props = {};
@@ -73,20 +72,16 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           onClick: () => this.$router.push('/dashboard'),
         },
         {
+          iconName: 'el-icon-user',
+          label: 'Pacientes',
+          index: 'patients',
+          onClick: () => this.$router.push('/dashboard/pacientes'),
+        },
+        {
           iconName: 'el-icon-notebook-2',
           label: 'Questionários',
           index: 'questionnaires',
           onClick: () => this.$router.push('/dashboard/questionarios'),
-        },
-      ];
-    },
-    bottomLinks() {
-      return [
-        {
-          iconName: 'el-icon-switch-button',
-          label: 'Sair',
-          index: 'questionnaires',
-          onClick: () => this.$authMethodsLogout,
         },
       ];
     },
@@ -95,6 +90,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       switch (currentRoute) {
         case '/dashboard':
           return 'home';
+        case '/dashboard/pacientes':
+        case '/dashboard/pacientes/novo':
+          return 'patients';
         case '/dashboard/questionarios':
         case '/dashboard/questionarios/novo':
           return 'questionnaires';
@@ -113,7 +111,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .the-side-menu-wrapper {
-  @apply hidden overflow-hidden flex-shrink-0 max-h-screen;
+  @apply hidden overflow-hidden flex-shrink-0 max-h-screen pb-4;
 
   .the-side-menu {
     @apply hidden h-full fixed flex-col left-0 top-0;

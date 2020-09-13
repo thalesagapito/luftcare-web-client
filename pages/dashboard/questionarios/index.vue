@@ -6,9 +6,9 @@
     shadowed-card.mt-7
       questionnaires-table(
         v-bind="questionnairesTableProps"
-        @update-sort="updateQuestionnairesFilters('orderBy', $event)"
-        @update-page-size="updateQuestionnairesFilters('resultsPerPage', $event)"
-        @update-current-page="updateQuestionnairesFilters('pageNumber', $event)"
+        @update-sort="updateQuestionnairesQueryArgs('orderBy', $event)"
+        @update-page-size="updateQuestionnairesQueryArgs('resultsPerPage', $event)"
+        @update-current-page="updateQuestionnairesQueryArgs('pageNumber', $event)"
       )
         el-table-column(
           label="Status"
@@ -47,10 +47,10 @@ import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { Query, QuerySymptomQuestionnairesArgs } from '@/types/gql';
 import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
 import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
-import QuestionnairesQuery from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import { Query, CurrentSymptomQuestionnairesQuery, QuerySymptomQuestionnairesArgs } from '@/types/gql';
+import QuestionnairesQueryGQL from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
 import DeleteQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/deleteSymptomQuestionnaire';
 import ChangePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
@@ -62,14 +62,14 @@ type Questionnaire = Query['symptomQuestionnaires']['results'][0];
 
 type Data = {
   questionnaires?: ExecutionResult<Query['symptomQuestionnaires']>['data']
-  questionnairesFilters: QuerySymptomQuestionnairesArgs;
+  questionnairesQueryArgs: QuerySymptomQuestionnairesArgs;
   isQuestionnairesTableLoading: 0;
 };
 type Methods = {
   refetchQuestionnaires: () => void;
   handleEdit: (questionnaire: Questionnaire) => void;
   handleDelete: (questionnaire: Questionnaire) => void;
-  updateQuestionnairesFilters: UpdateFieldWithValueFunction<Data['questionnairesFilters']>;
+  updateQuestionnairesQueryArgs: UpdateFieldWithValueFunction<Data['questionnairesQueryArgs']>;
   handlePublishStatusChangeSuccess: MutationResponseHandler['Success'];
   handleDeleteSuccess: MutationResponseHandler['Success'];
   changePublishStatus: (id: string, isPublished: boolean) => void;
@@ -89,7 +89,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     return {
       isQuestionnairesTableLoading: 0,
       questionnaires: undefined,
-      questionnairesFilters: {
+      questionnairesQueryArgs: {
         isPublished: undefined,
         pageNumber: undefined,
         resultsPerPage: 10,
@@ -100,11 +100,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     questionnaires: {
-      query: QuestionnairesQuery,
+      query: QuestionnairesQueryGQL,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
-      update: ({ symptomQuestionnaires }) => symptomQuestionnaires,
-      variables() { return this.questionnairesFilters; },
+      update: ({ symptomQuestionnaires }: CurrentSymptomQuestionnairesQuery) => symptomQuestionnaires,
+      variables() { return this.questionnairesQueryArgs; },
     },
   },
   computed: {
@@ -129,8 +129,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         },
         tablePaginationProps: {
           total: this.questionnaires?.totalResultsCount,
-          pageSize: this.questionnairesFilters.resultsPerPage || 10,
-          currentPage: this.questionnairesFilters.pageNumber || 1,
+          pageSize: this.questionnairesQueryArgs.resultsPerPage || 10,
+          currentPage: this.questionnairesQueryArgs.pageNumber || 1,
           layout: 'total, sizes, ->, prev, pager, next',
           pageSizes: [5, 10, 15, 20, 25],
         },
@@ -155,8 +155,8 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     refetchQuestionnaires() {
       this.$apollo.queries.questionnaires?.refetch();
     },
-    updateQuestionnairesFilters(field, value) {
-      this.questionnairesFilters = { ...this.questionnairesFilters, [field]: value };
+    updateQuestionnairesQueryArgs(field, value) {
+      this.questionnairesQueryArgs = { ...this.questionnairesQueryArgs, [field]: value };
     },
     handleEdit({ id }) {
       this.$router.push({ name: 'dashboard-questionarios-editar-id', params: { id } });

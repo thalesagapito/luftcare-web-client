@@ -10,6 +10,16 @@ export type Scalars = {
   DateTime: any;
 };
 
+/** Required data to manually create an application user through the admin panel */
+export type CreateUserInput = {
+  name: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  phoneNumber: Scalars['String'];
+  role?: Maybe<UserRole>;
+  kind?: Maybe<UserKind>;
+};
+
 
 /** Response padrão informativo para quando não se espera dados como resposta */
 export type GenericResponse = {
@@ -26,8 +36,9 @@ export type Mutation = {
   unpublishSymptomQuestionnaire: GenericResponse;
   changeSymptomQuestionnairePublishStatus: GenericResponse;
   deleteSymptomQuestionnaire: GenericResponse;
-  createSymptomQuestionnaireResponse: GenericResponse;
+  createSymptomQuestionnaireResponse: SymptomQuestionnaireResponse;
   registerUser: User;
+  createUser: User;
 };
 
 
@@ -78,6 +89,11 @@ export type MutationRegisterUserArgs = {
   userData: RegisterUserInput;
 };
 
+
+export type MutationCreateUserArgs = {
+  userData: CreateUserInput;
+};
+
 export type OrderByClause = {
   columnName: Scalars['String'];
   direction?: Maybe<OrderByClauseDirection>;
@@ -108,6 +124,13 @@ export type PaginatedSymptomQuestionnaires = {
   results: Array<SymptomQuestionnaire>;
 };
 
+export type PaginatedUsers = {
+  __typename?: 'PaginatedUsers';
+  totalResultsCount: Scalars['Int'];
+  hasMorePages: Scalars['Boolean'];
+  results: Array<User>;
+};
+
 export type Query = {
   __typename?: 'Query';
   authorizationToken: Scalars['String'];
@@ -116,7 +139,7 @@ export type Query = {
   symptomQuestionnaireResponses: PaginatedSymptomQuestionnaireResponses;
   currentUser?: Maybe<User>;
   user?: Maybe<User>;
-  users?: Maybe<Array<User>>;
+  users: PaginatedUsers;
 };
 
 
@@ -154,6 +177,18 @@ export type QuerySymptomQuestionnaireResponsesArgs = {
 
 export type QueryUserArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryUsersArgs = {
+  orderBy?: Maybe<Array<OrderByClause>>;
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  kind?: Maybe<UserKind>;
+  withDeleted?: Maybe<Scalars['Boolean']>;
+  pageNumber?: Maybe<Scalars['Int']>;
+  resultsPerPage?: Maybe<Scalars['Int']>;
 };
 
 /** Required data to register an application user from the register form */
@@ -340,10 +375,16 @@ export type User = {
   name: Scalars['String'];
   /** Unique email address used for logging in */
   email: Scalars['String'];
-  /** Has to contain special characters: +55 (41) 98765-4321 */
+  /** Should contain special characters, like: +55 (41) 98765-4321 */
   phoneNumber: Scalars['String'];
   role: UserRole;
+  kind: UserKind;
 };
+
+export enum UserKind {
+  Doctor = 'DOCTOR',
+  Patient = 'PATIENT'
+}
 
 export enum UserRole {
   Admin = 'ADMIN',
@@ -486,6 +527,9 @@ export type GetQuestionnaireQuery = (
         { __typename?: 'SymptomQuestionnaireQuestionChoice' }
         & Pick<SymptomQuestionnaireQuestionChoice, 'id' | 'nameForManagement' | 'text' | 'presentationOrder' | 'value'>
       )>> }
+    )>, scoreRanges: Array<(
+      { __typename?: 'SymptomQuestionnaireScoreRange' }
+      & Pick<SymptomQuestionnaireScoreRange, 'id' | 'color' | 'title' | 'minScore' | 'maxScore' | 'description'>
     )> }
   ) }
 );
@@ -499,4 +543,24 @@ export type CurrentUserFullInfoQuery = (
     { __typename?: 'User' }
     & Pick<User, 'name' | 'email' | 'phoneNumber' | 'role'>
   )> }
+);
+
+export type PatientsQueryVariables = {
+  name?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<Array<OrderByClause>>;
+  pageNumber?: Maybe<Scalars['Int']>;
+  resultsPerPage?: Maybe<Scalars['Int']>;
+};
+
+
+export type PatientsQuery = (
+  { __typename?: 'Query' }
+  & { users: (
+    { __typename?: 'PaginatedUsers' }
+    & Pick<PaginatedUsers, 'hasMorePages' | 'totalResultsCount'>
+    & { results: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'createdAt' | 'email' | 'name' | 'phoneNumber'>
+    )> }
+  ) }
 );
