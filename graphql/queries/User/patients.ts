@@ -10,7 +10,7 @@ export default gql`
 
     users(
       name: $name
-      kind: PATIENT
+      role: PATIENT
       orderBy: $orderBy
       pageNumber: $pageNumber
       resultsPerPage: $resultsPerPage

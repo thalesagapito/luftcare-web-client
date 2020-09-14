@@ -1,7 +1,7 @@
 <template lang="pug">
   .header-wrapper
     arrow-breadcrumbs(v-bind="breadcrumbs")
-    .title-and-action-wrapper
+    .title-and-action-wrapper(v-if="title")
       .title {{ title }}
       .action
         slot
@@ -17,7 +17,7 @@ type Methods = {};
 type Computed = {};
 export type Props = {
   breadcrumbs: BreadcrumbsProps;
-  title: string;
+  title?: string;
 };
 
 export default Vue.extend<Data, Methods, Computed, Props>({
@@ -30,7 +30,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     title: {
       type: String,
-      required: true,
+      required: false,
       default: '',
     },
   } as RecordPropsDefinition<Props>,

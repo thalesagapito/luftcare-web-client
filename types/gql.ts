@@ -12,12 +12,15 @@ export type Scalars = {
 
 /** Required data to manually create an application user through the admin panel */
 export type CreateUserInput = {
+  /** maxLength: 500 */
   name: Scalars['String'];
+  /** maxLength: 500 */
   email: Scalars['String'];
+  /** minLength: 6 */
   password: Scalars['String'];
+  /** maxlength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
   phoneNumber: Scalars['String'];
   role?: Maybe<UserRole>;
-  kind?: Maybe<UserKind>;
 };
 
 
@@ -166,7 +169,7 @@ export type QuerySymptomQuestionnaireArgs = {
 
 export type QuerySymptomQuestionnaireResponsesArgs = {
   orderBy?: Maybe<Array<OrderByClause>>;
-  patientId?: Maybe<Scalars['String']>;
+  patientId?: Maybe<Scalars['ID']>;
   responseDateAfter?: Maybe<Scalars['DateTime']>;
   responseDateBefore?: Maybe<Scalars['DateTime']>;
   withDeleted?: Maybe<Scalars['Boolean']>;
@@ -185,7 +188,7 @@ export type QueryUsersArgs = {
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
-  kind?: Maybe<UserKind>;
+  role?: Maybe<UserRole>;
   withDeleted?: Maybe<Scalars['Boolean']>;
   pageNumber?: Maybe<Scalars['Int']>;
   resultsPerPage?: Maybe<Scalars['Int']>;
@@ -193,9 +196,13 @@ export type QueryUsersArgs = {
 
 /** Required data to register an application user from the register form */
 export type RegisterUserInput = {
+  /** maxLength: 500 */
   name: Scalars['String'];
+  /** maxLength: 500 */
   email: Scalars['String'];
+  /** minLength: 6, maxLength: 500 */
   password: Scalars['String'];
+  /** maxlength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
   phoneNumber: Scalars['String'];
 };
 
@@ -378,17 +385,12 @@ export type User = {
   /** Should contain special characters, like: +55 (41) 98765-4321 */
   phoneNumber: Scalars['String'];
   role: UserRole;
-  kind: UserKind;
 };
-
-export enum UserKind {
-  Doctor = 'DOCTOR',
-  Patient = 'PATIENT'
-}
 
 export enum UserRole {
   Admin = 'ADMIN',
-  NonAdmin = 'NON_ADMIN'
+  Doctor = 'DOCTOR',
+  Patient = 'PATIENT'
 }
 
 export type ChangePublishStatusMutationVariables = {
@@ -556,6 +558,33 @@ export type CurrentUserFullInfoQuery = (
     { __typename?: 'User' }
     & Pick<User, 'name' | 'email' | 'phoneNumber' | 'role'>
   )> }
+);
+
+export type PatientOverviewQueryVariables = {
+  id: Scalars['ID'];
+};
+
+
+export type PatientOverviewQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'name' | 'email' | 'phoneNumber' | 'createdAt'>
+  )>, symptomQuestionnaireResponses: (
+    { __typename?: 'PaginatedSymptomQuestionnaireResponses' }
+    & Pick<PaginatedSymptomQuestionnaireResponses, 'totalResultsCount' | 'hasMorePages'>
+    & { results: Array<(
+      { __typename?: 'SymptomQuestionnaireResponse' }
+      & Pick<SymptomQuestionnaireResponse, 'responseDate'>
+      & { score: (
+        { __typename?: 'ResponseScore' }
+        & Pick<ResponseScore, 'value' | 'color' | 'title'>
+      ), questionnaire: (
+        { __typename?: 'SymptomQuestionnaire' }
+        & Pick<SymptomQuestionnaire, 'nameForPresentation'>
+      ) }
+    )> }
+  ) }
 );
 
 export type PatientsQueryVariables = {

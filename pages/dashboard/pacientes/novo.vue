@@ -20,10 +20,8 @@
 import Vue from 'vue';
 
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import {
-  CreateUserInput, MutationCreateUserArgs, UserKind, UserRole,
-} from '@/types/gql';
 import CreateUserMutationGQL from '@/graphql/mutations/User/createUser';
+import { CreateUserInput, MutationCreateUserArgs, UserRole } from '@/types/gql';
 
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
@@ -75,8 +73,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     async runCreatePatientMutation() {
       const userData: CreateUserInput = {
         ...this.patientData,
-        kind: UserKind.Patient,
-        role: UserRole.NonAdmin,
+        role: UserRole.Patient,
       };
       const mutationArgs: MutationCreateUserArgs = { userData };
       const loading = this.$loading({ lock: true, text: 'Adicionando paciente...' });
