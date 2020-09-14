@@ -1,6 +1,6 @@
 <template lang="pug">
   .patient-form-wrapper
-    .form-section-title.mb-6 Dados do questionário
+    .form-section-title.mb-6 Dados do paciente
 
     el-form(v-bind="formProps" ref="form")
       .mb-6: el-form-item(label="Email do paciente" prop="email")

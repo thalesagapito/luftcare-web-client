@@ -17,7 +17,7 @@
           width="235"
         )
           .action-buttons(slot-scope="{ row }")
-            el-button(round size="mini" type="text" @click="handleEdit(row)") Editar
+            el-button(round size="mini" type="text") Ver tratamento
 </template>
 
 <script lang="ts">
@@ -44,7 +44,6 @@ type Data = {
 };
 type Methods = {
   refetchPatients: () => void;
-  handleEdit: (patient: Patient) => void;
   updatePatientsQueryArgs: UpdateFieldWithValueFunction<Data['patientsQueryArgs']>;
 };
 type Computed = {
@@ -127,9 +126,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     updatePatientsQueryArgs(field, value) {
       this.patientsQueryArgs = { ...this.patientsQueryArgs, [field]: value };
-    },
-    handleEdit({ id }) {
-      this.$router.push({ name: 'dashboard-pacientes-editar-id', params: { id } });
     },
   },
   head: {
