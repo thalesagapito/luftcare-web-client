@@ -170,6 +170,7 @@ module.exports = {
       56: '14rem',
       64: '16rem',
     },
+    gradientColorStops: (theme) => theme('colors'),
     backgroundColor: (theme) => theme('colors'),
     backgroundPosition: {
       bottom: 'bottom',
@@ -665,6 +666,7 @@ module.exports = {
     alignSelf: ['responsive'],
     appearance: ['responsive'],
     backgroundAttachment: ['responsive'],
+    gradientColorStops: ['responsive', 'hover', 'focus'],
     backgroundColor: ['responsive', 'hover', 'focus'],
     backgroundPosition: ['responsive'],
     backgroundRepeat: ['responsive'],

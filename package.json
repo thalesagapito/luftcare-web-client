@@ -45,6 +45,7 @@
     "nuxt": "^2.0.0",
     "nuxt-typed-vuex": "^0.1.18",
     "secure-ls": "^1.2.6",
+    "tailwindcss": "^1.8.9",
     "typed-vuex": "^0.1.18",
     "uuid": "^8.1.0",
     "validator": "^13.1.1",
