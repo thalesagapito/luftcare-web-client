@@ -471,6 +471,19 @@ export type UpdateQuestionnaireMutation = (
   ) }
 );
 
+export type CreateUserMutationVariables = {
+  userData: CreateUserInput;
+};
+
+
+export type CreateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { createUser: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  ) }
+);
+
 export type LoginMutationVariables = {
   email: Scalars['String'];
   password: Scalars['String'];

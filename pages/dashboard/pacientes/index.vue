@@ -111,6 +111,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           {
             id: 2, label: 'Email', prop: 'email', sortable: 'custom',
           },
+          {
+            id: 3, label: 'Telefone', prop: 'phoneNumber', sortable: 'custom',
+          },
         ],
       };
     },
