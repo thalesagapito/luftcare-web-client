@@ -17,7 +17,7 @@
           width="235"
         )
           .action-buttons(slot-scope="{ row }")
-            el-button(round size="mini" type="text") Ver tratamento
+            el-button(round size="mini" type="text" @click="() => goToPatientOverview(row.id)") Ver tratamento
 </template>
 
 <script lang="ts">
@@ -44,6 +44,7 @@ type Data = {
 };
 type Methods = {
   refetchPatients: () => void;
+  goToPatientOverview: (id: string) => void;
   updatePatientsQueryArgs: UpdateFieldWithValueFunction<Data['patientsQueryArgs']>;
 };
 type Computed = {
@@ -123,6 +124,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   methods: {
     refetchPatients() {
       this.$apollo.queries.patients?.refetch();
+    },
+    goToPatientOverview(id) {
+      this.$router.push({ name: 'dashboard-pacientes-id', params: { id } });
     },
     updatePatientsQueryArgs(field, value) {
       this.patientsQueryArgs = { ...this.patientsQueryArgs, [field]: value };

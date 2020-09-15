@@ -21,7 +21,6 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import isUUID from 'validator/lib/isUUID';
 
-import { Nullable } from '@/types/helpers';
 import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
 import { MutationUpdateSymptomQuestionnaireArgs, Query } from '@/types/gql';
 import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
@@ -36,8 +35,8 @@ import { keyQuestionnaire, unkeyQuestionnaire } from '@/components/organisms/for
 
 type Data = {
   isFormValid: boolean;
-  questionnaireData: FormProps['value'];
-  id: Nullable<string>;
+  questionnaireData?: FormProps['value'];
+  id?: string;
 };
 type Methods = {
   runCreateQuestionnaireMutation: () => void;
@@ -70,8 +69,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       query: GetQuestionnaireQuery,
       error: debounce(smartQueryErrorHandler, 10),
       variables() { return { id: this.$route.params.id }; },
-      update({ symptomQuestionnaire }: Partial<Query>) {
-        if (!symptomQuestionnaire) return this.$router.push('/dashboard/questionarios');
+      update({ symptomQuestionnaire }: Partial<Query>): Data['questionnaireData'] {
+        if (!symptomQuestionnaire) {
+          this.$router.push('/dashboard/questionarios');
+          return undefined;
+        }
         this.id = symptomQuestionnaire.id;
         const symptomQuestionnaireInput = mapQuestionnaireTypeToInput(symptomQuestionnaire);
         return keyQuestionnaire(symptomQuestionnaireInput);

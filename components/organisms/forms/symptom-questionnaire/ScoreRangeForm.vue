@@ -80,9 +80,9 @@ import { debounce, trim } from 'lodash';
 import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import { getDefaultScoreRange } from './factoryFunctions';
+import { SymptomQuestionnaireScoreRangeColor } from '@/types/gql';
 import { KeyedScoreRangeInput, ScoreRangeInput } from './types';
-import { SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
+import { getDefaultScoreRange } from './factoryFunctions';
 
 type ColorOption = {
   value: SymptomQuestionnaireScoreRangeColor;

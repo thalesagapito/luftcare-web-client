@@ -165,6 +165,7 @@ module.exports = {
       20: '5rem',
       24: '6rem',
       32: '8rem',
+      36: '9rem',
       40: '10rem',
       48: '12rem',
       56: '14rem',
@@ -456,6 +457,7 @@ module.exports = {
       '11/12': '91.666667%',
       full: '100%',
       screen: '100vw',
+      'max-content': 'max-content',
     }),
     zIndex: {
       auto: 'auto',
