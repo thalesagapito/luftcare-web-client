@@ -11,6 +11,9 @@ module.exports = {
       'components/**/*.vue',
     ],
   },
+  future: {
+    purgeLayersByDefault: true,
+  },
   theme: {
     screens: {
       sm: '640px',
@@ -468,7 +471,6 @@ module.exports = {
       40: '40',
       50: '50',
     },
-    gap: (theme) => theme('spacing'),
     gridTemplateColumns: {
       none: 'none',
       1: 'repeat(1, minmax(0, 1fr))',
