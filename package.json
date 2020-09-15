@@ -35,6 +35,7 @@
     "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
     "async-validator": "^3.3.0",
+    "chart.js": "^2.9.3",
     "dotenv": "^8.2.0",
     "element-ui": "^2.13.2",
     "graphql": "14.6.0",
@@ -51,6 +52,7 @@
     "validator": "^13.1.1",
     "velocity-animate": "^2.0.6",
     "vue": "^2.6.11",
+    "vue-chartjs": "^3.5.1",
     "vuedraggable": "^2.24.1",
     "vuex-persistedstate": "^3.1.0"
   },

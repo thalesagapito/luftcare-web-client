@@ -17,6 +17,7 @@ type Computed = {
 };
 export type Props = {
   score: SymptomQuestionnaireResponse['score'];
+  isValueVisible: boolean;
 };
 export type Events = {};
 
@@ -26,9 +27,17 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       type: Object,
       required: true,
     },
+    isValueVisible: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   } as RecordPropsDefinition<Props>,
   computed: {
     scoreTitle() {
+      const { title, value } = this.score;
+      if (this.isValueVisible) return `${value} - ${title}`;
+
       return this.score?.title || '';
     },
     wrapperClassName() {
@@ -48,6 +57,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 <style lang="postcss" scoped>
 .score-colored-chip-wrapper {
   @apply flex justify-center items-center rounded-full px-3 text-sm leading-loose w-max-content h-6;
+  padding-top: 2px;
 
   &.green {
     @apply bg-green-500 bg-opacity-20 text-green-500;

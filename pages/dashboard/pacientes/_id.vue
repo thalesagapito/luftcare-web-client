@@ -1,6 +1,7 @@
 <template lang="pug">
   .dashboard-page-wrapper
     the-header.mb-6(v-bind="headerProps")
+
     .info-header
       shadowed-card.user-info
         .title {{ patientName }}
@@ -16,40 +17,48 @@
         .info
           .number.text-danger {{ negativeResponseCount }}
           .name Pontuações negativas
+
     shadowed-card.scores-chart
-      .title Pontuações
+      .title Gráfico de pontuações
+      line-chart(:data="chartData")
+
     shadowed-card.history
-      .title Histórico
+      .title Histórico de respostas
       el-table.no-header(:data="responses")
         el-table-column
           template(slot-scope="{ row }")
             span.pr-1 Respondeu o questionário
-            strong {{ row.questionnaire.nameForPresentation }}
+            strong {{ row.questionnaire.nameForManagement }}
 
         el-table-column(align="right")
           template(slot-scope="{ row }")
             span {{ formatResponseDate(row.responseDate) }}
 
-        el-table-column(align="center" min-width="20px" )
+        el-table-column(align="center" min-width="25px")
           template(slot-scope="{ row }")
-            score-colored-chip.mx-auto(:score="row.score")
+            score-colored-chip.mx-auto(:score="row.score" is-value-visible)
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import isUUID from 'validator/lib/isUUID';
 import { capitalize, debounce } from 'lodash';
+
+import {
+  User, Query, SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor,
+} from '@/types/gql';
+import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
+import PatientOverviewQueryGQL from '@/graphql/queries/User/patientOverview';
+import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
+
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import ScoreColoredChip from '@/components/atoms/score/ScoreColoredChip.vue';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
+import LineChart, { Props as LineChartProps } from '@/components/atoms/charts/LineChart.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import PatientOverviewQueryGQL from '@/graphql/queries/User/patientOverview';
-import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
-import {
-  Query, SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor, User,
-} from '~/types/gql';
+import { transformResponsesToChartData } from './chartBuildFunctions';
 
-export const ROUTE_NAME = '';
+
+export const ROUTE_NAME = 'dashboard-pacientes-id';
 
 type Data = {
   overview: {
@@ -68,6 +77,7 @@ type Computed = {
   responseCount: number;
   positiveResponseCount: number;
   negativeResponseCount: number;
+  chartData: LineChartProps['data'];
   responses: NonNullable<Data['overview']['responses']>;
 };
 export type Props = {};
@@ -78,6 +88,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   middleware: RegisteredMiddleware.isUserAuthenticated,
   components: {
     TheHeader,
+    LineChart,
     ShadowedCard,
     ScoreColoredChip,
   },
@@ -128,6 +139,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         SymptomQuestionnaireScoreRangeColor.Orange,
       ];
       return this.responses.filter(({ score }) => negativeColors.includes(score.color)).length;
+    },
+    chartData() {
+      return transformResponsesToChartData(this.overview?.responses || []);
     },
     headerProps() {
       return {
@@ -228,7 +242,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 
   .scores-chart {
-    @apply h-64 mb-6;
+    @apply pt-6 pl-8 mb-6;
   }
 
   .history {

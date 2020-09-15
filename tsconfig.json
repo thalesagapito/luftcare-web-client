@@ -19,6 +19,7 @@
     "types": [
       "async-validator/dist-types",
       "vue-cli-plugin-apollo",
+      "vue-chartjs/types",
       "vue-apollo/types",
       "@nuxtjs/apollo",
       "apollo-client",

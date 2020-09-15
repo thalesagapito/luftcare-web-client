@@ -34,6 +34,7 @@ import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandle
 import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
 import PatientsTable, { Props as TableProps } from '@/components/molecules/tables/TableOrderablePaginated.vue';
+import { ROUTE_NAME as PATIENT_ROUTE_NAME } from './_id.vue';
 
 type Patient = Query['users']['results'][0];
 
@@ -126,7 +127,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$apollo.queries.patients?.refetch();
     },
     goToPatientOverview(id) {
-      this.$router.push({ name: 'dashboard-pacientes-id', params: { id } });
+      this.$router.push({ name: PATIENT_ROUTE_NAME, params: { id } });
     },
     updatePatientsQueryArgs(field, value) {
       this.patientsQueryArgs = { ...this.patientsQueryArgs, [field]: value };

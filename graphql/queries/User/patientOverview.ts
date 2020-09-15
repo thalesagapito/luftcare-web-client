@@ -25,6 +25,7 @@ query patientOverview($id: ID!) {
       }
       questionnaire {
         nameForPresentation
+        nameForManagement
       }
     }
   }
