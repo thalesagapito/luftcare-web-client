@@ -20,20 +20,22 @@
         :key="index"
       )
         i(:class="iconName")
-        span(v-if="isDrawerOpen") {{ label }}
+        span {{ label }}
 
       .flex-grow
 
       el-menu-item(@click="$authMethodsLogout")
         i.el-icon-switch-button
-        span(v-if="isDrawerOpen") Sair
+        span Sair
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { authMethods } from '@/mixins/RegisteredMixins';
+import { ROUTE_NAME as PREFERENCES_ROUTE_NAME } from '@/pages/dashboard/preferencias/index.vue';
+import { ROUTE_NAME as ADD_PATIENT_ROUTE_NAME } from '~/pages/dashboard/pacientes/adicionar.vue';
 
-type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients';
+type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients' | 'preferences';
 
 type SideMenuLink = {
   label: string;
@@ -83,6 +85,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           index: 'questionnaires',
           onClick: () => this.$router.push('/dashboard/questionarios'),
         },
+        {
+          iconName: 'el-icon-setting',
+          label: 'Preferências',
+          index: 'preferences',
+          onClick: () => this.$router.push({ name: PREFERENCES_ROUTE_NAME }),
+        },
       ];
     },
     currentActiveLink() {
@@ -91,11 +99,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         case '/dashboard':
           return 'home';
         case '/dashboard/pacientes':
-        case '/dashboard/pacientes/novo':
+        case ADD_PATIENT_ROUTE_NAME:
           return 'patients';
         case '/dashboard/questionarios':
         case '/dashboard/questionarios/novo':
           return 'questionnaires';
+        case '/dashboard/preferencias':
+          return 'preferences';
         default:
           return undefined;
       }
@@ -111,10 +121,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
 <style lang="postcss" scoped>
 .the-side-menu-wrapper {
-  @apply hidden overflow-hidden flex-shrink-0 max-h-screen pb-4;
+  @apply hidden overflow-hidden flex-shrink-0 max-h-screen;
 
   .the-side-menu {
-    @apply hidden h-full fixed flex-col left-0 top-0;
+    @apply hidden h-full fixed flex-col left-0 top-0 pb-4;
 
     .toggle-open {
       @apply absolute right-0 mt-16 transform translate-x-1/2;
@@ -125,7 +135,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     }
 
     li {
-      @apply mx-3 my-2 rounded-lg h-12 leading-none flex items-center text-gray-700 px-0 overflow-hidden;
+      @apply mx-3 my-1 rounded-lg h-12 leading-none flex items-center text-gray-700 px-0 overflow-hidden;
       &.is-active {
         @apply text-lapis bg-lapis bg-opacity-10;
       }
@@ -151,6 +161,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
   li >>> i {
     margin-left: -8px;
+  }
+}
+
+.the-side-menu-wrapper.collapsed .the-side-menu {
+  li span {
+    @apply hidden;
   }
 }
 

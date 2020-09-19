@@ -27,13 +27,15 @@ import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
 import PatientForm, { Props as FormProps } from '@/components/organisms/forms/user/PatientForm.vue';
 
+export const ROUTE_NAME = 'dashboard-pacientes-adicionar';
+
 type Data = {
   isFormValid: boolean;
   patientData: FormProps['value'];
 };
 type Methods = {
   runCreatePatientMutation: () => void;
-  handleFormCreationSuccess: () => void;
+  handlePatientCreationSuccess: () => void;
 };
 type Computed = {
   headerProps: HeaderProps;
@@ -80,11 +82,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
 
       await this.$apollo
         .mutate({ mutation: CreateUserMutationGQL, variables: mutationArgs })
-        .then(this.handleFormCreationSuccess)
+        .then(this.handlePatientCreationSuccess)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());
     },
-    handleFormCreationSuccess() {
+    handlePatientCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Paciente adicionado com sucesso' });
       this.$router.push({ name: 'dashboard-pacientes', params: { refetch: '1' } });
     },

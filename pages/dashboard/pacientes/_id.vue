@@ -1,6 +1,6 @@
 <template lang="pug">
   .dashboard-page-wrapper
-    the-header.mb-6(v-bind="headerProps")
+    the-header(v-bind="headerProps")
 
     .info-header
       shadowed-card.user-info
@@ -204,7 +204,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   }
 
   .info-header {
-    @apply flex flex-row pb-6 h-36;
+    @apply flex flex-row pb-6 mt-6 h-36;
 
     .user-info,
     .responses-info {

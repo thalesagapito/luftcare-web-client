@@ -5,9 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
-
-export const ROUTE_NAME = '';
+import { SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor } from '@/types/gql';
 
 type Data = {};
 type Methods = {};

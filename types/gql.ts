@@ -12,13 +12,13 @@ export type Scalars = {
 
 /** Required data to manually create an application user through the admin panel */
 export type CreateUserInput = {
-  /** maxLength: 500 */
+  /** MaxLength: 500 */
   name: Scalars['String'];
-  /** maxLength: 500 */
+  /** MaxLength: 500 */
   email: Scalars['String'];
-  /** minLength: 6 */
+  /** MinLength: 6 */
   password: Scalars['String'];
-  /** maxlength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
+  /** MaxLength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
   phoneNumber: Scalars['String'];
   role?: Maybe<UserRole>;
 };
@@ -42,6 +42,7 @@ export type Mutation = {
   createSymptomQuestionnaireResponse: SymptomQuestionnaireResponse;
   registerUser: User;
   createUser: User;
+  updatePassword: User;
 };
 
 
@@ -95,6 +96,12 @@ export type MutationRegisterUserArgs = {
 
 export type MutationCreateUserArgs = {
   userData: CreateUserInput;
+};
+
+
+export type MutationUpdatePasswordArgs = {
+  currentPassword: Scalars['String'];
+  newPassword: Scalars['String'];
 };
 
 export type OrderByClause = {
@@ -169,7 +176,7 @@ export type QuerySymptomQuestionnaireArgs = {
 
 export type QuerySymptomQuestionnaireResponsesArgs = {
   orderBy?: Maybe<Array<OrderByClause>>;
-  patientId?: Maybe<Scalars['ID']>;
+  userId?: Maybe<Scalars['ID']>;
   responseDateAfter?: Maybe<Scalars['DateTime']>;
   responseDateBefore?: Maybe<Scalars['DateTime']>;
   withDeleted?: Maybe<Scalars['Boolean']>;
@@ -196,13 +203,13 @@ export type QueryUsersArgs = {
 
 /** Required data to register an application user from the register form */
 export type RegisterUserInput = {
-  /** maxLength: 500 */
+  /** MaxLength: 500 */
   name: Scalars['String'];
-  /** maxLength: 500 */
+  /** MaxLength: 500 */
   email: Scalars['String'];
-  /** minLength: 6, maxLength: 500 */
+  /** MinLength: 6, MaxLength: 500 */
   password: Scalars['String'];
-  /** maxlength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
+  /** MaxLength: 20. Should contain special characters, like: +55 (41) 98765-4321. */
   phoneNumber: Scalars['String'];
 };
 
@@ -361,9 +368,9 @@ export type SymptomQuestionnaireScoreRangeInput = {
   minScore: Scalars['Int'];
   maxScore: Scalars['Int'];
   color: SymptomQuestionnaireScoreRangeColor;
-  /** maxLength: 500 */
+  /** MaxLength: 500 */
   title: Scalars['String'];
-  /** maxLength: 2000 */
+  /** MaxLength: 2000 */
   description: Scalars['String'];
 };
 
@@ -500,6 +507,20 @@ export type LoginMutation = (
   ) }
 );
 
+export type UpdatePasswordMutationVariables = {
+  currentPassword: Scalars['String'];
+  newPassword: Scalars['String'];
+};
+
+
+export type UpdatePasswordMutation = (
+  { __typename?: 'Mutation' }
+  & { updatePassword: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  ) }
+);
+
 export type CurrentSymptomQuestionnairesQueryVariables = {
   name?: Maybe<Scalars['String']>;
   orderBy?: Maybe<Array<OrderByClause>>;
@@ -549,10 +570,10 @@ export type GetQuestionnaireQuery = (
   ) }
 );
 
-export type CurrentUserFullInfoQueryVariables = {};
+export type CurrentUserQueryVariables = {};
 
 
-export type CurrentUserFullInfoQuery = (
+export type CurrentUserQuery = (
   { __typename?: 'Query' }
   & { currentUser?: Maybe<(
     { __typename?: 'User' }
@@ -581,7 +602,7 @@ export type PatientOverviewQuery = (
         & Pick<ResponseScore, 'value' | 'color' | 'title'>
       ), questionnaire: (
         { __typename?: 'SymptomQuestionnaire' }
-        & Pick<SymptomQuestionnaire, 'nameForPresentation'>
+        & Pick<SymptomQuestionnaire, 'nameForPresentation' | 'nameForManagement'>
       ) }
     )> }
   ) }

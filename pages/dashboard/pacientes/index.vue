@@ -2,7 +2,7 @@
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
       el-button(type="default" plain @click="refetchPatients") Atualizar
-      el-button(type="primary" @click="$router.push('pacientes/novo')") Adicionar paciente
+      el-button(type="primary" @click="$router.push('pacientes/adicionar')") Adicionar paciente
     shadowed-card.mt-7
       patients-table(
         v-bind="patientsTableProps"
