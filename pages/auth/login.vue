@@ -27,11 +27,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Form } from 'element-ui';
-import { ElFormProps } from '@/types/element-ui';
-import { MutationLoginArgs } from '@/types/gql';
-import LoginMutation from '@/graphql/mutations/User/login';
-import { MutationResponseHandler } from '@/types/helpers';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
+
+import { MutationLoginArgs } from '~/types/gql';
+import { ElFormProps } from '~/types/element-ui';
+import { MutationResponseHandler } from '~/types/helpers';
+import LoginMutation from '~/graphql/mutations/User/login';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+
+import { DASHBOARD_PATH } from '~/pages/dashboard/index.vue';
+
+export const LOGIN_PATH = '/auth/login';
 
 type Data = {
   email?: string;
@@ -93,7 +98,7 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       const refreshToken = data?.login.authorization || '';
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
-      this.$router.push('/dashboard');
+      this.$router.push(DASHBOARD_PATH);
     },
   },
   head: {

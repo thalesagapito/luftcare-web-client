@@ -8,9 +8,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import CurrentUserQueryGQL from '@/graphql/queries/User/currentUser';
-import TheSideMenu from '@/components/organisms/single-instance/side-menu/TheSideMenu.vue';
-import { CurrentUserQuery } from '@/types/gql';
+import CurrentUserQueryGQL from '~/graphql/queries/User/currentUser';
+import TheSideMenu from '~/components/organisms/single-instance/side-menu/TheSideMenu.vue';
+import { CurrentUserQuery } from '~/types/gql';
 
 type Data = {
   currentUser: CurrentUserQuery['currentUser'];
@@ -24,6 +24,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   apollo: {
     currentUser: {
       query: CurrentUserQueryGQL,
+      // TODO figure this out
       // loadingKey: 'isPatientsTableLoading',
       // error: debounce(smartQueryErrorHandler, 10),
       fetchPolicy: 'cache-and-network',

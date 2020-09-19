@@ -31,9 +31,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { authMethods } from '@/mixins/RegisteredMixins';
-import { ROUTE_NAME as PREFERENCES_ROUTE_NAME } from '@/pages/dashboard/preferencias/index.vue';
-import { ROUTE_NAME as ADD_PATIENT_ROUTE_NAME } from '~/pages/dashboard/pacientes/adicionar.vue';
+import { authMethods } from '~/mixins/RegisteredMixins';
+import { DASHBOARD_PATH } from '~/pages/dashboard/index.vue';
+import { PATIENT_PATH } from '~/pages/dashboard/pacientes/_id.vue';
+import { PATIENTS_PATH } from '~/pages/dashboard/pacientes/index.vue';
+import { PREFERENCES_PATH } from '~/pages/dashboard/preferencias/index.vue';
+import { ADD_PATIENT_PATH } from '~/pages/dashboard/pacientes/adicionar.vue';
+import { QUESTIONNAIRES_PATH } from '~/pages/dashboard/questionarios/index.vue';
+import { NEW_QUESTIONNAIRE_PATH } from '~/pages/dashboard/questionarios/novo.vue';
 
 type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients' | 'preferences';
 
@@ -71,40 +76,41 @@ export default Vue.extend<Data, Methods, Computed, Props>({
           iconName: 'el-icon-house',
           label: 'Início',
           index: 'home',
-          onClick: () => this.$router.push('/dashboard'),
+          onClick: () => this.$router.push(DASHBOARD_PATH),
         },
         {
           iconName: 'el-icon-user',
           label: 'Pacientes',
           index: 'patients',
-          onClick: () => this.$router.push('/dashboard/pacientes'),
+          onClick: () => this.$router.push(PATIENTS_PATH),
         },
         {
           iconName: 'el-icon-notebook-2',
           label: 'Questionários',
           index: 'questionnaires',
-          onClick: () => this.$router.push('/dashboard/questionarios'),
+          onClick: () => this.$router.push(QUESTIONNAIRES_PATH),
         },
         {
           iconName: 'el-icon-setting',
           label: 'Preferências',
           index: 'preferences',
-          onClick: () => this.$router.push({ name: PREFERENCES_ROUTE_NAME }),
+          onClick: () => this.$router.push(PREFERENCES_PATH),
         },
       ];
     },
     currentActiveLink() {
       const { path: currentRoute } = this.$route;
       switch (currentRoute) {
-        case '/dashboard':
+        case DASHBOARD_PATH:
           return 'home';
-        case '/dashboard/pacientes':
-        case ADD_PATIENT_ROUTE_NAME:
+        case PATIENT_PATH:
+        case PATIENTS_PATH:
+        case ADD_PATIENT_PATH:
           return 'patients';
-        case '/dashboard/questionarios':
-        case '/dashboard/questionarios/novo':
+        case QUESTIONNAIRES_PATH:
+        case NEW_QUESTIONNAIRE_PATH:
           return 'questionnaires';
-        case '/dashboard/preferencias':
+        case PREFERENCES_PATH:
           return 'preferences';
         default:
           return undefined;

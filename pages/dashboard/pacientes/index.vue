@@ -2,7 +2,7 @@
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
       el-button(type="default" plain @click="refetchPatients") Atualizar
-      el-button(type="primary" @click="$router.push('pacientes/adicionar')") Adicionar paciente
+      el-button(type="primary" @click="goToAddPatient") Adicionar paciente
     shadowed-card.mt-7
       patients-table(
         v-bind="patientsTableProps"
@@ -25,16 +25,20 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
-import PatientsQueryGQL from '@/graphql/queries/User/patients';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { Query, PatientsQuery, QueryUsersArgs } from '@/types/gql';
-import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
+import { replaceParamsInPath } from '~/helpers/routing';
+import PatientsQueryGQL from '~/graphql/queries/User/patients';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { Query, PatientsQuery, QueryUsersArgs } from '~/types/gql';
+import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import PatientsTable, { Props as TableProps } from '@/components/molecules/tables/TableOrderablePaginated.vue';
-import { ROUTE_NAME as PATIENT_ROUTE_NAME } from './_id.vue';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import { PATIENT_PATH } from '~/pages/dashboard/pacientes/_id.vue';
+import { ADD_PATIENT_PATH } from '~/pages/dashboard/pacientes/adicionar.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import PatientsTable, { Props as TableProps } from '~/components/molecules/tables/TableOrderablePaginated.vue';
+
+export const PATIENTS_PATH = '/dashboard/pacientes';
 
 type Patient = Query['users']['results'][0];
 
@@ -44,6 +48,7 @@ type Data = {
   isPatientsTableLoading: 0;
 };
 type Methods = {
+  goToAddPatient: () => void;
   refetchPatients: () => void;
   goToPatientOverview: (id: string) => void;
   updatePatientsQueryArgs: UpdateFieldWithValueFunction<Data['patientsQueryArgs']>;
@@ -120,22 +125,24 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   mounted() {
-    if (this.$route.params.refetch) this.refetchPatients();
+    if (this.$route.query.refetch) this.refetchPatients();
   },
   methods: {
+    goToAddPatient() {
+      this.$router.push(ADD_PATIENT_PATH);
+    },
     refetchPatients() {
       this.$apollo.queries.patients?.refetch();
     },
     goToPatientOverview(id) {
-      this.$router.push({ name: PATIENT_ROUTE_NAME, params: { id } });
+      const path = replaceParamsInPath(PATIENT_PATH, { id });
+      this.$router.push(path);
     },
     updatePatientsQueryArgs(field, value) {
       this.patientsQueryArgs = { ...this.patientsQueryArgs, [field]: value };
     },
   },
-  head: {
-    titleTemplate: (base) => `${base} - Listar pacientes cadastrados`,
-  },
+  head: { titleTemplate: (base) => `${base} - Listar pacientes cadastrados` },
 });
 </script>
 

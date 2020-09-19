@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { LOGIN_PATH } from '~/pages/auth/login.vue';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -17,7 +18,7 @@ export default Vue.extend({
     $authMethodsLogout() {
       this.$apolloHelpers.onLogout();
       this.$accessor.auth.clearRefreshToken();
-      this.$router.push('/auth/login');
+      this.$router.push(LOGIN_PATH);
     },
   },
 });

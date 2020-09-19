@@ -11,7 +11,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RegisteredLayout } from '@/enums';
+import { RegisteredLayout } from '~/enums';
+import { DASHBOARD_PATH } from '~/pages/dashboard/index.vue';
 
 type Data = {};
 type Methods = {
@@ -32,7 +33,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     redirect() {
-      this.$router.push('/dashboard');
+      this.$router.push(DASHBOARD_PATH);
     },
   },
 });

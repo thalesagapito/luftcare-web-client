@@ -8,7 +8,7 @@
       )
 
       .form-section-footer
-        el-button(type="default" @click="$router.push('/dashboard/questionarios')") Cancelar
+        el-button(type="default" @click="goToQuestionnaires") Cancelar
         el-button(
           type="primary"
           :disabled="!isFormValid"
@@ -19,20 +19,24 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { MutationCreateSymptomQuestionnaireArgs } from '@/types/gql';
-import CreateSymptomQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
+import CreateSymptomQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import { unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
-import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import { unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
+import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import { QUESTIONNAIRES_PATH } from './index.vue';
+
+export const NEW_QUESTIONNAIRE_PATH = '/dashboard/questionarios/novo';
 
 type Data = {
   isFormValid: boolean;
   questionnaireData: FormProps['value'];
 };
 type Methods = {
+  goToQuestionnaires: (refetch?: boolean) => void;
   runCreateQuestionnaireMutation: () => void;
   handleFormCreationSuccess: () => void;
 };
@@ -86,7 +90,16 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     handleFormCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Questionário criado com sucesso' });
-      this.$router.push({ name: 'dashboard-questionarios', params: { refetch: '1' } });
+      this.goToQuestionnaires(true);
+    },
+    goToQuestionnaires(refetch) {
+      const path = QUESTIONNAIRES_PATH;
+      if (refetch) {
+        const query = { refetch: '1' };
+        this.$router.push({ path, query });
+        return;
+      }
+      this.$router.push(path);
     },
   },
   head: {

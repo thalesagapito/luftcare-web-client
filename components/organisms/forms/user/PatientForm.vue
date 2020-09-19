@@ -59,10 +59,10 @@ import Vue from 'vue';
 import msk from 'msk';
 import { Form } from 'element-ui';
 import { trim } from 'lodash';
-import { ElFormProps } from '@/types/element-ui';
-import { CreateUserInput } from '@/types/gql';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
+import { ElFormProps } from '~/types/element-ui';
+import { CreateUserInput } from '~/types/gql';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
 
 type Data = {};
 type Methods = {

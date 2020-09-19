@@ -1,7 +1,7 @@
 <template lang="pug">
   .update-password-wrapper
     el-form(v-bind="formProps" ref="form")
-      input.invisible(type="email" :value="currentUserEmail")
+      input.hidden(type="email" :value="currentUserEmail")
       .mb-6: el-form-item(label="Senha atual" prop="currentPassword")
         .form-item-helper-text É necessário informar a sua senha atual por segurança.
         el-input(
@@ -34,10 +34,10 @@
 import Vue from 'vue';
 import { trim } from 'lodash';
 import { Form } from 'element-ui';
-import { ElFormProps } from '@/types/element-ui';
-import { MutationUpdatePasswordArgs } from '@/types/gql';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
+import { ElFormProps } from '~/types/element-ui';
+import { MutationUpdatePasswordArgs } from '~/types/gql';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
 
 type Data = {
   isNewPasswordVisible: boolean;

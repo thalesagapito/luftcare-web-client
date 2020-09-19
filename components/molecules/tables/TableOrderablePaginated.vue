@@ -23,7 +23,7 @@ import Vue from 'vue';
 import { Table, Pagination } from 'element-ui';
 import { TableColumn, SortOrders } from 'element-ui/types/table-column';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { OrderByClauseDirection, OrderByClause } from '@/types/gql';
+import { OrderByClauseDirection, OrderByClause } from '~/types/gql';
 
 const convertElementUiSortOrderToGraphqlSortOrder = (order: SortOrders): OrderByClauseDirection => {
   switch (order) {

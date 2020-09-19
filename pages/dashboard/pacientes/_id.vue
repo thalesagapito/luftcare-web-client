@@ -45,20 +45,22 @@ import isUUID from 'validator/lib/isUUID';
 import { capitalize, debounce } from 'lodash';
 
 import {
-  User, Query, SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor,
-} from '@/types/gql';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import PatientOverviewQueryGQL from '@/graphql/queries/User/patientOverview';
-import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
+  User,
+  Query,
+  SymptomQuestionnaireResponse,
+  SymptomQuestionnaireScoreRangeColor,
+} from '~/types/gql';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import PatientOverviewQueryGQL from '~/graphql/queries/User/patientOverview';
+import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import ScoreColoredChip from '@/components/atoms/score/ScoreColoredChip.vue';
-import LineChart, { Props as LineChartProps } from '@/components/atoms/charts/LineChart.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import ScoreColoredChip from '~/components/atoms/score/ScoreColoredChip.vue';
+import LineChart, { Props as LineChartProps } from '~/components/atoms/charts/LineChart.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import { transformResponsesToChartData } from './chartBuildFunctions';
 
-
-export const ROUTE_NAME = 'dashboard-pacientes-id';
+export const PATIENT_PATH = '/dashboard/pacientes/:id';
 
 type Data = {
   overview: {

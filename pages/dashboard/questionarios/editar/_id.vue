@@ -8,7 +8,7 @@
       )
 
       .form-section-footer
-        el-button(type="default" @click="$router.push('/dashboard/questionarios')") Cancelar
+        el-button(type="default" @click="goToQuestionnaires") Cancelar
         el-button(
           type="primary"
           :disabled="!isFormValid"
@@ -21,17 +21,20 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import isUUID from 'validator/lib/isUUID';
 
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { MutationUpdateSymptomQuestionnaireArgs, Query } from '@/types/gql';
-import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
-import GetQuestionnaireQuery from '@/graphql/queries/SymptomQuestionnaires/getSymptomQuestionnaire';
-import UpdateQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { MutationUpdateSymptomQuestionnaireArgs, Query } from '~/types/gql';
+import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
+import GetQuestionnaireQuery from '~/graphql/queries/SymptomQuestionnaires/getSymptomQuestionnaire';
+import UpdateQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import { mapQuestionnaireTypeToInput } from '@/components/organisms/forms/symptom-questionnaire/typeInputMapperFunctions';
-import QuestionnaireForm, { Props as FormProps } from '@/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
-import { keyQuestionnaire, unkeyQuestionnaire } from '@/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import { mapQuestionnaireTypeToInput } from '~/components/organisms/forms/symptom-questionnaire/typeInputMapperFunctions';
+import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import { keyQuestionnaire, unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
+import { QUESTIONNAIRES_PATH } from '../index.vue';
+
+export const EDIT_QUESTIONNAIRE_PATH = '/dashboard/questionarios/editar/:id';
 
 type Data = {
   isFormValid: boolean;
@@ -39,6 +42,7 @@ type Data = {
   id?: string;
 };
 type Methods = {
+  goToQuestionnaires: (refetch?: boolean) => void;
   runCreateQuestionnaireMutation: () => void;
   handleFormCreationSuccess: () => void;
 };
@@ -111,7 +115,16 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     handleFormCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Questionário alterado com sucesso' });
-      this.$router.push({ name: 'dashboard-questionarios', params: { refetch: '1' } });
+      this.goToQuestionnaires(true);
+    },
+    goToQuestionnaires(refetch) {
+      const path = QUESTIONNAIRES_PATH;
+      if (refetch) {
+        const query = { refetch: '1' };
+        this.$router.push({ path, query });
+        return;
+      }
+      this.$router.push(path);
     },
   },
   validate({ params }) {

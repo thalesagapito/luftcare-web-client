@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BrandLogo from '@/components/atoms/BrandLogo.vue';
+import BrandLogo from '~/components/atoms/BrandLogo.vue';
 
 type Data = {};
 type Methods = {};

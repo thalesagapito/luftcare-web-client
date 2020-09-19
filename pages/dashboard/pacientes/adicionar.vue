@@ -8,7 +8,7 @@
       )
 
       .form-section-footer
-        el-button(type="default" @click="$router.push('/dashboard/pacientes')") Cancelar
+        el-button(type="default" @click="goToPatients") Cancelar
         el-button(
           type="primary"
           :disabled="!isFormValid"
@@ -19,21 +19,23 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import CreateUserMutationGQL from '@/graphql/mutations/User/createUser';
-import { CreateUserInput, MutationCreateUserArgs, UserRole } from '@/types/gql';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import CreateUserMutationGQL from '~/graphql/mutations/User/createUser';
+import { CreateUserInput, MutationCreateUserArgs, UserRole } from '~/types/gql';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import PatientForm, { Props as FormProps } from '@/components/organisms/forms/user/PatientForm.vue';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import { PATIENTS_PATH } from '~/pages/dashboard/pacientes/index.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import PatientForm, { Props as FormProps } from '~/components/organisms/forms/user/PatientForm.vue';
 
-export const ROUTE_NAME = 'dashboard-pacientes-adicionar';
+export const ADD_PATIENT_PATH = '/dashboard/pacientes/adicionar';
 
 type Data = {
   isFormValid: boolean;
   patientData: FormProps['value'];
 };
 type Methods = {
+  goToPatients: (refetch?: boolean) => void;
   runCreatePatientMutation: () => void;
   handlePatientCreationSuccess: () => void;
 };
@@ -88,12 +90,19 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     handlePatientCreationSuccess() {
       this.$notify({ title: 'Sucesso', type: 'success', message: 'Paciente adicionado com sucesso' });
-      this.$router.push({ name: 'dashboard-pacientes', params: { refetch: '1' } });
+      this.goToPatients(true);
+    },
+    goToPatients(refetch) {
+      const path = PATIENTS_PATH;
+      if (refetch) {
+        const query = { refetch: '1' };
+        this.$router.push({ path, query });
+        return;
+      }
+      this.$router.push(path);
     },
   },
-  head: {
-    titleTemplate: (base) => `${base} - Adicionar paciente`,
-  },
+  head: { titleTemplate: (base) => `${base} - Adicionar paciente` },
 });
 </script>
 

@@ -73,9 +73,9 @@
 import Vue from 'vue';
 import { Form } from 'element-ui';
 import { every, trim } from 'lodash';
-import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
+import { ElFormProps } from '~/types/element-ui';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
 import { KeyedQuestionnaireInput } from './types';
 import QuestionsContainer from './QuestionsContainer.vue';
 import ScoreRangesContainer from './ScoreRangesContainer.vue';

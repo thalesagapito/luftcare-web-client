@@ -9,12 +9,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import { ROUTE_NAME as UPDATE_PASSWORD_ROUTE_NAME } from '@/pages/dashboard/preferencias/alterar-senha.vue';
 
-export const ROUTE_NAME = 'dashboard-preferencias';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import { UPDATE_PASSWORD_PATH } from '~/pages/dashboard/preferencias/alterar-senha.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+
+export const PREFERENCES_PATH = '/dashboard/preferencias';
 
 type PreferenceLink = { label: string, onClick: () => void };
 
@@ -45,7 +47,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     profileLinks() {
       return [
-        { label: 'Alterar senha', onClick: () => this.$router.push({ name: UPDATE_PASSWORD_ROUTE_NAME }) },
+        { label: 'Alterar senha', onClick: () => this.$router.push(UPDATE_PASSWORD_PATH) },
       ];
     },
   },

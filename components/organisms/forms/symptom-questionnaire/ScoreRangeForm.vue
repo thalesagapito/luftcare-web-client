@@ -77,10 +77,10 @@
 import Vue from 'vue';
 import { Form } from 'element-ui';
 import { debounce, trim } from 'lodash';
-import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import { SymptomQuestionnaireScoreRangeColor } from '@/types/gql';
+import { ElFormProps } from '~/types/element-ui';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
+import { SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
 import { KeyedScoreRangeInput, ScoreRangeInput } from './types';
 import { getDefaultScoreRange } from './factoryFunctions';
 

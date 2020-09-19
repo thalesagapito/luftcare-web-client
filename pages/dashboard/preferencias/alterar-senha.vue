@@ -10,16 +10,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import UpdatePasswordMutationGQL from '@/graphql/mutations/User/updatePassword';
-import { ROUTE_NAME as PREFERENCES_ROUTE_NAME } from '@/pages/dashboard/preferencias/index.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import UpdatePasswordForm, { Props as FormProps } from '@/components/organisms/forms/update-password/UpdatePasswordForm.vue';
 import { MutationUpdatePasswordArgs } from '~/types/gql';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import UpdatePasswordMutationGQL from '~/graphql/mutations/User/updatePassword';
+
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import { PREFERENCES_PATH } from '~/pages/dashboard/preferencias/index.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import UpdatePasswordForm, { Props as FormProps } from '~/components/organisms/forms/update-password/UpdatePasswordForm.vue';
 
 
-export const ROUTE_NAME = 'dashboard-preferencias-alterar-senha';
+export const UPDATE_PASSWORD_PATH = 'dashboard/preferencias/alterar-senha';
 
 type Data = {
   formData: FormProps['value'];
@@ -69,7 +70,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     goToPreferences() {
-      this.$router.push({ name: PREFERENCES_ROUTE_NAME });
+      this.$router.push(PREFERENCES_PATH);
     },
     async submit() {
       const variables: MutationUpdatePasswordArgs = {

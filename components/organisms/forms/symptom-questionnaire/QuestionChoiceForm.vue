@@ -56,9 +56,9 @@ import Vue from 'vue';
 import { Form } from 'element-ui';
 import { debounce, trim } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { ElFormProps } from '@/types/element-ui';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import NumberStepper from '@/components/atoms/controls/VerticalNumberStepper.vue';
+import { ElFormProps } from '~/types/element-ui';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
+import NumberStepper from '~/components/atoms/controls/VerticalNumberStepper.vue';
 import { KeyedChoiceInput, ChoiceInput } from './types';
 import { getDefaultChoice } from './factoryFunctions';
 

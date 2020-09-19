@@ -70,10 +70,10 @@
 import Vue from 'vue';
 import { Option, Form } from 'element-ui';
 import { every, debounce, trim } from 'lodash';
-import { ElFormProps } from '@/types/element-ui';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { UpdateFieldWithValueFunction } from '@/types/helpers';
-import { SymptomQuestionnaireQuestionKind } from '@/types/gql';
+import { ElFormProps } from '~/types/element-ui';
+import { UpdateFieldWithValueFunction } from '~/types/helpers';
+import { SymptomQuestionnaireQuestionKind } from '~/types/gql';
 import ChoicesContainer from './QuestionChoicesContainer.vue';
 import { KeyedQuestionInput, QuestionInput } from './types';
 import { getDefaultQuestion, getDefaultChoice } from './factoryFunctions';

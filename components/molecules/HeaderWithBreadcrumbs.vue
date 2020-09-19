@@ -10,7 +10,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
-import ArrowBreadcrumbs, { Props as BreadcrumbsProps } from '@/components/atoms/ArrowBreadcrumbs.vue';
+import ArrowBreadcrumbs, { Props as BreadcrumbsProps } from '~/components/atoms/ArrowBreadcrumbs.vue';
 
 type Data = {};
 type Methods = {};

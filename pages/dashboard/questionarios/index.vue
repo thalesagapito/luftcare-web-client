@@ -2,7 +2,7 @@
   .dashboard-page-wrapper
     the-header(v-bind="headerProps")
       el-button(type="default" plain @click="refetchQuestionnaires") Atualizar
-      el-button(type="primary" @click="$router.push('questionarios/novo')") Criar novo questionário
+      el-button(type="primary" @click="goToNewQuestionnaire") Criar novo questionário
     shadowed-card.mt-7
       questionnaires-table(
         v-bind="questionnairesTableProps"
@@ -46,17 +46,22 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
-import { RegisteredLayout, RegisteredMiddleware } from '@/enums';
-import { UpdateFieldWithValueFunction, MutationResponseHandler } from '@/types/helpers';
-import smartQueryErrorHandler from '@/errorHandling/apollo/smartQueryErrorHandler';
-import { Query, CurrentSymptomQuestionnairesQuery, QuerySymptomQuestionnairesArgs } from '@/types/gql';
-import QuestionnairesQueryGQL from '@/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
-import DeleteQuestionnaireMutation from '@/graphql/mutations/SymptomQuestionnaires/deleteSymptomQuestionnaire';
-import ChangePublishStatusMutation from '@/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+import { replaceParamsInPath } from '~/helpers/routing';
+import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { UpdateFieldWithValueFunction, MutationResponseHandler } from '~/types/helpers';
+import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
+import { Query, CurrentSymptomQuestionnairesQuery, QuerySymptomQuestionnairesArgs } from '~/types/gql';
+import QuestionnairesQueryGQL from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
+import DeleteQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/deleteSymptomQuestionnaire';
+import ChangePublishStatusMutation from '~/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
 
-import ShadowedCard from '@/components/atoms/ShadowedCard.vue';
-import TheHeader, { Props as HeaderProps } from '@/components/molecules/HeaderWithBreadcrumbs.vue';
-import QuestionnairesTable, { Props as TableProps } from '@/components/molecules/tables/TableOrderablePaginated.vue';
+import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
+import { NEW_QUESTIONNAIRE_PATH } from '~/pages/dashboard/questionarios/novo.vue';
+import { EDIT_QUESTIONNAIRE_PATH } from '~/pages/dashboard/questionarios/editar/_id.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import QuestionnairesTable, { Props as TableProps } from '~/components/molecules/tables/TableOrderablePaginated.vue';
+
+export const QUESTIONNAIRES_PATH = '/dashboard/questionarios';
 
 type Questionnaire = Query['symptomQuestionnaires']['results'][0];
 
@@ -67,6 +72,7 @@ type Data = {
 };
 type Methods = {
   refetchQuestionnaires: () => void;
+  goToNewQuestionnaire: () => void;
   handleEdit: (questionnaire: Questionnaire) => void;
   handleDelete: (questionnaire: Questionnaire) => void;
   updateQuestionnairesQueryArgs: UpdateFieldWithValueFunction<Data['questionnairesQueryArgs']>;
@@ -149,7 +155,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   mounted() {
-    if (this.$route.params.refetch) this.refetchQuestionnaires();
+    if (this.$route.query.refetch) this.refetchQuestionnaires();
   },
   methods: {
     refetchQuestionnaires() {
@@ -158,8 +164,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     updateQuestionnairesQueryArgs(field, value) {
       this.questionnairesQueryArgs = { ...this.questionnairesQueryArgs, [field]: value };
     },
+    goToNewQuestionnaire() {
+      this.$router.push(NEW_QUESTIONNAIRE_PATH);
+    },
     handleEdit({ id }) {
-      this.$router.push({ name: 'dashboard-questionarios-editar-id', params: { id } });
+      const path = replaceParamsInPath(EDIT_QUESTIONNAIRE_PATH, { id });
+      this.$router.push(path);
     },
     handleDelete({ id }) {
       this.$apollo
@@ -206,9 +216,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       }
     },
   },
-  head: {
-    titleTemplate: (base) => `${base} - Listar questionários cadastrados`,
-  },
+  head: { titleTemplate: (base) => `${base} - Listar questionários cadastrados` },
 });
 </script>
 
