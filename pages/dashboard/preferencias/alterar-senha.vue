@@ -20,7 +20,7 @@ import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWi
 import UpdatePasswordForm, { Props as FormProps } from '~/components/organisms/forms/update-password/UpdatePasswordForm.vue';
 
 
-export const UPDATE_PASSWORD_PATH = 'dashboard/preferencias/alterar-senha';
+export const UPDATE_PASSWORD_PATH = '/dashboard/preferencias/alterar-senha';
 
 type Data = {
   formData: FormProps['value'];

@@ -50,10 +50,10 @@ import { replaceParamsInPath } from '~/helpers/routing';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { UpdateFieldWithValueFunction, MutationResponseHandler } from '~/types/helpers';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
-import { Query, CurrentSymptomQuestionnairesQuery, QuerySymptomQuestionnairesArgs } from '~/types/gql';
-import QuestionnairesQueryGQL from '~/graphql/queries/SymptomQuestionnaires/currentSymptomQuestionnaires';
-import DeleteQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/deleteSymptomQuestionnaire';
-import ChangePublishStatusMutation from '~/graphql/mutations/SymptomQuestionnaires/changeQuestionnairePublishStatus';
+import { Query, CurrentQuestionnairesQuery, QueryQuestionnairesArgs } from '~/types/gql';
+import QuestionnairesQueryGQL from '~/graphql/queries/Questionnaires/currentQuestionnaires';
+import DeleteQuestionnaireMutation from '~/graphql/mutations/Questionnaires/deleteQuestionnaire';
+import ChangePublishStatusMutation from '~/graphql/mutations/Questionnaires/changeQuestionnairePublishStatus';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { NEW_QUESTIONNAIRE_PATH } from '~/pages/dashboard/questionarios/novo.vue';
@@ -63,11 +63,11 @@ import QuestionnairesTable, { Props as TableProps } from '~/components/molecules
 
 export const QUESTIONNAIRES_PATH = '/dashboard/questionarios';
 
-type Questionnaire = Query['symptomQuestionnaires']['results'][0];
+type Questionnaire = Query['questionnaires']['results'][0];
 
 type Data = {
-  questionnaires?: ExecutionResult<Query['symptomQuestionnaires']>['data']
-  questionnairesQueryArgs: QuerySymptomQuestionnairesArgs;
+  questionnaires?: ExecutionResult<Query['questionnaires']>['data']
+  questionnairesQueryArgs: QueryQuestionnairesArgs;
   isQuestionnairesTableLoading: 0;
 };
 type Methods = {
@@ -109,7 +109,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       query: QuestionnairesQueryGQL,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
-      update: ({ symptomQuestionnaires }: CurrentSymptomQuestionnairesQuery) => symptomQuestionnaires,
+      update: ({ questionnaires }: CurrentQuestionnairesQuery) => questionnaires,
       variables() { return this.questionnairesQueryArgs; },
     },
   },
@@ -183,7 +183,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     handleDeleteSuccess({ data }) {
       this.$notify({
         title: 'Sucesso',
-        message: data?.deleteSymptomQuestionnaire.userFriendlyMessage || '',
+        message: data?.deleteQuestionnaire.userFriendlyMessage || '',
         type: 'success',
       });
       this.refetchQuestionnaires();
@@ -200,7 +200,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     handlePublishStatusChangeSuccess({ data }) {
       this.$notify({
         title: 'Sucesso',
-        message: data?.changeSymptomQuestionnairePublishStatus.userFriendlyMessage || '',
+        message: data?.changeQuestionnairePublishStatus.userFriendlyMessage || '',
         type: 'success',
       });
       this.refetchQuestionnaires();

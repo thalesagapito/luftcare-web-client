@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query currentSymptomQuestionnaires(
+  query currentQuestionnaires(
     $name: String
     $orderBy: [OrderByClause!]
     $pageNumber: Int
@@ -9,7 +9,7 @@ export default gql`
     $resultsPerPage: Int
     ) {
 
-    symptomQuestionnaires(
+    questionnaires(
       currentVersionsOnly: true
       nameForManagement: $name
       orderBy: $orderBy

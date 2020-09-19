@@ -47,8 +47,8 @@ import { capitalize, debounce } from 'lodash';
 import {
   User,
   Query,
-  SymptomQuestionnaireResponse,
-  SymptomQuestionnaireScoreRangeColor,
+  QuestionnaireResponse,
+  QuestionnaireScoreRangeColor,
 } from '~/types/gql';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import PatientOverviewQueryGQL from '~/graphql/queries/User/patientOverview';
@@ -65,7 +65,7 @@ export const PATIENT_PATH = '/dashboard/pacientes/:id';
 type Data = {
   overview: {
     user?: User;
-    responses?: SymptomQuestionnaireResponse[];
+    responses?: QuestionnaireResponse[];
   };
 };
 type Methods = {
@@ -104,10 +104,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       query: PatientOverviewQueryGQL,
       error: debounce(smartQueryErrorHandler, 10),
       variables() { return { id: this.$route.params.id }; },
-      update({ user, symptomQuestionnaireResponses }: Partial<Query>): Data['overview'] {
+      update({ user, questionnaireResponses }: Partial<Query>): Data['overview'] {
         return {
           user: user || undefined,
-          responses: symptomQuestionnaireResponses?.results || [],
+          responses: questionnaireResponses?.results || [],
         };
       },
     },
@@ -130,15 +130,15 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     positiveResponseCount() {
       const positiveColors = [
-        SymptomQuestionnaireScoreRangeColor.Green,
-        SymptomQuestionnaireScoreRangeColor.GreenYellow,
+        QuestionnaireScoreRangeColor.Green,
+        QuestionnaireScoreRangeColor.GreenYellow,
       ];
       return this.responses.filter(({ score }) => positiveColors.includes(score.color)).length;
     },
     negativeResponseCount() {
       const negativeColors = [
-        SymptomQuestionnaireScoreRangeColor.Red,
-        SymptomQuestionnaireScoreRangeColor.Orange,
+        QuestionnaireScoreRangeColor.Red,
+        QuestionnaireScoreRangeColor.Orange,
       ];
       return this.responses.filter(({ score }) => negativeColors.includes(score.color)).length;
     },

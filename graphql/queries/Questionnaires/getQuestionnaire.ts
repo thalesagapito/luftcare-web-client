@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export default gql`
   query getQuestionnaire($id: ID!) {
-    symptomQuestionnaire(id: $id) {
+    questionnaire(id: $id) {
       id
       isPublished
       nameForManagement

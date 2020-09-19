@@ -8,7 +8,7 @@ query patientOverview($id: ID!) {
     phoneNumber
     createdAt
   }
-  symptomQuestionnaireResponses(
+  questionnaireResponses(
     userId: $id,
     pageNumber: 1,
     resultsPerPage: 100,

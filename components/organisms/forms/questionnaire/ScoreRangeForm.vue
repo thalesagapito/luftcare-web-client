@@ -80,12 +80,12 @@ import { debounce, trim } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
 import { UpdateFieldWithValueFunction } from '~/types/helpers';
-import { SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
+import { QuestionnaireScoreRangeColor } from '~/types/gql';
 import { KeyedScoreRangeInput, ScoreRangeInput } from './types';
 import { getDefaultScoreRange } from './factoryFunctions';
 
 type ColorOption = {
-  value: SymptomQuestionnaireScoreRangeColor;
+  value: QuestionnaireScoreRangeColor;
   label: string;
   class: string;
 };
@@ -137,27 +137,27 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         {
           label: 'Vermelho',
           class: 'red',
-          value: SymptomQuestionnaireScoreRangeColor.Red,
+          value: QuestionnaireScoreRangeColor.Red,
         },
         {
           label: 'Laranja',
           class: 'orange',
-          value: SymptomQuestionnaireScoreRangeColor.Orange,
+          value: QuestionnaireScoreRangeColor.Orange,
         },
         {
           label: 'Amarelo',
           class: 'yellow',
-          value: SymptomQuestionnaireScoreRangeColor.Yellow,
+          value: QuestionnaireScoreRangeColor.Yellow,
         },
         {
           label: 'Amarelo-verde',
           class: 'green-yellow',
-          value: SymptomQuestionnaireScoreRangeColor.GreenYellow,
+          value: QuestionnaireScoreRangeColor.GreenYellow,
         },
         {
           label: 'Verde',
           class: 'green',
-          value: SymptomQuestionnaireScoreRangeColor.Green,
+          value: QuestionnaireScoreRangeColor.Green,
         },
       ];
     },

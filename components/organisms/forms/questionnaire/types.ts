@@ -4,20 +4,20 @@ import {
   WithIsValid,
 } from '~/types/helpers';
 import {
-  SymptomQuestionnaire,
-  SymptomQuestionnaireInput,
-  SymptomQuestionnaireQuestion,
-  SymptomQuestionnaireScoreRange,
-  SymptomQuestionnaireQuestionInput,
-  SymptomQuestionnaireQuestionChoice,
-  SymptomQuestionnaireScoreRangeInput,
-  SymptomQuestionnaireQuestionChoiceInput,
+  Questionnaire,
+  QuestionnaireInput as GeneratedQuestionnaireInput,
+  QuestionnaireQuestion,
+  QuestionnaireScoreRange,
+  QuestionnaireQuestionInput,
+  QuestionnaireQuestionChoice,
+  QuestionnaireScoreRangeInput,
+  QuestionnaireQuestionChoiceInput,
 } from '~/types/gql';
 
 /** ****** */
 /* Choices */
-export type ChoiceType = SymptomQuestionnaireQuestionChoice;
-export type ChoiceInput = SymptomQuestionnaireQuestionChoiceInput;
+export type ChoiceType = QuestionnaireQuestionChoice;
+export type ChoiceInput = QuestionnaireQuestionChoiceInput;
 export type KeyedChoiceInput = Keyed<WithIsValid<ChoiceInput>>;
 /* Choices */
 /** ****** */
@@ -25,8 +25,8 @@ export type KeyedChoiceInput = Keyed<WithIsValid<ChoiceInput>>;
 
 /** ******** */
 /* Questions */
-export type QuestionType = SymptomQuestionnaireQuestion;
-export type QuestionInput = SymptomQuestionnaireQuestionInput;
+export type QuestionType = QuestionnaireQuestion;
+export type QuestionInput = QuestionnaireQuestionInput;
 type QuestionWithKeyedChoices = Override<QuestionInput, { possibleChoices?: KeyedChoiceInput[] }>;
 export type KeyedQuestionInput = Keyed<WithIsValid<QuestionWithKeyedChoices>>;
 /* Questions */
@@ -35,8 +35,8 @@ export type KeyedQuestionInput = Keyed<WithIsValid<QuestionWithKeyedChoices>>;
 
 /** ******** */
 /* ScoreRanges */
-export type ScoreRangeType = SymptomQuestionnaireScoreRange;
-export type ScoreRangeInput = SymptomQuestionnaireScoreRangeInput;
+export type ScoreRangeType = QuestionnaireScoreRange;
+export type ScoreRangeInput = QuestionnaireScoreRangeInput;
 export type KeyedScoreRangeInput = Keyed<WithIsValid<ScoreRangeInput>>;
 /* ScoreRanges */
 /** ******** */
@@ -44,8 +44,8 @@ export type KeyedScoreRangeInput = Keyed<WithIsValid<ScoreRangeInput>>;
 
 /** ************ */
 /* Questionnaire */
-export type QuestionnaireType = SymptomQuestionnaire;
-export type QuestionnaireInput = SymptomQuestionnaireInput;
+export type QuestionnaireType = Questionnaire;
+export type QuestionnaireInput = GeneratedQuestionnaireInput;
 export type KeyedQuestionnaireInput = Override<QuestionnaireInput, {
   questions: KeyedQuestionInput[],
   scoreRanges: KeyedScoreRangeInput[],

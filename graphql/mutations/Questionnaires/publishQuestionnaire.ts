@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation deleteQuestionnaire($id: ID!) {
-    deleteSymptomQuestionnaire(id: $id) {
+  mutation publishQuestionnaire($id: ID!) {
+    publishQuestionnaire(id: $id) {
       userFriendlyMessage
     }
   }

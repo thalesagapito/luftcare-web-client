@@ -73,7 +73,7 @@ import { every, debounce, trim } from 'lodash';
 import { RecordPropsDefinition } from 'vue/types/options';
 import { ElFormProps } from '~/types/element-ui';
 import { UpdateFieldWithValueFunction } from '~/types/helpers';
-import { SymptomQuestionnaireQuestionKind } from '~/types/gql';
+import { QuestionnaireQuestionKind } from '~/types/gql';
 import ChoicesContainer from './QuestionChoicesContainer.vue';
 import { KeyedQuestionInput, QuestionInput } from './types';
 import { getDefaultQuestion, getDefaultChoice } from './factoryFunctions';
@@ -171,12 +171,12 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     questionKindSelectOptions() {
       return [
-        { value: SymptomQuestionnaireQuestionKind.MultipleChoice, label: 'Múltipla escolha' },
-        { value: SymptomQuestionnaireQuestionKind.FreeResponse, label: 'Texto livre' },
+        { value: QuestionnaireQuestionKind.MultipleChoice, label: 'Múltipla escolha' },
+        { value: QuestionnaireQuestionKind.FreeResponse, label: 'Texto livre' },
       ];
     },
     isQuestionMultipleChoice() {
-      return this.question.kind === SymptomQuestionnaireQuestionKind.MultipleChoice;
+      return this.question.kind === QuestionnaireQuestionKind.MultipleChoice;
     },
   },
   watch: {

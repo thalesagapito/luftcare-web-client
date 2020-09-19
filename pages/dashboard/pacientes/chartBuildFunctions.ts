@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { find, findIndex, uniq } from 'lodash';
 import tailwindConfig from '~/tailwind.config';
-import { SymptomQuestionnaireResponse } from '~/types/gql';
+import { QuestionnaireResponse } from '~/types/gql';
 
-type Response = SymptomQuestionnaireResponse;
+type Response = QuestionnaireResponse;
 type ChartData = Chart.ChartData;
 type Labels = string[];
 type Dataset = NonNullable<ChartData['datasets']>[0];

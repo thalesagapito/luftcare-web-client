@@ -20,13 +20,13 @@
 import Vue from 'vue';
 
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { MutationCreateSymptomQuestionnaireArgs } from '~/types/gql';
-import CreateSymptomQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/createSymptomQuestionnaire';
+import { MutationCreateQuestionnaireArgs } from '~/types/gql';
+import CreateQuestionnaireMutation from '~/graphql/mutations/Questionnaires/createQuestionnaire';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import { unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
-import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
+import { unkeyQuestionnaire } from '~/components/organisms/forms/questionnaire/vueKeyManipulationFunctions';
+import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/questionnaire/QuestionnaireForm.vue';
 import { QUESTIONNAIRES_PATH } from './index.vue';
 
 export const NEW_QUESTIONNAIRE_PATH = '/dashboard/questionarios/novo';
@@ -77,13 +77,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     async runCreateQuestionnaireMutation() {
-      const mutationArgs: MutationCreateSymptomQuestionnaireArgs = {
+      const mutationArgs: MutationCreateQuestionnaireArgs = {
         questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
       const loading = this.$loading({ lock: true, text: 'Criando questionário...' });
 
       await this.$apollo
-        .mutate({ mutation: CreateSymptomQuestionnaireMutation, variables: mutationArgs })
+        .mutate({ mutation: CreateQuestionnaireMutation, variables: mutationArgs })
         .then(this.handleFormCreationSuccess)
         .catch(this.$clientErrorHandler)
         .finally(() => loading.close());

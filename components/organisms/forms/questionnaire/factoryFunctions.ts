@@ -2,14 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { max, map, min } from 'lodash';
 import { MinMaxScorePair } from './scoreRangeFunctions';
 import { KeyedQuestionInput, KeyedChoiceInput, KeyedScoreRangeInput } from './types';
-import { SymptomQuestionnaireQuestionKind, SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
+import { QuestionnaireQuestionKind, QuestionnaireScoreRangeColor } from '~/types/gql';
 
 type DefaultQuestionGetter = (currentQuestionsLength?: number) => KeyedQuestionInput;
 export const getDefaultQuestion: DefaultQuestionGetter = (currentQuestionsLength) => ({
   nameForManagement: '',
   presentationOrder: (currentQuestionsLength || 0) + 1,
   text: '',
-  kind: SymptomQuestionnaireQuestionKind.MultipleChoice,
+  kind: QuestionnaireQuestionKind.MultipleChoice,
   possibleChoices: [],
   key: uuidv4(),
   isValid: false,
@@ -59,7 +59,7 @@ export const getDefaultScoreRange: DefaultScoreRangeGetter = (
   return {
     title: '',
     description: '',
-    color: SymptomQuestionnaireScoreRangeColor.Yellow,
+    color: QuestionnaireScoreRangeColor.Yellow,
     minScore: newRange.minScore,
     maxScore: newRange.maxScore,
     key: uuidv4(),

@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RecordPropsDefinition } from 'vue/types/options';
-import { SymptomQuestionnaireResponse, SymptomQuestionnaireScoreRangeColor } from '~/types/gql';
+import { QuestionnaireResponse, QuestionnaireScoreRangeColor } from '~/types/gql';
 
 type Data = {};
 type Methods = {};
@@ -14,7 +14,7 @@ type Computed = {
   scoreTitle: string;
 };
 export type Props = {
-  score: SymptomQuestionnaireResponse['score'];
+  score: QuestionnaireResponse['score'];
   isValueVisible: boolean;
 };
 export type Events = {};
@@ -40,11 +40,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     wrapperClassName() {
       switch (this.score?.color) {
-        case SymptomQuestionnaireScoreRangeColor.Green: return 'green';
-        case SymptomQuestionnaireScoreRangeColor.GreenYellow: return 'green-yellow';
-        case SymptomQuestionnaireScoreRangeColor.Yellow: return 'yellow';
-        case SymptomQuestionnaireScoreRangeColor.Orange: return 'orange';
-        case SymptomQuestionnaireScoreRangeColor.Red: return 'red';
+        case QuestionnaireScoreRangeColor.Green: return 'green';
+        case QuestionnaireScoreRangeColor.GreenYellow: return 'green-yellow';
+        case QuestionnaireScoreRangeColor.Yellow: return 'yellow';
+        case QuestionnaireScoreRangeColor.Orange: return 'orange';
+        case QuestionnaireScoreRangeColor.Red: return 'red';
         default: return '';
       }
     },

@@ -22,16 +22,16 @@ import { debounce } from 'lodash';
 import isUUID from 'validator/lib/isUUID';
 
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
-import { MutationUpdateSymptomQuestionnaireArgs, Query } from '~/types/gql';
+import { MutationUpdateQuestionnaireArgs, Query } from '~/types/gql';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
-import GetQuestionnaireQuery from '~/graphql/queries/SymptomQuestionnaires/getSymptomQuestionnaire';
-import UpdateQuestionnaireMutation from '~/graphql/mutations/SymptomQuestionnaires/updateQuestionnaire';
+import GetQuestionnaireQuery from '~/graphql/queries/Questionnaires/getQuestionnaire';
+import UpdateQuestionnaireMutation from '~/graphql/mutations/Questionnaires/updateQuestionnaire';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
-import { mapQuestionnaireTypeToInput } from '~/components/organisms/forms/symptom-questionnaire/typeInputMapperFunctions';
-import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/symptom-questionnaire/QuestionnaireForm.vue';
-import { keyQuestionnaire, unkeyQuestionnaire } from '~/components/organisms/forms/symptom-questionnaire/vueKeyManipulationFunctions';
+import { mapQuestionnaireTypeToInput } from '~/components/organisms/forms/questionnaire/typeInputMapperFunctions';
+import QuestionnaireForm, { Props as FormProps } from '~/components/organisms/forms/questionnaire/QuestionnaireForm.vue';
+import { keyQuestionnaire, unkeyQuestionnaire } from '~/components/organisms/forms/questionnaire/vueKeyManipulationFunctions';
 import { QUESTIONNAIRES_PATH } from '../index.vue';
 
 export const EDIT_QUESTIONNAIRE_PATH = '/dashboard/questionarios/editar/:id';
@@ -73,14 +73,14 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       query: GetQuestionnaireQuery,
       error: debounce(smartQueryErrorHandler, 10),
       variables() { return { id: this.$route.params.id }; },
-      update({ symptomQuestionnaire }: Partial<Query>): Data['questionnaireData'] {
-        if (!symptomQuestionnaire) {
+      update({ questionnaire }: Partial<Query>): Data['questionnaireData'] {
+        if (!questionnaire) {
           this.$router.push('/dashboard/questionarios');
           return undefined;
         }
-        this.id = symptomQuestionnaire.id;
-        const symptomQuestionnaireInput = mapQuestionnaireTypeToInput(symptomQuestionnaire);
-        return keyQuestionnaire(symptomQuestionnaireInput);
+        this.id = questionnaire.id;
+        const questionnaireInput = mapQuestionnaireTypeToInput(questionnaire);
+        return keyQuestionnaire(questionnaireInput);
       },
     },
   },
@@ -101,7 +101,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   methods: {
     async runCreateQuestionnaireMutation() {
       if (!this.questionnaireData || !this.id) return;
-      const mutationArgs: MutationUpdateSymptomQuestionnaireArgs = {
+      const mutationArgs: MutationUpdateQuestionnaireArgs = {
         id: this.id,
         questionnaire: unkeyQuestionnaire(this.questionnaireData),
       };
