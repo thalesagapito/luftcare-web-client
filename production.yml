@@ -12,8 +12,8 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - APOLLO_ENDPOINT=http://0.0.0.0:5001/api
-      - API_URL=http://core-api:5000
+      - APOLLO_ENDPOINT=https://0.0.0.0:5001/api
+      - API_URL=https://core-api:5000
       - HOST=0.0.0.0
       - PORT=5001
       - NODE_ENV=dev
