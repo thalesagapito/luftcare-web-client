@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",
-    "generate": "nuxt-ts generate",
     "start": "nuxt-ts start",
+    "generate": "nuxt-ts generate",
     "start:prod": "pm2 start --name web-client npm -- start",
     "logs": "pm2 logs web-client",
     "stop": "pm2 stop web-client",
@@ -33,6 +33,7 @@
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/proxy": "^2.0.1",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
     "async-validator": "^3.3.0",

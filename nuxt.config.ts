@@ -6,7 +6,6 @@ import ValidateEnv from './validateEnv';
 ValidateEnv();
 
 const nuxtConfig: NuxtConfiguration = {
-  mode: 'universal',
   /*
   ** Hosts at 0.0.0.0 to be accessible by other devices in the same network
   */

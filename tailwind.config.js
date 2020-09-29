@@ -3,7 +3,7 @@ module.exports = {
   important: false,
   separator: '_',
   purge: {
-    enabled: process.env.NODE_ENV === 'production',
+    enabled: process.env.NODE_ENV === 'prod',
     content: [
       'nuxt.config.ts',
       'pages/**/*.vue',
