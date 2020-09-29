@@ -1,9 +1,15 @@
 import { ProcessEnv } from '~/types/modules';
 
 export default function () {
-  const { API_URL, CLIENT_URL, ENV } = process.env as ProcessEnv;
+  const {
+    HOST,
+    PORT,
+    API_URL,
+    APOLLO_ENDPOINT,
+  } = process.env as ProcessEnv;
 
-  if (!ENV) throw new Error('ENV missing from .env file');
-  if (!API_URL) throw new Error('API_URL missing from .env file');
-  if (!CLIENT_URL) throw new Error('CLIENT_URL missing from .env file');
+  if (!HOST) throw new Error('HOST missing from env');
+  if (!PORT) throw new Error('PORT missing from env');
+  if (!API_URL) throw new Error('API_URL missing from env');
+  if (!APOLLO_ENDPOINT) throw new Error('APOLLO_ENDPOINT missing from env');
 }

@@ -1,11 +1,8 @@
 /* eslint-disable object-curly-newline */
-import { resolve } from 'path';
-import { config as DotenvConfig } from 'dotenv';
 import { Configuration as NuxtConfiguration } from '@nuxt/types';
 import { ProcessEnv } from './types/modules';
 import ValidateEnv from './validateEnv';
 
-DotenvConfig({ path: resolve(__dirname, './.env') });
 ValidateEnv();
 
 const nuxtConfig: NuxtConfiguration = {
@@ -14,8 +11,8 @@ const nuxtConfig: NuxtConfiguration = {
   ** Hosts at 0.0.0.0 to be accessible by other devices in the same network
   */
   server: {
-    host: (process.env as ProcessEnv).CLIENT_DEV_HOST,
-    port: (process.env as ProcessEnv).CLIENT_DEV_PORT,
+    host: (process.env as ProcessEnv).HOST,
+    port: (process.env as ProcessEnv).PORT,
   },
   /*
   ** Headers of the page

@@ -46,19 +46,11 @@ const logToConsole = ({ message, severityLevel, objectToLog } : LoggingMethodArg
 
 
 const loggingMethods: { [name: string]: LoggingMethod } = {
-  dev(args: LoggingMethodArgs) {
-    logToConsole(args);
-  },
-  staging(args: LoggingMethodArgs) {
-    // TODO create staging logging solution here
-    logToConsole(args);
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  prod(args: LoggingMethodArgs) {
-    // TODO create prod logging solution
-  },
+  dev: (args: LoggingMethodArgs) => logToConsole(args),
+  staging: (args: LoggingMethodArgs) => logToConsole(args),
+  prod: (args: LoggingMethodArgs) => logToConsole(args),
 };
 
-const { ENV } = (process.env as ProcessEnv);
+const { NODE_ENV } = (process.env as ProcessEnv);
 
-export const log = loggingMethods[ENV] || loggingMethods.dev;
+export const log = loggingMethods[NODE_ENV] || loggingMethods.dev;

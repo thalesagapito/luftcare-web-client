@@ -3,11 +3,10 @@ import { errorHandler } from '~/errorHandling/apollo/clientErrorHandler';
 
 declare interface ProcessEnv extends Record<string, string> {
   API_URL: string;
-  CLIENT_URL: string;
   APOLLO_ENDPOINT: string;
-  CLIENT_DEV_HOST: string;
-  CLIENT_DEV_PORT: string;
-  ENV: 'dev' | 'staging' | 'prod';
+  HOST: string;
+  PORT: string;
+  NODE_ENV: 'dev' | 'staging' | 'prod';
 }
 
 declare module 'vue/types/vue' {

@@ -1,9 +1,10 @@
 {
   "name": "luftcare-web-client",
-  "version": "1.0.0",
-  "description": "My superb Nuxt.js project",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
   "author": "Thales Agapito",
   "private": true,
+  "description": "Luftcare web client",
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",
