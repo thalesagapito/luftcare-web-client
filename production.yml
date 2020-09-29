@@ -1,0 +1,25 @@
+version: "3"
+services:
+  web-client:
+    build: .
+    tty: true
+    container_name: web-client
+    image: web-client-image:latest
+    command: >
+      bash -c "yarn build && yarn start"
+    expose:
+      - 5001
+    ports:
+      - "5001:5001"
+    environment:
+      - APOLLO_ENDPOINT=http://0.0.0.0:5001/api
+      - API_URL=http://core-api:5000
+      - HOST=0.0.0.0
+      - PORT=5001
+      - NODE_ENV=dev
+
+# Uses the api external network, this is required since we want to be able to proxy requests to the api
+networks:
+  default:
+    external:
+      name: luftcare-api_default
