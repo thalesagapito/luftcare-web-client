@@ -16,6 +16,8 @@ module.exports = {
     extraFileExtensions: ['.vue', '.html'],
   },
   rules: {
+    '@typescript-eslint/camelcase': 'off',
+    'no-multiple-empty-lines': 'off',
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'no-shadow': ['error', { 'allow': ['state'] }],
