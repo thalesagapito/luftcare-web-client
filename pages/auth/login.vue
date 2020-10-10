@@ -16,6 +16,7 @@
           autocomplete="email"
           placeholder="Digite sua senha aqui"
           v-model="password"
+          @keyup.enter.native="validateFormAndLogin"
         )
       el-form-item.flex.justify-end
         el-button(
