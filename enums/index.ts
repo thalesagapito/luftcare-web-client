@@ -1,5 +1,6 @@
 export enum RegisteredMiddleware {
   isUserAuthenticated = 'isUserAuthenticated',
+  isUserAdmin = 'isUserAdmin',
   isUserGuest = 'isUserGuest',
 }
 

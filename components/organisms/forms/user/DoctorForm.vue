@@ -1,50 +1,50 @@
 <template lang="pug">
-  .patient-form-wrapper
-    .form-section-title.mb-6 Dados do paciente
+  .doctor-form-wrapper
+    .form-section-title.mb-6 Dados do médico
 
     el-form(v-bind="formProps" ref="form")
-      .mb-6: el-form-item(label="Email do paciente" prop="email")
+      .mb-6: el-form-item(label="Email do médico" prop="email")
         .form-item-helper-text
-          |<strong>Não poderá</strong> ser alterado pelo paciente.
-          |É esse email será usado para entrar no aplicativo.
+          |<strong>Não poderá</strong> ser alterado.
+          |É esse email será usado para entrar no sistema.
         el-input(
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
           :value="value.email"
-          @input="updatePatientField('email', $event)"
-          @blur="updatePatientField('email', trim(value.email))"
+          @input="updateDoctorField('email', $event)"
+          @blur="updateDoctorField('email', trim(value.email))"
         )
 
       .mb-6: el-form-item(label="Senha provisória da conta" prop="password")
         .form-item-helper-text
-          |<strong>Deve</strong> ser alterada pelo paciente.
+          |<strong>Deve</strong> ser alterada.
         el-input(
           type="text"
           minlength="6"
           maxlength="500"
           placeholder="Digite aqui"
           :value="value.password"
-          @input="updatePatientField('password', $event)"
-          @blur="updatePatientField('password', trim(value.password))"
+          @input="updateDoctorField('password', $event)"
+          @blur="updateDoctorField('password', trim(value.password))"
         )
 
-      .mb-6: el-form-item(label="Nome do paciente" prop="name")
+      .mb-6: el-form-item(label="Nome do médico" prop="name")
         .form-item-helper-text
-          |Pode ser alterado mais tarde pelo paciente.
+          |Pode ser alterado mais tarde.
         el-input(
           autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
           :value="value.name"
-          @input="updatePatientField('name', $event)"
-          @blur="updatePatientField('name', trim(value.name))"
+          @input="updateDoctorField('name', $event)"
+          @blur="updateDoctorField('name', trim(value.name))"
         )
 
-      .mb-6: el-form-item(label="Telefone do paciente" prop="phoneNumber")
+      .mb-6: el-form-item(label="Telefone do médico" prop="phoneNumber")
         .form-item-helper-text
-          |Pode ser alterado mais tarde pelo paciente.
+          |Pode ser alterado mais tarde.
         el-input(
           autofocus
           type="text"
@@ -67,7 +67,7 @@ import { UpdateFieldWithValueFunction } from '~/types/helpers';
 type Data = {};
 type Methods = {
   emitInput: (value: Props['value']) => void;
-  updatePatientField: UpdateFieldWithValueFunction<Props['value']>;
+  updateDoctorField: UpdateFieldWithValueFunction<Props['value']>;
 };
 type Computed = {
   trim: (value: string) => string;
@@ -109,7 +109,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       },
       set(value = '') {
         const maskedValue = getMaskedPhoneNumber(value);
-        this.updatePatientField('phoneNumber', maskedValue);
+        this.updateDoctorField('phoneNumber', maskedValue);
       },
     },
     formProps() {
@@ -165,16 +165,16 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         });
       });
     },
-    updatePatientField(field, value) {
-      const updatedPatient = { ...this.value, [field]: value };
-      this.emitInput(updatedPatient);
+    updateDoctorField(field, value) {
+      const updatedDoctor = { ...this.value, [field]: value };
+      this.emitInput(updatedDoctor);
     },
   },
 });
 </script>
 
 <style lang="postcss" scoped>
-.patient-form-wrapper {
+.doctor-form-wrapper {
   .form-section-title {
     @apply text-lg font-semibold text-gray-800 flex items-baseline;
   }

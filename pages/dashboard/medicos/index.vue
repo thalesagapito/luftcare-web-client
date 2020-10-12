@@ -10,14 +10,6 @@
         @update-page-size="updateDoctorsQueryArgs('resultsPerPage', $event)"
         @update-current-page="updateDoctorsQueryArgs('pageNumber', $event)"
       )
-        el-table-column(
-          fixed="right"
-          label="Ações"
-          align="right"
-          width="235"
-        )
-          .action-buttons(slot-scope="{ row }")
-            el-button(round size="mini" type="text" @click="() => goToDoctorOverview(row.id)") Ver tratamento
 </template>
 
 <script lang="ts">
@@ -25,7 +17,6 @@ import Vue from 'vue';
 import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
-import { replaceParamsInPath } from '~/helpers/routing';
 import DoctorsQueryGQL from '~/graphql/queries/User/doctors';
 import { UpdateFieldWithValueFunction } from '~/types/helpers';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
@@ -33,7 +24,6 @@ import { Query, DoctorsQuery, QueryUsersArgs } from '~/types/gql';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
-import { DOCTOR_PATH } from '~/pages/dashboard/medicos/_id.vue';
 import { ADD_DOCTOR_PATH } from '~/pages/dashboard/medicos/adicionar.vue';
 import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 import DoctorsTable, { Props as TableProps } from '~/components/molecules/tables/TableOrderablePaginated.vue';
@@ -50,7 +40,6 @@ type Data = {
 type Methods = {
   goToAddDoctor: () => void;
   refetchDoctors: () => void;
-  goToDoctorOverview: (id: string) => void;
   updateDoctorsQueryArgs: UpdateFieldWithValueFunction<Data['doctorsQueryArgs']>;
 };
 type Computed = {
@@ -61,7 +50,7 @@ type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: RegisteredLayout.dashboard,
-  middleware: RegisteredMiddleware.isUserAuthenticated,
+  middleware: RegisteredMiddleware.isUserAdmin,
   components: { TheHeader, ShadowedCard, DoctorsTable },
   data() {
     return {
@@ -133,10 +122,6 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     refetchDoctors() {
       this.$apollo.queries.doctors?.refetch();
-    },
-    goToDoctorOverview(id) {
-      const path = replaceParamsInPath(DOCTOR_PATH, { id });
-      this.$router.push(path);
     },
     updateDoctorsQueryArgs(field, value) {
       this.doctorsQueryArgs = { ...this.doctorsQueryArgs, [field]: value };

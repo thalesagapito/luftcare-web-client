@@ -31,21 +31,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { filter } from 'lodash';
+import { UserRole } from '~/types/gql';
 import { authMethods } from '~/mixins/RegisteredMixins';
 import { DASHBOARD_PATH } from '~/pages/dashboard/index.vue';
+import { DOCTORS_PATH } from '~/pages/dashboard/medicos/index.vue';
 import { PATIENT_PATH } from '~/pages/dashboard/pacientes/_id.vue';
 import { PATIENTS_PATH } from '~/pages/dashboard/pacientes/index.vue';
+import { ADD_DOCTOR_PATH } from '~/pages/dashboard/medicos/adicionar.vue';
 import { PREFERENCES_PATH } from '~/pages/dashboard/preferencias/index.vue';
 import { ADD_PATIENT_PATH } from '~/pages/dashboard/pacientes/adicionar.vue';
 import { QUESTIONNAIRES_PATH } from '~/pages/dashboard/questionarios/index.vue';
 import { NEW_QUESTIONNAIRE_PATH } from '~/pages/dashboard/questionarios/novo.vue';
 
-type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients' | 'preferences';
+type SideMenuLinkIndex = 'home' | 'questionnaires' | 'patients' | 'preferences' | 'doctors';
 
 type SideMenuLink = {
   label: string;
   iconName: string;
   index: SideMenuLinkIndex;
+  isVisible: boolean;
   onClick: () => void;
 };
 
@@ -56,6 +61,7 @@ type Methods = {
 type Computed = {
   isDrawerOpen: boolean;
   wrapperClass: string;
+  isUserAdmin: boolean;
   topLinks: SideMenuLink[];
   currentActiveLink: SideMenuLinkIndex | undefined;
 };
@@ -70,33 +76,47 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     wrapperClass() {
       return this.isDrawerOpen ? '' : 'collapsed';
     },
+    isUserAdmin() {
+      return this.$accessor.currentUser?.currentUser?.role === UserRole.Admin;
+    },
     topLinks() {
-      return [
+      return filter([
         {
           iconName: 'el-icon-house',
           label: 'Início',
           index: 'home',
+          isVisible: true,
           onClick: () => this.$router.push(DASHBOARD_PATH),
         },
         {
           iconName: 'el-icon-user',
           label: 'Pacientes',
           index: 'patients',
+          isVisible: true,
           onClick: () => this.$router.push(PATIENTS_PATH),
+        },
+        {
+          iconName: 'el-icon-user',
+          label: 'Médicos',
+          index: 'doctors',
+          isVisible: this.isUserAdmin,
+          onClick: () => this.$router.push(DOCTORS_PATH),
         },
         {
           iconName: 'el-icon-notebook-2',
           label: 'Questionários',
           index: 'questionnaires',
+          isVisible: true,
           onClick: () => this.$router.push(QUESTIONNAIRES_PATH),
         },
         {
           iconName: 'el-icon-setting',
           label: 'Preferências',
           index: 'preferences',
+          isVisible: true,
           onClick: () => this.$router.push(PREFERENCES_PATH),
         },
-      ];
+      ], 'isVisible');
     },
     currentActiveLink() {
       const { path: currentRoute } = this.$route;
@@ -107,6 +127,9 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         case PATIENTS_PATH:
         case ADD_PATIENT_PATH:
           return 'patients';
+        case DOCTORS_PATH:
+        case ADD_DOCTOR_PATH:
+          return 'doctors';
         case QUESTIONNAIRES_PATH:
         case NEW_QUESTIONNAIRE_PATH:
           return 'questionnaires';

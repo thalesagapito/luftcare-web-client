@@ -31,8 +31,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       update: ({ currentUser } : CurrentUserQuery) => currentUser,
     },
   },
-  mounted() {
-    this.$accessor.currentUser.setCurrentUser(this.currentUser);
+  watch: {
+    currentUser(newCurrentUser) {
+      this.$accessor.currentUser.setCurrentUser(newCurrentUser);
+    },
   },
 });
 </script>

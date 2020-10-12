@@ -13,7 +13,7 @@
           type="primary"
           :disabled="!isFormValid"
           @click="runCreateDoctorMutation"
-        ) Adicionar paciente
+        ) Adicionar médico
 </template>
 
 <script lang="ts">
@@ -24,11 +24,11 @@ import CreateUserMutationGQL from '~/graphql/mutations/User/createUser';
 import { CreateUserInput, MutationCreateUserArgs, UserRole } from '~/types/gql';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
-import { DOCTORS_PATH } from '~/pages/dashboard/pacientes/index.vue';
-import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
+import { DOCTORS_PATH } from '~/pages/dashboard/medicos/index.vue';
 import DoctorForm, { Props as FormProps } from '~/components/organisms/forms/user/DoctorForm.vue';
+import TheHeader, { Props as HeaderProps } from '~/components/molecules/HeaderWithBreadcrumbs.vue';
 
-export const ADD_DOCTOR_PATH = '/dashboard/pacientes/adicionar';
+export const ADD_DOCTOR_PATH = '/dashboard/medicos/adicionar';
 
 type Data = {
   isFormValid: boolean;
@@ -46,7 +46,7 @@ type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   layout: RegisteredLayout.dashboard,
-  middleware: RegisteredMiddleware.isUserAuthenticated,
+  middleware: RegisteredMiddleware.isUserAdmin,
   components: { TheHeader, ShadowedCard, DoctorForm },
   data() {
     return {
@@ -62,11 +62,11 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   computed: {
     headerProps() {
       return {
-        title: 'Adicionar paciente',
+        title: 'Adicionar médico',
         breadcrumbs: {
           items: [
             { label: 'Início', to: '/dashboard' },
-            { label: 'Pacientes', to: '/dashboard/pacientes' },
+            { label: 'Médicos', to: '/dashboard/medicos' },
             { label: 'Adicionar', to: '' },
           ],
         },
@@ -80,7 +80,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         role: UserRole.Doctor,
       };
       const mutationArgs: MutationCreateUserArgs = { userData };
-      const loading = this.$loading({ lock: true, text: 'Adicionando paciente...' });
+      const loading = this.$loading({ lock: true, text: 'Adicionando médico...' });
 
       await this.$apollo
         .mutate({ mutation: CreateUserMutationGQL, variables: mutationArgs })
@@ -89,7 +89,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         .finally(() => loading.close());
     },
     handleDoctorCreationSuccess() {
-      this.$notify({ title: 'Sucesso', type: 'success', message: 'Paciente adicionado com sucesso' });
+      this.$notify({ title: 'Sucesso', type: 'success', message: 'Médico adicionado com sucesso' });
       this.goToDoctors(true);
     },
     goToDoctors(refetch) {
@@ -102,7 +102,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       this.$router.push(path);
     },
   },
-  head: { titleTemplate: (base) => `${base} - Adicionar paciente` },
+  head: { titleTemplate: (base) => `${base} - Adicionar médico` },
 });
 </script>
 

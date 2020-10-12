@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -209,7 +210,9 @@ export type Questionnaire = {
   id: Scalars['ID'];
   nameForManagement: Scalars['String'];
   nameForPresentation: Scalars['String'];
+  description: Scalars['String'];
   version: Scalars['Int'];
+  estimatedDurationInMinutes: Scalars['Int'];
   isPublished: Scalars['Boolean'];
   questions: Array<QuestionnaireQuestion>;
   responses: Array<QuestionnaireResponse>;
@@ -283,7 +286,7 @@ export type QuestionnaireResponse = {
   responseDate: Scalars['DateTime'];
   patient: User;
   questionnaire: Questionnaire;
-  questionAnswers: Array<QuestionnaireResponseAnswer>;
+  questionAnswers: QuestionnaireResponseAnswer;
   score: ResponseScore;
 };
 
@@ -400,10 +403,10 @@ export enum UserRole {
   Patient = 'PATIENT'
 }
 
-export type ChangePublishStatusMutationVariables = {
+export type ChangePublishStatusMutationVariables = Exact<{
   id: Scalars['ID'];
   isPublished: Scalars['Boolean'];
-};
+}>;
 
 
 export type ChangePublishStatusMutation = (
@@ -414,9 +417,9 @@ export type ChangePublishStatusMutation = (
   ) }
 );
 
-export type CreateQuestionnaireMutationVariables = {
+export type CreateQuestionnaireMutationVariables = Exact<{
   questionnaire: QuestionnaireInput;
-};
+}>;
 
 
 export type CreateQuestionnaireMutation = (
@@ -427,9 +430,9 @@ export type CreateQuestionnaireMutation = (
   ) }
 );
 
-export type DeleteQuestionnaireMutationVariables = {
+export type DeleteQuestionnaireMutationVariables = Exact<{
   id: Scalars['ID'];
-};
+}>;
 
 
 export type DeleteQuestionnaireMutation = (
@@ -440,9 +443,9 @@ export type DeleteQuestionnaireMutation = (
   ) }
 );
 
-export type PublishQuestionnaireMutationVariables = {
+export type PublishQuestionnaireMutationVariables = Exact<{
   id: Scalars['ID'];
-};
+}>;
 
 
 export type PublishQuestionnaireMutation = (
@@ -453,9 +456,9 @@ export type PublishQuestionnaireMutation = (
   ) }
 );
 
-export type UnpublishQuestionnaireMutationVariables = {
+export type UnpublishQuestionnaireMutationVariables = Exact<{
   id: Scalars['ID'];
-};
+}>;
 
 
 export type UnpublishQuestionnaireMutation = (
@@ -466,10 +469,10 @@ export type UnpublishQuestionnaireMutation = (
   ) }
 );
 
-export type UpdateQuestionnaireMutationVariables = {
+export type UpdateQuestionnaireMutationVariables = Exact<{
   id: Scalars['ID'];
   questionnaire: QuestionnaireInput;
-};
+}>;
 
 
 export type UpdateQuestionnaireMutation = (
@@ -480,9 +483,9 @@ export type UpdateQuestionnaireMutation = (
   ) }
 );
 
-export type CreateUserMutationVariables = {
+export type CreateUserMutationVariables = Exact<{
   userData: CreateUserInput;
-};
+}>;
 
 
 export type CreateUserMutation = (
@@ -493,10 +496,10 @@ export type CreateUserMutation = (
   ) }
 );
 
-export type LoginMutationVariables = {
+export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
-};
+}>;
 
 
 export type LoginMutation = (
@@ -507,10 +510,10 @@ export type LoginMutation = (
   ) }
 );
 
-export type UpdatePasswordMutationVariables = {
+export type UpdatePasswordMutationVariables = Exact<{
   currentPassword: Scalars['String'];
   newPassword: Scalars['String'];
-};
+}>;
 
 
 export type UpdatePasswordMutation = (
@@ -521,13 +524,13 @@ export type UpdatePasswordMutation = (
   ) }
 );
 
-export type CurrentQuestionnairesQueryVariables = {
+export type CurrentQuestionnairesQueryVariables = Exact<{
   name?: Maybe<Scalars['String']>;
   orderBy?: Maybe<Array<OrderByClause>>;
   pageNumber?: Maybe<Scalars['Int']>;
   isPublished?: Maybe<Scalars['Boolean']>;
   resultsPerPage?: Maybe<Scalars['Int']>;
-};
+}>;
 
 
 export type CurrentQuestionnairesQuery = (
@@ -546,9 +549,9 @@ export type CurrentQuestionnairesQuery = (
   ) }
 );
 
-export type GetQuestionnaireQueryVariables = {
+export type GetQuestionnaireQueryVariables = Exact<{
   id: Scalars['ID'];
-};
+}>;
 
 
 export type GetQuestionnaireQuery = (
@@ -570,7 +573,7 @@ export type GetQuestionnaireQuery = (
   ) }
 );
 
-export type CurrentUserQueryVariables = {};
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = (
@@ -581,9 +584,29 @@ export type CurrentUserQuery = (
   )> }
 );
 
-export type PatientOverviewQueryVariables = {
+export type DoctorsQueryVariables = Exact<{
+  name?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<Array<OrderByClause>>;
+  pageNumber?: Maybe<Scalars['Int']>;
+  resultsPerPage?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type DoctorsQuery = (
+  { __typename?: 'Query' }
+  & { users: (
+    { __typename?: 'PaginatedUsers' }
+    & Pick<PaginatedUsers, 'hasMorePages' | 'totalResultsCount'>
+    & { results: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'createdAt' | 'email' | 'name' | 'phoneNumber'>
+    )> }
+  ) }
+);
+
+export type PatientOverviewQueryVariables = Exact<{
   id: Scalars['ID'];
-};
+}>;
 
 
 export type PatientOverviewQuery = (
@@ -608,12 +631,12 @@ export type PatientOverviewQuery = (
   ) }
 );
 
-export type PatientsQueryVariables = {
+export type PatientsQueryVariables = Exact<{
   name?: Maybe<Scalars['String']>;
   orderBy?: Maybe<Array<OrderByClause>>;
   pageNumber?: Maybe<Scalars['Int']>;
   resultsPerPage?: Maybe<Scalars['Int']>;
-};
+}>;
 
 
 export type PatientsQuery = (
