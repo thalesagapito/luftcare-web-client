@@ -9,10 +9,12 @@
           autocomplete="email"
           placeholder="Digite seu endereço de email aqui"
           v-model="email"
+          @keyup.enter.native="moveFocusToPasswordField"
         )
       .mb-7: el-form-item(label="Senha" prop="password")
         el-input(
           type="password"
+          ref="passwordField"
           autocomplete="email"
           placeholder="Digite sua senha aqui"
           v-model="password"
@@ -47,6 +49,7 @@ type Methods = {
   loginUser: () => void;
   validateFormAndLogin: () => void;
   passTokenToApolloClient: MutationResponseHandler['Success'];
+  moveFocusToPasswordField: () => void;
 };
 type Computed = {
   formProps: ElFormProps<'email'|'password'>;
@@ -100,6 +103,9 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
       this.$router.push(DASHBOARD_PATH);
+    },
+    moveFocusToPasswordField() {
+      (this.$refs.passwordField as HTMLElement).focus();
     },
   },
   head: {
