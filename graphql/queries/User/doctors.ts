@@ -21,6 +21,7 @@ export default gql`
       results {
         id
         createdAt
+        canLogin
         email
         name
         phoneNumber

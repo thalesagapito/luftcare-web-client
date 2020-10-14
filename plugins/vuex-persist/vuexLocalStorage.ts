@@ -6,7 +6,7 @@ export default ({ store }: Context) => {
   (window as typeof window & NuxtExtendedWindow).onNuxtReady(() => {
     createPersistedState({
       key: 'vuex',
-      paths: ['layout'],
+      paths: ['layout', 'currentUser'],
     })(store);
   });
 };

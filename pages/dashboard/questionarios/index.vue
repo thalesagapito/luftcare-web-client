@@ -68,7 +68,7 @@ type Questionnaire = Query['questionnaires']['results'][0];
 type Data = {
   questionnaires?: ExecutionResult<Query['questionnaires']>['data']
   questionnairesQueryArgs: QueryQuestionnairesArgs;
-  isQuestionnairesTableLoading: 0;
+  isQuestionnairesTableLoading: number;
 };
 type Methods = {
   refetchQuestionnaires: () => void;
@@ -106,6 +106,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     questionnaires: {
+      prefetch: false,
       query: QuestionnairesQueryGQL,
       loadingKey: 'isQuestionnairesTableLoading',
       error: debounce(smartQueryErrorHandler, 10),

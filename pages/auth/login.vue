@@ -30,12 +30,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Form } from 'element-ui';
+import { ApolloCurrentQueryResult } from 'apollo-client';
 
-import { MutationLoginArgs } from '~/types/gql';
 import { ElFormProps } from '~/types/element-ui';
 import { MutationResponseHandler } from '~/types/helpers';
 import LoginMutation from '~/graphql/mutations/User/login';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
+import { MutationLoginArgs, CurrentUserQuery } from '~/types/gql';
+import CurrentUserQueryGQL from '~/graphql/queries/User/currentUser';
 
 import { DASHBOARD_PATH } from '~/pages/dashboard/index.vue';
 
@@ -102,6 +104,13 @@ export default Vue.extend<Data, Methods, Computed, {}>({
       const refreshToken = data?.login.authorization || '';
       await this.$apolloHelpers.onLogin(authToken);
       this.$accessor.auth.setRefreshToken(refreshToken);
+
+      const { data: { currentUser } = {} } = await this.$apollo.query({
+        query: CurrentUserQueryGQL,
+        fetchPolicy: 'network-only',
+      }) as ApolloCurrentQueryResult<CurrentUserQuery>;
+
+      this.$accessor.currentUser.setCurrentUser(currentUser);
       this.$router.push(DASHBOARD_PATH);
     },
     moveFocusToPasswordField() {

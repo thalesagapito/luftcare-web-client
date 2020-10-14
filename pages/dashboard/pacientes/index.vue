@@ -45,7 +45,7 @@ type Patient = Query['users']['results'][0];
 type Data = {
   patients?: ExecutionResult<Query['users']>['data']
   patientsQueryArgs: QueryUsersArgs;
-  isPatientsTableLoading: 0;
+  isPatientsTableLoading: number;
 };
 type Methods = {
   goToAddPatient: () => void;
@@ -76,6 +76,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     patients: {
+      prefetch: false,
       query: PatientsQueryGQL,
       loadingKey: 'isPatientsTableLoading',
       error: debounce(smartQueryErrorHandler, 10),

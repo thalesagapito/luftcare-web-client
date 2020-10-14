@@ -8,6 +8,7 @@
           |<strong>Não poderá</strong> ser alterado pelo paciente.
           |É esse email será usado para entrar no aplicativo.
         el-input(
+          autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
@@ -33,7 +34,6 @@
         .form-item-helper-text
           |Pode ser alterado mais tarde pelo paciente.
         el-input(
-          autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
@@ -46,7 +46,6 @@
         .form-item-helper-text
           |Pode ser alterado mais tarde pelo paciente.
         el-input(
-          autofocus
           type="text"
           maxlength="20"
           placeholder="(41) 98765-4321"

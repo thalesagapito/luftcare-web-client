@@ -44,6 +44,7 @@ export type Mutation = {
   registerUser: User;
   createUser: User;
   updatePassword: User;
+  changeLoginCapability: GenericResponse;
 };
 
 
@@ -103,6 +104,12 @@ export type MutationCreateUserArgs = {
 export type MutationUpdatePasswordArgs = {
   currentPassword: Scalars['String'];
   newPassword: Scalars['String'];
+};
+
+
+export type MutationChangeLoginCapabilityArgs = {
+  id: Scalars['ID'];
+  canLogin: Scalars['Boolean'];
 };
 
 export type OrderByClause = {
@@ -394,6 +401,8 @@ export type User = {
   email: Scalars['String'];
   /** Should contain special characters, like: +55 (41) 98765-4321 */
   phoneNumber: Scalars['String'];
+  /** If the user is allowed to log in the application */
+  canLogin: Scalars['Boolean'];
   role: UserRole;
 };
 
@@ -599,7 +608,7 @@ export type DoctorsQuery = (
     & Pick<PaginatedUsers, 'hasMorePages' | 'totalResultsCount'>
     & { results: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'createdAt' | 'email' | 'name' | 'phoneNumber'>
+      & Pick<User, 'id' | 'createdAt' | 'canLogin' | 'email' | 'name' | 'phoneNumber'>
     )> }
   ) }
 );

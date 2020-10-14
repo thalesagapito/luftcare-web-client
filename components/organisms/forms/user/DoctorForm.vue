@@ -8,6 +8,7 @@
           |<strong>Não poderá</strong> ser alterado.
           |É esse email será usado para entrar no sistema.
         el-input(
+          autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"
@@ -33,7 +34,6 @@
         .form-item-helper-text
           |Pode ser alterado mais tarde.
         el-input(
-          autofocus
           type="text"
           maxlength="500"
           placeholder="Digite aqui"

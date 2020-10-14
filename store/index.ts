@@ -3,8 +3,8 @@ import { getAccessorType } from 'typed-vuex';
 import * as auth from '~/store/auth';
 import * as layout from '~/store/layout';
 import * as currentUser from '~/store/currentUser';
+import nuxtServerInit from '~/store/nuxtServerInit';
 
-// eslint-disable-next-line import/prefer-default-export
 export const accessorType = getAccessorType({
   modules: {
     auth,
@@ -12,3 +12,7 @@ export const accessorType = getAccessorType({
     currentUser,
   },
 });
+
+export default {
+  actions: { nuxtServerInit },
+};

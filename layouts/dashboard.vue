@@ -8,34 +8,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import CurrentUserQueryGQL from '~/graphql/queries/User/currentUser';
 import TheSideMenu from '~/components/organisms/single-instance/side-menu/TheSideMenu.vue';
-import { CurrentUserQuery } from '~/types/gql';
 
-type Data = {
-  currentUser: CurrentUserQuery['currentUser'];
-};
+type Data = {};
 type Methods = {};
 type Computed = {};
 type Props = {};
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   components: { TheSideMenu },
-  apollo: {
-    currentUser: {
-      query: CurrentUserQueryGQL,
-      // TODO figure this out
-      // loadingKey: 'isPatientsTableLoading',
-      // error: debounce(smartQueryErrorHandler, 10),
-      fetchPolicy: 'cache-and-network',
-      update: ({ currentUser } : CurrentUserQuery) => currentUser,
-    },
-  },
-  watch: {
-    currentUser(newCurrentUser) {
-      this.$accessor.currentUser.setCurrentUser(newCurrentUser);
-    },
-  },
 });
 </script>
 

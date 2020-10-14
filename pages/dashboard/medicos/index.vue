@@ -10,6 +10,39 @@
         @update-page-size="updateDoctorsQueryArgs('resultsPerPage', $event)"
         @update-current-page="updateDoctorsQueryArgs('pageNumber', $event)"
       )
+        el-table-column(
+          label="Status"
+          align="center"
+          width="120"
+        )
+          template(slot-scope="{ row }")
+            el-tag(v-if="row.canLogin" size="small") Com acesso
+            el-tag.opacity-50(v-else size="small") Sem acesso
+        el-table-column(
+          fixed="right"
+          label="Ações"
+          align="right"
+          width="235"
+        )
+          .action-buttons(slot-scope="{ row }")
+            el-popconfirm(
+              v-if="row.canLogin"
+              title="Desautorizar acesso a aplicação?"
+              confirmButtonText="Sim, remover"
+              cancelButtonText="Cancelar"
+              hide-icon
+              @onConfirm="changeLoginCapability(row, false)"
+            )
+              el-button(round size="mini" type="text" slot="reference") Desautorizar acesso
+            el-popconfirm(
+              v-else
+              title="Autorizar acesso a aplicação?"
+              confirmButtonText="Sim, autorizar"
+              cancelButtonText="Cancelar"
+              hide-icon
+              @onConfirm="changeLoginCapability(row, true)"
+            )
+              el-button(round size="mini" type="text" slot="reference") Autorizar acesso
 </template>
 
 <script lang="ts">
@@ -18,10 +51,11 @@ import { debounce } from 'lodash';
 import { ExecutionResult } from 'graphql';
 
 import DoctorsQueryGQL from '~/graphql/queries/User/doctors';
-import { UpdateFieldWithValueFunction } from '~/types/helpers';
+import { MutationResponseHandler, UpdateFieldWithValueFunction } from '~/types/helpers';
 import { RegisteredLayout, RegisteredMiddleware } from '~/enums';
 import { Query, DoctorsQuery, QueryUsersArgs } from '~/types/gql';
 import smartQueryErrorHandler from '~/errorHandling/apollo/smartQueryErrorHandler';
+import ChangeLoginCapabilityMutationGQL from '~/graphql/mutations/User/changeLoginCapability';
 
 import ShadowedCard from '~/components/atoms/ShadowedCard.vue';
 import { ADD_DOCTOR_PATH } from '~/pages/dashboard/medicos/adicionar.vue';
@@ -35,12 +69,14 @@ type Doctor = Query['users']['results'][0];
 type Data = {
   doctors?: ExecutionResult<Query['users']>['data']
   doctorsQueryArgs: QueryUsersArgs;
-  isDoctorsTableLoading: 0;
+  isDoctorsTableLoading: number;
 };
 type Methods = {
   goToAddDoctor: () => void;
   refetchDoctors: () => void;
+  changeLoginCapability: (doctor: Doctor, canLogin: Doctor['canLogin']) => void;
   updateDoctorsQueryArgs: UpdateFieldWithValueFunction<Data['doctorsQueryArgs']>;
+  handleChangeCapabilitySuccess: MutationResponseHandler['Success'];
 };
 type Computed = {
   headerProps: HeaderProps;
@@ -55,7 +91,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   data() {
     return {
       isDoctorsTableLoading: 0,
-      doctors: undefined,
+      doctors: { results: [], totalResultsCount: 0, hasMorePages: false },
       doctorsQueryArgs: {
         pageNumber: undefined,
         resultsPerPage: 10,
@@ -65,6 +101,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   apollo: {
     doctors: {
+      prefetch: false,
       query: DoctorsQueryGQL,
       loadingKey: 'isDoctorsTableLoading',
       error: debounce(smartQueryErrorHandler, 10),
@@ -125,6 +162,23 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     updateDoctorsQueryArgs(field, value) {
       this.doctorsQueryArgs = { ...this.doctorsQueryArgs, [field]: value };
+    },
+    changeLoginCapability({ id }, canLogin) {
+      this.$apollo
+        .mutate({
+          mutation: ChangeLoginCapabilityMutationGQL,
+          variables: { id, canLogin },
+        })
+        .then(this.handleChangeCapabilitySuccess)
+        .catch(this.$clientErrorHandler);
+    },
+    handleChangeCapabilitySuccess({ data }) {
+      this.$notify({
+        title: 'Sucesso',
+        message: data?.changeLoginCapability.userFriendlyMessage || '',
+        type: 'success',
+      });
+      this.refetchDoctors();
     },
   },
   head: { titleTemplate: (base) => `${base} - Listar médicos cadastrados` },
