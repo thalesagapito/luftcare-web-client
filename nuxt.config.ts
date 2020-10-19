@@ -70,6 +70,22 @@ const nuxtConfig: NuxtConfiguration = {
     '@nuxtjs/dotenv',
     '@nuxtjs/proxy',
   ],
+
+  /*
+  ** PWA configuration
+  */
+  pwa: {
+    meta: {
+      title: 'Luftcare',
+      author: 'Thales Agapito',
+    },
+    manifest: {
+      name: 'Luftcare',
+      short_name: 'Luftcare',
+      description: 'Painel de controle para acompanhamento de pacientes',
+      lang: 'pt_BR',
+    },
+  },
   /*
   ** Apollo configuration
   */
