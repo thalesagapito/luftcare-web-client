@@ -81,13 +81,13 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
     topLinks() {
       return filter([
-        {
-          iconName: 'el-icon-house',
-          label: 'Início',
-          index: 'home',
-          isVisible: true,
-          onClick: () => this.$router.push(DASHBOARD_PATH),
-        },
+        // {
+        //   iconName: 'el-icon-house',
+        //   label: 'Início',
+        //   index: 'home',
+        //   isVisible: true,
+        //   onClick: () => this.$router.push(DASHBOARD_PATH),
+        // },
         {
           iconName: 'el-icon-user',
           label: 'Pacientes',

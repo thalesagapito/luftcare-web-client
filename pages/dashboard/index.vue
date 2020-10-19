@@ -1,6 +1,5 @@
 <template lang="pug">
   .dashboard-page-wrapper
-    .text-gray-600.text-4xl.mt-6 Em construção...
 </template>
 
 <script lang="ts">
